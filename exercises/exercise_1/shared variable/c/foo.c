@@ -13,23 +13,34 @@ int longest_sequence_sub = 0;
 
 pthread_mutex_t lock;
 
+void update_longest_sequence(int* sequence_operation) {
+    // Determine which operation the current sequence belongs to
+    // based on the pointer to the sequence variable.
+    // 0 = add, 1 = sub. 
+    int belonging_operation = 0;
+    if (sequence_operation == &longest_sequence_sub) {
+        belonging_operation = 1;
+    }
+
+    if (last_operation == belonging_operation) {
+        current_sequence++;
+    }
+    else {   
+        if (current_sequence > *sequence_operation) {
+            *sequence_operation = current_sequence;
+        }
+        current_sequence = 0;
+    }
+}
+
 // Note the return type: void*
 void* incrementingThreadFunction(){
     for (int j = 0; j < 1000000; j++) {
         pthread_mutex_lock(&lock);
         i++;
 
-        if (last_operation == 0) {
-            current_sequence++;
-        }
-        else {   
-            if (current_sequence > longest_sequence_add)
-            {
-                longest_sequence_add = current_sequence;
-            }
-            current_sequence = 0;
-        }
-        
+        update_longest_sequence(&longest_sequence_add);
+
         last_operation = 0;
         pthread_mutex_unlock(&lock);
     }
@@ -41,15 +52,7 @@ void* decrementingThreadFunction(){
         pthread_mutex_lock(&lock);
         i--;
 
-        if (last_operation == 1) {
-            current_sequence++;
-        }
-        else {   
-            if (current_sequence > longest_sequence_sub) {
-                longest_sequence_sub = current_sequence;
-            }
-            current_sequence = 0;
-        }
+        update_longest_sequence(&longest_sequence_sub);
 
         last_operation = 1;
         pthread_mutex_unlock(&lock);
