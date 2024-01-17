@@ -4,35 +4,44 @@
 
 using boost::asio::ip::udp;
 
-int main(int argc, char* argv[]){
-    try
-    {
-        if (argc != 2){
-            std::cerr << "Usage: client <host>" << std::endl;
-            return 1;
-        }
-    boost::asio::io_context io_context;
+// udp_sender.cpp
+#include "udp_send.h"
 
+Udp_Sender::Udp_Sender(const std::string& ip, const std::string& port)
+    : socket(io_context) {
     udp::resolver resolver(io_context);
-    udp::endpoint receiver_endpoint = 
-        *resolver.resolve(udp::v4(), argv[1], "daytime").begin();
+    endpoint = *resolver.resolve(udp::v4(), ip, port).begin();
+    socket.open(udp::v4());
+}
+Udp_Sender::~Udp_Sender() {
+    socket.close();
+}
 
-        udp::socket socket(io_context);
-        socket.open(udp::v4());
+void Udp_Sender::send(const std::string& message) {
+    socket.send_to(boost::asio::buffer(message), endpoint);
+}
 
-        std::array<char, 1> send_buf = {{0}};
-        socket.send_to(boost::asio::buffer(send_buf), receiver_endpoint);
 
-        std::array<char, 128> recv_buf;
-        udp::endpoint sender_endpoint;
-        size_t len = socket.receive_from(
-            boost::asio::buffer(recv_buf), sender_endpoint);
-        
-        std::cout.write(recv_buf.data(), len);
+
+// #define IPAddr "10.100.23.29" //local ip
+#define IPAddr "0.0.0.0" //local ip
+#define PORT "20018"          //port
+
+int main(){
+
+    //boost wait timer
+    boost::asio::io_context io_context;
+    boost::asio::steady_timer timer(io_context, boost::asio::chrono::seconds(1));
+
+
+    Udp_Sender sender(IPAddr, PORT);
+    for (int i = 0; i < 10; i++)
+    {
+        sender.send("Message nr. " + std::to_string(i));
+        std::cout << "Message nr. " + std::to_string(i) + " has been sent"<< std::endl;
+        //use time so message is sent every second
+        timer.wait();
+        timer.expires_after(boost::asio::chrono::seconds(1));
     }
-    catch (std::exception& e){
-        std::cerr << e.what() << std::endl;
-    }
-    return 0;
     
 }

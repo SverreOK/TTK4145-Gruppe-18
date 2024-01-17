@@ -1,10 +1,8 @@
 #include <boost/asio.hpp>
 #include <boost/array.hpp>
 #include <boost/bind.hpp>
-#include <thread>
 #include <iostream>
 
-#define IPADDRESS "127.0.0.1" // "192.168.1.64"
 #define UDP_PORT 20018
 
 using boost::asio::ip::udp;
@@ -16,28 +14,33 @@ struct listener {
     boost::array<char, 1024> recv_buffer;
     udp::endpoint remote_endpoint;
 
+    // Initialize the socket
+    listener() : socket(io_service, udp::endpoint(udp::v4(), UDP_PORT)) {
+        // Set the socket option to allow broadcasting
+        socket.set_option(boost::asio::socket_base::broadcast(true));
+        wait();
+    }
+
     void handle_receive(const boost::system::error_code& error, size_t bytes_transferred) {
         if (error) {
             std::cout << "Receive failed: " << error.message() << "\n";
             return;
         }
-        std::cout << "Received: '" << std::string(recv_buffer.begin(), recv_buffer.begin()+bytes_transferred) << "' (" << error.message() << ")\n";
+        std::cout << "Received: '" << std::string(recv_buffer.begin(), recv_buffer.begin() + bytes_transferred) << "'\n";
+        wait();  // Continue waiting for the next incoming message
     }
 
     void wait() {
         socket.async_receive_from(boost::asio::buffer(recv_buffer),
-            remote_endpoint,
-            boost::bind(&listener::handle_receive, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+                                  remote_endpoint,
+                                  boost::bind(&listener::handle_receive, this,
+                                              boost::asio::placeholders::error,
+                                              boost::asio::placeholders::bytes_transferred));
     }
 
-    void Receiver()
-    {
-        socket.open(udp::v4());
-        socket.bind(udp::endpoint(address::from_string(IPADDRESS), UDP_PORT));
-
-        wait();
-
-        std::cout << "Receiving\n";
+    void Receiver() {
+        std::cout << "From port: " << UDP_PORT << "\n";
+        std::cout << "Remote endpoint / address: " << remote_endpoint.address() << "\n";
         io_service.run();
         std::cout << "Receiver exit\n";
     }
@@ -47,15 +50,10 @@ struct listener {
     }
 };
 
-int main(int argc, char *argv[]) {
+int main() {
     listener listener;
 
-    std::thread r([&] {listener.Receiver(); });
-
-    for (int i = 0; i < 5; i++) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
-        std::cout << "Count: " << i << std::endl;
-    }
+    std::thread r([&] { listener.Receiver(); });
 
     r.join();
 }
