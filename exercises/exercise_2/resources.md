@@ -1,3 +1,17 @@
+
+find ip: 
+    sudo tcpdump -i any -n -vvv 'port 30000'
+
+SERVER IP: 10.100.23.255
+broadcasts ip on port 30000
+
+find local ip:
+    hostname -I
+compuder spot 18 IP addr: 10.100.23.28
+
+we should use port 20000 + spot # (20018)
+
+
 Pseudocode
 ==========
 
