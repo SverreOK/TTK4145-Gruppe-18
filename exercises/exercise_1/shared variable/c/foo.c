@@ -6,40 +6,74 @@
 
 int i = 0;
 
+int last_operation = 0; // 0 = add, 1 = sub
+int current_sequence = 0;
+int longest_sequence_add = 0;
+int longest_sequence_sub = 0;
+
+pthread_mutex_t lock;
+
 // Note the return type: void*
 void* incrementingThreadFunction(){
-    // TODO: increment i 1_000_000 times
-    for (int x = 0; x < 1000000; x++) {
+    for (int j = 0; j < 1000000; j++) {
+        pthread_mutex_lock(&lock);
         i++;
+
+        if (last_operation == 0) {
+            current_sequence++;
+        }
+        else {   
+            if (current_sequence > longest_sequence_add)
+            {
+                longest_sequence_add = current_sequence;
+            }
+            current_sequence = 0;
+        }
+        
+        last_operation = 0;
+        pthread_mutex_unlock(&lock);
     }
     return NULL;
 }
 
 void* decrementingThreadFunction(){
-    // TODO: decrement i 1_000_000 times
-    for (int m = 0; m < 1000000; m++) {
+    for (int k = 0; k < 1000000-1; k++) {
+        pthread_mutex_lock(&lock);
         i--;
+
+        if (last_operation == 1) {
+            current_sequence++;
+        }
+        else {   
+            if (current_sequence > longest_sequence_sub) {
+                longest_sequence_sub = current_sequence;
+            }
+            current_sequence = 0;
+        }
+
+        last_operation = 1;
+        pthread_mutex_unlock(&lock);
     }
     return NULL;
 }
 
-
 int main(){
-    // TODO: 
-    // start the two functions as their own threads using `pthread_create`
-    // Hint: search the web! Maybe try "pthread_create example"?
+    pthread_mutex_init(&lock, NULL);
 
-    pthread_t thread_increment, thread_decrement;
+    //Create threads
+    pthread_t incrementingThread;
+    pthread_create(&incrementingThread, NULL, incrementingThreadFunction, "incrementing thread");
 
-    pthread_create(&thread_increment, NULL, incrementingThreadFunction, NULL);
-    pthread_create(&thread_decrement, NULL, decrementingThreadFunction, NULL);
-    
-    // TODO:
-    // wait for the two threads to be done before printing the final result
-    // Hint: Use `pthread_join` 
-    pthread_join(thread_increment, NULL);
-    pthread_join(thread_decrement, NULL);
+    pthread_t decrementingThread;
+    pthread_create(&decrementingThread, NULL, decrementingThreadFunction, "decrementing thread");
+
+    pthread_join(incrementingThread, NULL);
+    pthread_join(decrementingThread, NULL);
     
     printf("The magic number is: %d\n", i);
+    printf("Longest sequence add: %d\n", longest_sequence_add);
+    printf("Longest sequence sub: %d\n", longest_sequence_sub);
+
+    pthread_mutex_destroy(&lock);
     return 0;
 }
