@@ -27,6 +27,8 @@ private:
     char ip[16];
     char port[8];
 
+    
+
 public:
     ElevatorDriver();
     void connect();
@@ -42,7 +44,7 @@ public:
     int get_stop_signal();
     int get_obstruction_signal();
 
-    
+
 };
 
 

@@ -2,13 +2,13 @@
 CC = g++
 
 # Compiler flags
-CFLAGS = -Wall -std=c++11
+CFLAGS = -Wall -std=c++11 -g
 
 # Libraries for linking
 LIBS = -lboost_system -lboost_thread -lpthread
 
 # Target executable
-TARGET = elevator
+TARGET = main
 
 # Object files
 OBJS = main.o elevator_driver.o
