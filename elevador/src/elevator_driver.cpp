@@ -7,6 +7,7 @@
 ElevatorDriver::ElevatorDriver() : socket(io_service) {
     strncpy(ip, "localhost", sizeof(ip));
     strncpy(port, "15657", sizeof(port));
+    ElevatorDriver::connected = false;
 }
 
 void ElevatorDriver::connect() {
@@ -18,6 +19,8 @@ void ElevatorDriver::connect() {
         return;
     }
     std::cout << "Connected successfully" << std::endl;
+    
+    ElevatorDriver::connected = true;
 }
 
 void ElevatorDriver::set_motor_direction(int dir) {
@@ -83,3 +86,6 @@ int ElevatorDriver::get_obstruction_signal() {
     return response[1];
 }
 
+bool ElevatorDriver::get_connected() {
+    return ElevatorDriver::connected;
+}
