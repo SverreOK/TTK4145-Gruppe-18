@@ -2,15 +2,17 @@
 #ifndef ELEVATOR_FSM_H
 #define ELEVATOR_FSM_H
 
+// INCLUDES
+#include "inc/elevator_driver.h"
+#include <boost/thread.hpp>
+#include <boost/chrono.hpp>
+#include <mutex>
+
 // EVENTS
 enum class ElevatorEvent {
-    BUTTON_PRESSED_UP,
-    BUTTON_PRESSED_DOWN,
-    ARRIVED_AT_FLOOR,
-    DOOR_TIMER_EXPIRED,
+    ORDER_RECEIVED,
     STOP_BUTTON_PRESSED,
-    STOP_BUTTON_TIMEOUT,
-    VALID_FLOOR_FOUND,
+    ARRIVED_AT_FLOOR,
     OBSTRUCTION
 };
 
@@ -25,23 +27,40 @@ enum class ElevatorState {
 
 class Elevator {
 private:
+    ElevatorDriver* driver;
     ElevatorState currentState;
+    int8_t currentFloor;
+    
+    uint8_t stopButton;
+    uint8_t obstruction;
+    
+    std::mutex eventMutex;
+    
 
 public:
 
+    void updateState(ElevatorState state);
     void entryState(ElevatorState state);
-    void exitState(ElevatorState state);
     void handleEvent(ElevatorEvent event);
 
-    void handleEventInit(ElevatorEvent event);
-    void handleEventIdle(ElevatorEvent event);
-    void handleEventMovingUp(ElevatorEvent event);
-    void handleEventMovingDown(ElevatorEvent event);
-    void handleEventStop(ElevatorEvent event);
+    // Floor
+    void setFloor(int8_t floor);
+    int8_t getFloor();
+    void floorPoller();
 
-    Elevator();
+    // Stop button
+    void pollStopButton();
+    void setStopButtonLight(uint8_t);
 
-    void updateState(ElevatorEvent event);
+    // Obstruction
+    void pollObstruction();
+
+    //algorithms
+    bool shouldStop();
+
+
+    Elevator(ElevatorDriver* driver, ElevatorState initialState, uint8_t currentFloor);
+    ~Elevator();
 };
 
 #endif /* ELEVATOR_FSM_H */

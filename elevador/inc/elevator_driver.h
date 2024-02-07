@@ -26,7 +26,7 @@ private:
 
     char ip[16];
     char port[8];
-
+    bool connected;
     
 
 public:
@@ -43,7 +43,8 @@ public:
     int get_floor_sensor_signal();
     int get_stop_signal();
     int get_obstruction_signal();
-
+    
+    bool get_connected();
 
 };
 
