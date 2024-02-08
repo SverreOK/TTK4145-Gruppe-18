@@ -1,0 +1,9 @@
+{
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "c:\\dev\\Sanntid ttk4145\\TTK4145-Gruppe-18\\elevador",
+            "binaryPath": "c:\\dev\\Sanntid ttk4145\\TTK4145-Gruppe-18\\elevador\\main",
+            "binaryArgs": []
+        }
+    ]
+}
