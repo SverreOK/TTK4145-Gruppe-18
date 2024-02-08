@@ -1,3 +1,12 @@
+
+//enum for direction of elevator
+enum class Direction {
+    UP = 1,
+    STOP = 0,
+    DOWN = -1
+};
+
+
 class Call {
     public:
         Call(int floor, int direction, int ID, bool reassignable);
@@ -6,7 +15,7 @@ class Call {
         int get_direction();
     private:
         int floor;
-        int direction;
+        Direction direction;
         int ID;
         bool reassignable;
 };
