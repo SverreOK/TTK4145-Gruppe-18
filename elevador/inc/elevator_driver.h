@@ -1,5 +1,6 @@
 #pragma once
 
+#define BOOST_THREAD_USE_LIB
 #include <boost/asio.hpp>
 #include <boost/system/error_code.hpp>
 #include <mutex>

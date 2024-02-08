@@ -1,11 +1,10 @@
 #pragma once
 #ifndef ELEVATOR_FSM_H
 #define ELEVATOR_FSM_H
-
+#define BOOST_THREAD_USE_LIB
 // INCLUDES
-#include "inc/elevator_driver.h"
-#include <boost/thread.hpp>
-#include <boost/chrono.hpp>
+#include "elevator_driver.h"
+#include "call-class.h"
 #include <mutex>
 
 // EVENTS

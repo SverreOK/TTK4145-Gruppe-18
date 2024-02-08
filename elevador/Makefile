@@ -1,14 +1,16 @@
 # Compiler
-CC = g++
+
 
 ifeq ($(OS),Windows_NT) # IF WINDOWS
-    BOOST_PATH = C:/local/boost_1_84_0
+	CC = g++
+	VCPKG_DIR = C:/dev/vcpkg_dev/vcpkg/installed/x64-windows
 
-    CFLAGS = -Wall -std=c++11 -g -Iinc -I$(BOOST_PATH)
+    INCLUDES = -I$(VCPKG_DIR)/include
+    LIBS = -L$(VCPKG_DIR)/lib -lboost_system-vc140-mt -lboost_thread-vc140-mt -lboost_chrono-vc140-mt -lWs2_32
 
-	LIBS = -L$(BOOST_PATH)
-
+    CFLAGS = -Wall -std=c++11 -g $(INCLUDES)
 else
+	CC = g++
 	LIBS = -lboost_system -lboost_thread -lpthread
 
 	CFLAGS = -Wall -std=c++11 -g -Iinc
