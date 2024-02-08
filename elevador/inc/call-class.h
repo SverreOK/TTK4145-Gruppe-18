@@ -1,9 +1,18 @@
+<<<<<<< HEAD
 //enum for direction
 
 enum Direction {
     UP = 1,
     DOWN = -1,
     STOP = 0
+=======
+
+//enum for direction of elevator
+enum class Direction {
+    UP = 1,
+    STOP = 0,
+    DOWN = -1
+>>>>>>> 30993d287ea5d337282b461ff942b4a8385ccceb
 };
 
 
