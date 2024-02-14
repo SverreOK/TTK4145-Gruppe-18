@@ -8,7 +8,7 @@
 #include <mutex>
 
 // EVENTS
-enum class ElevatorEvent {
+enum class elevator_event {
     ORDER_RECEIVED,
     STOP_BUTTON_PRESSED,
     ARRIVED_AT_FLOOR,
@@ -16,7 +16,7 @@ enum class ElevatorEvent {
 };
 
 // STATES
-enum class ElevatorState {
+enum class elevator_state {
     INIT,
     IDLE,
     MOVING_UP,
@@ -26,39 +26,39 @@ enum class ElevatorState {
 
 class Elevator {
 private:
-    ElevatorDriver* driver;
-    ElevatorState currentState;
-    int8_t currentFloor;
+    elevator_driver* driver;
+    elevator_state current_state;
+    int8_t current_floor;
     
-    uint8_t stopButton;
+    uint8_t stop_button;
     uint8_t obstruction;
     
-    std::mutex eventMutex;
+    std::mutex event_mutex;
     
 
 public:
 
-    void updateState(ElevatorState state);
-    void entryState(ElevatorState state);
-    void handleEvent(ElevatorEvent event);
+    void update_state(elevator_state state);
+    void entry_state(elevator_state state);
+    void handle_event(elevator_event event);
 
     // Floor
-    void setFloor(int8_t floor);
-    int8_t getFloor();
-    void floorPoller();
+    void set_floor(int8_t floor);
+    int8_t get_floor();
+    void floor_poller();
 
     // Stop button
-    void pollStopButton();
-    void setStopButtonLight(uint8_t);
+    void poll_stop_button();
+    void set_stop_button_light(uint8_t);
 
     // Obstruction
-    void pollObstruction();
+    void poll_obstruction();
 
     //algorithms
-    bool shouldStop();
+    bool should_stop();
 
 
-    Elevator(ElevatorDriver* driver, ElevatorState initialState, uint8_t currentFloor);
+    Elevator(elevator_driver* driver, elevator_state initial_state, uint8_t current_floor);
     ~Elevator();
 };
 
