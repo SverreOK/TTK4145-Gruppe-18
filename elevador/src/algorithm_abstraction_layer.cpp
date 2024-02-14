@@ -51,8 +51,8 @@ std::vector<std::vector<bool>> call_list_to_floor_list(std::vector<Call> &calls)
     return floors;
 }
 
-void reassign_calls(std::vector<Simulated_elevator> &elevators, std::vector<Call> &calls) {
-    std::string argument_string = "{ \"hallRequests\" : [";
+std::string create_hall_request_json(std::vector<Simulated_elevator> &elevators, std::vector<Call> &calls) {
+    std::string argument_string = "{\n\t\"hallRequests\" : \n\t\t[";
         std::vector<std::vector<bool>> floors = call_list_to_floor_list(calls);
         for (auto floor : floors) {
             argument_string += "[";
@@ -63,25 +63,30 @@ void reassign_calls(std::vector<Simulated_elevator> &elevators, std::vector<Call
             argument_string.pop_back(); // Remove trailing comma
             argument_string += "],";
         }
-        argument_string += "], \"states\" : {";
+        argument_string += "],\n\t\"states\" : {";
         for (auto elevator : elevators) {
-            argument_string += "\"" + std::to_string(elevator.get_elevator_ID()) + "\" : {";
-                argument_string += "\"behaviour\":\"" + elevator.get_current_behaviour() + "\",";
-                argument_string += "\"floor\":" + std::to_string(elevator.get_current_floor()) + "\",";
-                argument_string += "\"direction\":" + elevator.get_current_direction() + "\",";
-                argument_string += "\"cabRequests\":[";
+            argument_string += "\n\t\t\"" + std::to_string(elevator.get_elevator_ID()) + "\" : {\n";
+                argument_string += "\t\t\t\"behaviour\":\"" + elevator.get_current_behaviour() + "\",\n";
+                argument_string += "\t\t\t\"floor\":" + std::to_string(elevator.get_current_floor()) + ",\n";
+                argument_string += "\t\t\t\"direction\":\"" + elevator.get_current_direction() + "\",\n";
+                argument_string += "\t\t\t\"cabRequests\":[";
                 for (auto button : elevator.get_cab_call_floors()) {
                     argument_string += button ? "true" : "false";
                     argument_string += ",";
                 }
                 argument_string.pop_back(); // Remove trailing comma
-                argument_string += "]";
-            argument_string += "},";
+                argument_string += "]\n";
+            argument_string += "\t\t},";
         }
         argument_string.pop_back(); // Remove trailing comma
-        argument_string += "}";
+        argument_string += "\n\t}\n";
     argument_string += "}";
 
+    return argument_string;
+}
+
+void reassign_calls(std::vector<Simulated_elevator> &elevators, std::vector<Call> &calls) {
+    std::string argument_string = create_hall_request_json(elevators, calls);
     std::string response = system("./hall_request_assigner --input '" + argument_string + "'");
 
     // Set call ownership based on returned json string
