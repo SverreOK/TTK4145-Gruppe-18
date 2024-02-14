@@ -129,5 +129,10 @@ void reassign_calls(std::vector<Virtual_elevator> &elevators, std::vector<Call> 
         pclose(pipe);
     }
 
-    // Set call ownership based on returned json string
+    // convert response to map<Elevator_id, std::vector<bool>> where vector is floors
+    // For elevator in map
+        // for floor in vector
+            // for call in calls
+                // if get_reassignable
+                    // if call floor == floor, call.service_call(elevator_ID)
 }
