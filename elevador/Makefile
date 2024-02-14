@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Compiler
 
 
@@ -15,16 +14,6 @@ else
 	LIBS = -lboost_system -lboost_thread -lpthread
 
 	CFLAGS = -Wall -std=c++11 -g -Iinc
-=======
-# Detect OS
-OS := $(shell uname -s)
-
-# Compiler and linker settings for both Linux and Windows
-ifeq ($(OS),Windows_NT)
-    detected_OS := Windows
-else
-    detected_OS := $(OS)
->>>>>>> 30993d287ea5d337282b461ff942b4a8385ccceb
 endif
 
 ifeq ($(detected_OS),Windows)
