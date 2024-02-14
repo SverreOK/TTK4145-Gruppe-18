@@ -1,6 +1,6 @@
 #include "algorithm_abstraction_layer.h"
 
-Simulated_elevator::Simulated_elevator(ElevatorState state, int8_t floor) {
+Simulated_elevator::Simulated_elevator(elevator_state state, int8_t floor) {
     currentState = state;
     currentFloor = floor;
     cab_call_floors = std::vector<bool>(N_FLOORS, false);
@@ -12,11 +12,11 @@ Simulated_elevator::Simulated_elevator(Elevator local_elevator) {
     // cab_call_floors = local_elevator.get_cab_call_floors();
 }
 
-void Simulated_elevator::set_current_state(ElevatorState state) {
+void Simulated_elevator::set_current_state(elevator_state state) {
     currentState = state;
 }
 
-ElevatorState Simulated_elevator::get_current_state() {
+elevator_state Simulated_elevator::get_current_state() {
     return currentState;
 }
 
