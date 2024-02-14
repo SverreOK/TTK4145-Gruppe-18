@@ -37,7 +37,7 @@ class Call {
         Call_id ID;
 
     public:
-        Call(int floor, int direction, int ID_num);
+        Call(int floor, button_type call_type, int ID_num);
         bool get_reassignable();
         int get_floor();
         button_type get_call_type();
