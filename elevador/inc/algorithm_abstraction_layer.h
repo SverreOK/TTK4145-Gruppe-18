@@ -1,4 +1,4 @@
-#include "elevator_fsm.h" // Elevator class should be defined in another file. Todo inheritance?
+#include "../inc/elevator_fsm.h" // Elevator class should be defined in another file. Todo inheritance?
 
 class Simulated_elevator {
     private:

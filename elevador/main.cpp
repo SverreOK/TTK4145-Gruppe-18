@@ -7,7 +7,7 @@
 
 
 int main(int argc, char *argv[]) {
-    ElevatorDriver elevator;
+    elevator_driver elevator;
 
     elevator.connect();
 

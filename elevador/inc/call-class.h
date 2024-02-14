@@ -1,3 +1,5 @@
+#include <string>
+
 //enum for direction of elevator
 enum class Direction {
     UP = 1,
@@ -7,17 +9,38 @@ enum class Direction {
 
 
 class Call {
-    public:
-        Call(int floor, int direction, int ID, bool reassignable);
-        bool get_reassignable();
-        int get_floor();
-        Direction get_direction();
     private:
         int floor;
         Direction direction;
-        int ID;
-        bool reassignable;
+        std::string ID;
+
+    public:
+        Call(int floor, int direction, int ID_num);
+        bool get_reassignable();
+        int get_floor();
+        Direction get_direction();
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢨⣾⣿⣿⣷⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
