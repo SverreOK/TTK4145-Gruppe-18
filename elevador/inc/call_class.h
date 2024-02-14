@@ -8,12 +8,8 @@ enum class button_type {
     CAB = -2
 };
 
-class Elevator_id{
-    private:
-        std::string elevator_id;
-    public:
-        Elevator_id();
-        std::string get_elevator_id();
+struct Elevator_id {
+    std::string elevator_id;
 };
 
 class Call_id {
