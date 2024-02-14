@@ -35,18 +35,22 @@ class Call {
         int floor;
         button_type call_type;
         Call_id ID;
+        Elevator_id assigned_elevator;
+        std::vector<bool> serviced_ack_list;
+        std::vector<Elevator_id> elevator_ack_list;
 
     public:
         Call(int floor, button_type call_type, int ID_num);
         bool get_reassignable();
         int get_floor();
         button_type get_call_type();
+        void service_call(Elevator_id elevator_id);
 };
 
 class Call_database {
     private:
 
-    std::vector<Call> call_list;
+    std::vector<Call*> call_list;
 
     public:
 
