@@ -87,7 +87,17 @@ std::string create_hall_request_json(std::vector<Simulated_elevator> &elevators,
 
 void reassign_calls(std::vector<Simulated_elevator> &elevators, std::vector<Call> &calls) {
     std::string argument_string = create_hall_request_json(elevators, calls);
-    std::string response = system("./hall_request_assigner --input '" + argument_string + "'");
+    std::string response = "";
+    FILE* pipe = popen(("./hall_request_assigner --input '" + argument_string + "'").c_str(), "r");
+    if (pipe) {
+        char buffer[128];
+        while (!feof(pipe)) {
+            if (fgets(buffer, 128, pipe) != nullptr) {
+                response += buffer;
+            }
+        }
+        pclose(pipe);
+    }
 
     // Set call ownership based on returned json string
 }
