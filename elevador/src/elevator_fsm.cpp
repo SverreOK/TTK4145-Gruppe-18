@@ -4,6 +4,7 @@ Elevator::Elevator(elevator_driver* driver, elevator_state initial_state, uint8_
     : driver(driver), current_state(initial_state), current_floor(current_floor){
         stop_button = false;
         obstruction = false;
+        requests = 
     }    
 
 Elevator::~Elevator() {
@@ -140,6 +141,10 @@ int8_t Elevator::get_floor() {
     return current_floor;
 }
 
+elevator_state Elevator::get_state() {
+    return current_state;
+}
+
 void Elevator::floor_poller() {
     set_floor(driver->get_floor_sensor_signal());
 }
@@ -157,31 +162,3 @@ void Elevator::set_stop_button_light(uint8_t val) {
 void Elevator::poll_obstruction() {
     obstruction = driver->get_obstruction_signal();
 }
-
-
-////////////////// EVENTS ////////////////////
-
-//returns TRUE if elevator should stop at the floor it arrived at
-//returns FALSE if the elevator should keep moving/idling
-bool Elevator::should_stop() {
-    switch (Elevator::current_state)
-    {
-    case elevator_state::MOVING_UP:
-        return true; // temp true
-            // e.requests[e.floor][CallType.cab]       || // is there a cab call at this floor              STOP
-            // e.requests[e.floor][CallType.hallUp]    || // is there a hall call upwards at this floor     STOP
-            // !e.requestsAbove                        || // there are no more requests above               STOP
-            // e.floor == 0                            || ?? bug catching
-            // e.floor == e.requests.length-1;            ?? idk
-    case elevator_state::MOVING_DOWN:
-        return true; // temp true
-            // e.requests[e.floor][CallType.cab]       || // is there a cab call at this floor              STOP
-            // e.requests[e.floor][CallType.hallDown]  || // is there a hall call downwards at this floor   STOP
-            // !e.requestsBelow                        || // there are no more requests below               STOP
-            // e.floor == 0                            || //bug catching?
-            // e.floor == e.requests.length-1;            //idk
-    case elevator_state::STOP:
-        return true;
-    }
-}
-
