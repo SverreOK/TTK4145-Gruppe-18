@@ -22,7 +22,8 @@ enum class elevator_state {
     IDLE,
     MOVING_UP,
     MOVING_DOWN,
-    STOP
+    STOP,
+    DOOR_OPEN
 };
 
 class Elevator {
@@ -38,7 +39,6 @@ private:
     
     std::mutex event_mutex;
     
-
 public:
 
     void update_state(elevator_state state);
