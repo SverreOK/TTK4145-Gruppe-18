@@ -6,6 +6,7 @@ class Virtual_elevator {
         int elevator_ID;
         elevator_state currentState;
         std::vector<Call> assigned_hall_calls;
+        Call_database* call_database;
     public:
         Virtual_elevator(elevator_state state, int8_t floor);
         Virtual_elevator(Elevator local_elevator);
