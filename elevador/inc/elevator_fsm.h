@@ -5,6 +5,7 @@
 // INCLUDES
 #include "elevator_driver.h"
 #include "call-class.h"
+#include <vector>
 #include <mutex>
 
 // EVENTS
@@ -32,6 +33,8 @@ private:
     
     uint8_t stop_button;
     uint8_t obstruction;
+
+    std::vector<int,int> requests;
     
     std::mutex event_mutex;
     
@@ -41,6 +44,7 @@ public:
     void update_state(elevator_state state);
     void entry_state(elevator_state state);
     void handle_event(elevator_event event);
+    elevator_state get_state();
 
     // Floor
     void set_floor(int8_t floor);
