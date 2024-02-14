@@ -57,12 +57,14 @@ std::string Virtual_elevator::get_current_direction() {
 std::vector<std::vector<bool>> call_list_to_floor_list(std::vector<Call> &calls) {
     std::vector<std::vector<bool>> floors(N_FLOORS, std::vector<bool>(N_BUTTONS, false));
     for (auto call : calls) {
-        switch (call.get_direction()) {
-            case Direction::UP:
+        switch (call.get_call_type()) {
+            case button_type::UP_HALL:
                 floors[call.get_floor()][0] = true;
                 break;
-            case Direction::DOWN:
+            case button_type::DOWN_HALL:
                 floors[call.get_floor()][1] = true;
+                break;
+            default:
                 break;
         }
     }
