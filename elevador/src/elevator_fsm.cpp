@@ -1,8 +1,8 @@
 #include "inc/elevator_fsm.h"
 
-Elevator::Elevator(ElevatorDriver* driver, ElevatorState initialState, uint8_t currentFloor)
-    : driver(driver), currentState(initialState), currentFloor(currentFloor){
-        stopButton = false;
+Elevator::Elevator(elevator_driver* driver, elevator_state initial_state, uint8_t current_floor)
+    : driver(driver), current_state(initial_state), current_floor(current_floor){
+        stop_button = false;
         obstruction = false;
     }    
 
@@ -10,17 +10,17 @@ Elevator::~Elevator() {
     delete driver;
 }
     
-void Elevator::updateState(ElevatorState nextState) {
+void Elevator::update_state(elevator_state next_state) {
 
-    currentState = nextState;
+    current_state = next_state;
 
-    entryState(currentState);
+    entry_state(current_state);
 }
 
-void Elevator::entryState(ElevatorState state) {
+void Elevator::entry_state(elevator_state state) {
     switch (state)
     {
-        case ElevatorState::INIT:
+        case elevator_state::INIT:
             
             if (!driver->get_connected()) {
                 driver->connect(); 
@@ -32,7 +32,7 @@ void Elevator::entryState(ElevatorState state) {
             // find valid state/floor?
             break;
 
-        case ElevatorState::IDLE:
+        case elevator_state::IDLE:
             driver->set_stop_lamp(0);
 
 
@@ -40,20 +40,20 @@ void Elevator::entryState(ElevatorState state) {
             // close door if no obstruction
             break;
 
-        case ElevatorState::MOVING_UP:
+        case elevator_state::MOVING_UP:
             driver->set_motor_direction(1);
             driver->set_stop_lamp(0);
             // elevator direction up
             break;
 
-        case ElevatorState::MOVING_DOWN:
+        case elevator_state::MOVING_DOWN:
             driver->set_motor_direction(-1);
             driver->set_stop_lamp(0);
 
             // elevator direction down
             break;
 
-        case ElevatorState::STOP:
+        case elevator_state::STOP:
             driver->set_motor_direction(0);
             driver->set_stop_lamp(1);
             // if valid floor open door with timer
@@ -64,97 +64,97 @@ void Elevator::entryState(ElevatorState state) {
     }
 }
 
-void Elevator::handleEvent(ElevatorEvent event) {
+void Elevator::handle_event(elevator_event event) {
 
-    std::lock_guard<std::mutex> guard(eventMutex);
+    std::lock_guard<std::mutex> guard(event_mutex);
 
-    switch(currentState) {
+    switch(current_state) {
         
         // If elevator is in INIT it does not handle any event
-        case ElevatorState::INIT:
+        case elevator_state::INIT:
             break;
 
         // Will handle orders and stop buttons
-        case ElevatorState::IDLE:
-            if (event == ElevatorEvent::STOP_BUTTON_PRESSED){
-                updateState(ElevatorState::STOP);
+        case elevator_state::IDLE:
+            if (event == elevator_event::STOP_BUTTON_PRESSED){
+                update_state(elevator_state::STOP);
             }
-            else if (event == ElevatorEvent::ORDER_RECEIVED) {
+            else if (event == elevator_event::ORDER_RECEIVED) {
                 // Check which floor is above or below
-                updateState(ElevatorState::MOVING_UP);
+                update_state(elevator_state::MOVING_UP);
             }
             break;
 
 
         //What to do when the elevator is moving up
-        case ElevatorState::MOVING_UP:
-            if (event == ElevatorEvent::STOP_BUTTON_PRESSED){
-                updateState(ElevatorState::STOP);
+        case elevator_state::MOVING_UP:
+            if (event == elevator_event::STOP_BUTTON_PRESSED){
+                update_state(elevator_state::STOP);
             }
-            else if (event == ElevatorEvent::ARRIVED_AT_FLOOR) {
-                if (shouldStop())
+            else if (event == elevator_event::ARRIVED_AT_FLOOR) {
+                if (should_stop())
                 {
-                    updateState(ElevatorState::IDLE);
+                    update_state(elevator_state::IDLE);
                 }
                 else
                 {
-                    updateState(ElevatorState::MOVING_UP); // can maybe remove?
+                    update_state(elevator_state::MOVING_UP); // can maybe remove?
                 }
             }
             break;
 
 
         //What to do when the elevator is moving down
-        case ElevatorState::MOVING_DOWN:
-            if (event == ElevatorEvent::STOP_BUTTON_PRESSED){
-                updateState(ElevatorState::STOP);
+        case elevator_state::MOVING_DOWN:
+            if (event == elevator_event::STOP_BUTTON_PRESSED){
+                update_state(elevator_state::STOP);
             }
-            else if (event == ElevatorEvent::ARRIVED_AT_FLOOR) {
-                if (shouldStop())
+            else if (event == elevator_event::ARRIVED_AT_FLOOR) {
+                if (should_stop())
                 {
-                    updateState(ElevatorState::IDLE);
+                    update_state(elevator_state::IDLE);
                 }
                 else
                 {
-                    updateState(ElevatorState::MOVING_DOWN); // can maybe remove?
+                    update_state(elevator_state::MOVING_DOWN); // can maybe remove?
                 }
             }
             break;
 
 
         //What to do when the elevator is stopped
-        case ElevatorState::STOP:
-            if (event == ElevatorEvent::STOP_BUTTON_PRESSED){
-                updateState(ElevatorState::STOP);
+        case elevator_state::STOP:
+            if (event == elevator_event::STOP_BUTTON_PRESSED){
+                update_state(elevator_state::STOP);
             }
             break;
     }
 }
 
 // Floor
-void Elevator::setFloor(int8_t floor) {
-    currentFloor = floor;
+void Elevator::set_floor(int8_t floor) {
+    current_floor = floor;
 }
 
-int8_t Elevator::getFloor() {
-    return currentFloor;
+int8_t Elevator::get_floor() {
+    return current_floor;
 }
 
-void Elevator::floorPoller() {
-    setFloor(driver->get_floor_sensor_signal());
+void Elevator::floor_poller() {
+    set_floor(driver->get_floor_sensor_signal());
 }
 
 // Stop button
-void Elevator::pollStopButton() {
-    stopButton = driver->get_stop_signal();
+void Elevator::poll_stop_button() {
+    stop_button = driver->get_stop_signal();
 }
 
-void Elevator::setStopButtonLight(uint8_t val) {
+void Elevator::set_stop_button_light(uint8_t val) {
     driver->set_stop_lamp(val);
 }
 
 // Obstruction
-void Elevator::pollObstruction() {
+void Elevator::poll_obstruction() {
     obstruction = driver->get_obstruction_signal();
 }
 
@@ -163,24 +163,24 @@ void Elevator::pollObstruction() {
 
 //returns TRUE if elevator should stop at the floor it arrived at
 //returns FALSE if the elevator should keep moving/idling
-bool Elevator::shouldStop() {
-    switch (Elevator::currentState)
+bool Elevator::should_stop() {
+    switch (Elevator::current_state)
     {
-    case ElevatorState::MOVING_UP:
+    case elevator_state::MOVING_UP:
         return true; // temp true
             // e.requests[e.floor][CallType.cab]       || // is there a cab call at this floor              STOP
             // e.requests[e.floor][CallType.hallUp]    || // is there a hall call upwards at this floor     STOP
             // !e.requestsAbove                        || // there are no more requests above               STOP
             // e.floor == 0                            || ?? bug catching
             // e.floor == e.requests.length-1;            ?? idk
-    case ElevatorState::MOVING_DOWN:
+    case elevator_state::MOVING_DOWN:
         return true; // temp true
             // e.requests[e.floor][CallType.cab]       || // is there a cab call at this floor              STOP
             // e.requests[e.floor][CallType.hallDown]  || // is there a hall call downwards at this floor   STOP
             // !e.requestsBelow                        || // there are no more requests below               STOP
             // e.floor == 0                            || //bug catching?
             // e.floor == e.requests.length-1;            //idk
-    case ElevatorState::STOP:
+    case elevator_state::STOP:
         return true;
     }
 }
