@@ -3,7 +3,7 @@
 Simulated_elevator::Simulated_elevator(ElevatorState state, int8_t floor) {
     currentState = state;
     currentFloor = floor;
-    cab_call_floors = std::vector<std::vector<bool>>(N_FLOORS, std::vector<bool>(N_BUTTONS, false));
+    cab_call_floors = std::vector<bool>(N_FLOORS, false);
 }
 
 Simulated_elevator::Simulated_elevator(Elevator local_elevator) {
@@ -24,7 +24,7 @@ void Simulated_elevator::set_current_floor(int8_t floor) {
     currentFloor = floor;
 }
 
-int8_t Simulated_elevator::get_current_floor() {
+int Simulated_elevator::get_current_floor() {
     return currentFloor;
 }
 
