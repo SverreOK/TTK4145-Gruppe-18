@@ -8,13 +8,33 @@ enum class button_type {
     CAB = -2
 };
 
+class Elevator_id{
+    private:
+        std::string elevator_id;
+    public:
+        Elevator_id();
+        std::string get_elevator_id();
+};
+
+class Call_id {
+    private:
+        Elevator_id elevator_id;
+        int call_number;
+    public:
+
+        Call_id(Elevator_id elevator_id, int call_number);
+
+        std::string get_call_id();
+        std::string get_call_elevator_id();
+        int get_call_number();
+};
 
 class Call {
     private:
 
         int floor;
         button_type call_type;
-        std::string ID;
+        Call_id ID;
 
     public:
         Call(int floor, int direction, int ID_num);
@@ -34,7 +54,7 @@ class Call_database {
     void add_call(Call);
     void change_call(Call call, std::string elevator_id);
 
-}
+};
 
 
 
