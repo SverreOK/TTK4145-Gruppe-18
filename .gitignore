@@ -32,4 +32,4 @@
 *.app
 
 .vscode
-elevador/*.vscode
+elevador/.vscode/
