@@ -18,7 +18,7 @@
 ///////////////////////// Elevator Driver  /////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-class ElevatorDriver {
+class elevator_driver {
 private:
     boost::asio::io_service io_service;
     boost::asio::ip::tcp::socket socket;
@@ -31,7 +31,7 @@ private:
     
 
 public:
-    ElevatorDriver();
+    elevator_driver();
     void connect();
 
     void set_motor_direction(int dir);
