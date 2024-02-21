@@ -153,6 +153,6 @@ void reassign_calls(std::vector<Virtual_elevator> &elevators, std::vector<Call> 
     std::map<Elevator_id, std::vector<bool>> elevator_responses;
     for (auto elevator : elevators) {
         elevator_responses[elevator.get_elevator_ID()] = obj[elevator.get_elevator_ID()];
-    }   
+    }
 }
 
