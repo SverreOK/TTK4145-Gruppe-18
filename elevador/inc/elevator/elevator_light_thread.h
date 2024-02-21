@@ -1,7 +1,9 @@
 #pragma once
 
 #include <vector>
-#include "inc/call_class.h"
+
+#include "inc/data/super_container.h"
+
 #include "inc/elevator/elevator_driver.h"
 #include <boost/thread.hpp>
 
@@ -11,7 +13,7 @@ class light_controller {
 
     private:
         elevator_driver* driver;
-        Call_database* call_database;
+        Super_container* data_container;
         boost::thread light_thread;
         Elevator_id elevator_id;
         bool running;
@@ -27,8 +29,8 @@ class light_controller {
                 
                 temp_matrix = std::vector<std::vector<bool>>(3, std::vector<bool>(number_of_floors, false));
                 //get the current call list and fill the temp matrix
-                std::vector<Call*> call_list = call_database->get_call_list();
-                std::vector<Elevator_id> alive_elevators = call_database->get_alive_elevators();
+                std::vector<Call*> call_list = data_container->get_call_list();
+                std::vector<Elevator_id> alive_elevators = data_container->get_alive_elevators();
                 for (auto call : call_list){
                     for (auto elevator : alive_elevators){
 

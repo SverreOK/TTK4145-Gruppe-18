@@ -4,7 +4,7 @@
 #include <boost/asio.hpp>
 #include <boost/system/error_code.hpp>
 #include <mutex>
-#include "elevator_fsm.h"
+#include "inc/elevator/elevator_fsm.h"
 
 // Number of floors. Hardware-dependent, do not modify.
 #define N_FLOORS 4

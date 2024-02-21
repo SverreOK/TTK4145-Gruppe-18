@@ -1,4 +1,4 @@
-#include "../inc/call_class.h"
+#include "inc/data/call_class.h"
 
 std::map<Call_id, Call*> Call_database::get_call_list(){
     return call_list;

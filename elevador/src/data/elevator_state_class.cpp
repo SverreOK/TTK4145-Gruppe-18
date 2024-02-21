@@ -1,4 +1,4 @@
-#include "elevator_state_class.h"
+#include "inc/data/elevator_state_class.h"
 
 //elevator state functions
 state_enum Elevator_state::get_current_state(){

@@ -1,13 +1,15 @@
 #pragma once
 
-#include "inc/call_class.h"
-#include "elevator_driver.h"
+
+#include "inc/data/super_container.h"
+
+#include "inc/elevator/elevator_driver.h"
 #include <boost/thread.hpp>
 
 class Elevator_driver_poller {
 private:
     elevator_driver* driver;
-    Call_database* call_database;
+    Super_container* data_container;
     boost::thread poller_thread;
     Elevator_id elevator_id;
     bool running;
@@ -21,7 +23,7 @@ private:
                 if (driver->get_button_signal(button, floor) == 1) {
 
                     button_type call_type = (button_type)button; //might give wrong button check
-                    call_database->add_call_with_elevatorId(floor, call_type, elevator_id); 
+                    data_container->add_call_with_elevatorId(floor, call_type, elevator_id); 
                 }
             }
         }
@@ -31,15 +33,15 @@ private:
         int floor = driver->get_floor_sensor_signal();
         if (floor != current_floor) {
             current_floor = floor;
-            call_database->update_elevator_floor(elevator_id, floor);
+            data_container->update_elevator_floor(elevator_id, floor);
         }
     }
 
 
 
 public:
-    Elevator_driver_poller(elevator_driver* driver, Elevator_id elevator_id, Call_database* call_database, int number_of_floors) 
-        : driver(driver), running(false), elevator_id(elevator_id), call_database(call_database), number_of_floors(number_of_floors) {}
+    Elevator_driver_poller(elevator_driver* driver, Elevator_id elevator_id, Call_database* data_container, int number_of_floors) 
+        : driver(driver), running(false), elevator_id(elevator_id), data_container(data_container), number_of_floors(number_of_floors) {}
 
     void start() {
         running = true;
