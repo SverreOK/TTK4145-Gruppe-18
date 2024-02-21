@@ -51,3 +51,42 @@ Call_id* Call_database::get_last_call_id_originating_from_elevator(Elevator_id e
 
     return last_call_id;
 }
+
+
+//elevator state functions
+state_enum Elevator_state::get_current_state(){
+    std::shared_lock<std::shared_mutex> lock(mutex);
+    return current_state;
+}
+
+int Elevator_state::get_current_floor(){
+    std::shared_lock<std::shared_mutex> lock(mutex);
+    return current_floor;
+}
+
+bool Elevator_state::get_obstruction_status(){
+    std::shared_lock<std::shared_mutex> lock(mutex);
+    return obstruction;
+}
+
+Elevator_id Elevator_state::get_id(){
+    return id;
+}
+
+
+void Elevator_state::set_current_state(state_enum state){
+    std::unique_lock<std::shared_mutex> lock(mutex);
+    current_state = state;
+}
+
+void Elevator_state::set_current_floor(int floor){
+    std::unique_lock<std::shared_mutex> lock(mutex);
+    current_floor = floor;
+}
+
+void Elevator_state::set_obstruction(bool obstruction){
+    std::unique_lock<std::shared_mutex> lock(mutex);
+    obstruction = obstruction;
+}
+
+

@@ -3,9 +3,8 @@
 #define ELEVATOR_INC_ELEVATOR_ELEVATOR_FSM_H
 
 //Includes
-#include "elevator_driver.h" // Include the correct header file for elevator_driver
+#include "elevator_driver.h" 
 #include "elevator_algorithm.h"
-#include "door_timer.h"
 #include "inc/call_class.h"
 #include <vector>
 #include <mutex>
@@ -17,28 +16,11 @@ enum class elevator_event {
     DOOR_TIMEOUT
 };
 
-// STATES
-enum class state_enum {
-    IDLE,
-    MOVING_UP,
-    MOVING_DOWN,
-    DOOR_OPEN
-};
-
-struct elevator_state {
-    state_enum current_state;
-    int current_floor;
-    bool obstruction = false;
-    std::vector<int8_t,int8_t> orders;
-};
-
 
 class Elevator {
     private:
         elevator_driver* driver;
-        elevator_state* state;
-
-        door_timer door_timer;
+        Elevator_state* state;
 
         std::mutex event_mutex;
 

@@ -30,6 +30,42 @@ class Call_id {
         int get_call_number(){return call_number;};
 };
 
+// STATES
+enum class state_enum {
+    IDLE,
+    MOVING_UP,
+    MOVING_DOWN,
+    DOOR_OPEN
+};
+
+class Elevator_state {
+    private:
+        static Elevator_id id;
+        state_enum current_state;
+        int current_floor;
+        bool obstruction;
+
+        std::shared_mutex mutex;
+
+    public:
+        Elevator_state(Elevator_id id){
+            id = id;
+            current_state = state_enum::IDLE;
+            current_floor = 0;
+            obstruction = false;
+        }
+
+        state_enum get_current_state();
+        int get_current_floor();
+        bool get_obstruction_status();
+        Elevator_id get_id();
+
+        void set_current_state(state_enum state);
+        void set_current_floor(int floor);
+        void set_obstruction(bool obstruction);
+};
+
+
 class Call {
     private:
 
