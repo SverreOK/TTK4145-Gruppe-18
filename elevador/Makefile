@@ -4,6 +4,9 @@ CC = g++
 # Compiler flags
 CFLAGS = -Iinc -Iinc/data -Iinc/elevator
 
+# Linker flags
+LDFLAGS = -ljsoncpp
+
 # Source files
 SRC = $(wildcard src/*.cpp src/data/*.cpp src/elevator/*.cpp)
 
@@ -16,7 +19,7 @@ EXEC = my_program
 all: $(EXEC)
 
 $(EXEC): $(OBJ)
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 %.o: %.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
