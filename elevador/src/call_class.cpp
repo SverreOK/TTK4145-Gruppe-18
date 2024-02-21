@@ -1,6 +1,6 @@
 #include "../inc/call_class.h"
 
-std::vector<Call*> Call_database::get_call_list(){
+std::map<Call_id, Call*> Call_database::get_call_list(){
     return call_list;
 }
 
@@ -11,7 +11,7 @@ void Call_database::add_call(int floor, button_type call_type, Call_id call_id){
 
 
     std::unique_lock<std::shared_mutex> lock(call_list_mutex);
-    call_list.push_back(new_call);
+    //call_list.push_back(new_call);
 }
 
 void Call_database::add_call_with_elevatorId(int floor, button_type call_type, Elevator_id elevator_id){
@@ -23,15 +23,15 @@ void Call_database::add_call_with_elevatorId(int floor, button_type call_type, E
 
 }
 
-std::vector<Call*> Call_database::get_calls_originating_from_elevator(Elevator_id elevator_id){
-    std::vector<Call*> calls;
+std::map<Call_id, Call*>Call_database::get_calls_originating_from_elevator(Elevator_id elevator_id){
+    std::map<Call_id, Call*> calls;
     
     std::shared_lock<std::shared_mutex> lock(call_list_mutex);
 
-    for (auto call : call_list){
+    for (auto& [call_id, call] : call_list){
         
         if (call->get_call_id().get_call_elevator_id().id == elevator_id.id){
-            calls.push_back(call);
+            calls.insert(std::pair<Call_id, Call*>(call_id, call));
         }
     }
     return calls;
@@ -41,9 +41,9 @@ Call_id* Call_database::get_last_call_id_originating_from_elevator(Elevator_id e
     //should make sure the returned call_id has the largest call_id.get_call_number()
 
     Call_id* last_call_id;
-    std::vector<Call*> calls = get_calls_originating_from_elevator(elevator_id);
+    std::map<Call_id, Call*> calls = get_calls_originating_from_elevator(elevator_id);
     
-    for (auto call : calls){
+    for (auto& [call_id, call] : call_list){
         if (call->get_call_id().get_call_number() > last_call_id->get_call_number()){
             last_call_id = &call->get_call_id();
         }
