@@ -4,24 +4,29 @@
 
 //Includes
 #include "elevator_driver.h" // Include the correct header file for elevator_driver
+#include "elevator_algorithm.h"
 #include "call_class.h"
 #include <vector>
 #include <mutex>
 
+// EVENTS
+enum class elevator_event {
+    ORDER_RECEIVED,
+    ARRIVED_AT_FLOOR,
+    DOOR_TIMEOUT
+};
+
 // STATES
-enum class state {
-    INIT,
+enum class state_enum {
     IDLE,
     MOVING_UP,
     MOVING_DOWN,
-    STOP,
     DOOR_OPEN
 };
 
 struct elevator_state {
-    state current_state;
+    state_enum current_state;
     int current_floor;
-    bool door_open = false;
     bool obstruction = false;
     std::vector<int8_t,int8_t> orders;
 };
@@ -34,26 +39,25 @@ class Elevator {
 
         std::mutex event_mutex;
 
+        void initialize_position();
+
     public:
-        void update_elevator_state();
-        void entry_state();
-        void handle_event();
-        void event_poller();
+        // Constructor declaration
+        Elevator(elevator_driver* driver, elevator_state* state);
+
+        void handle_event(elevator_event event);
 
         // Floor
-        void poll_floor();
         int8_t get_floor();
         void set_floor(int8_t floor);
 
-        // Stop button
-        void poll_stop_button();
-        bool is_stop_button_pressed();
-
         // Door
         void open_door();
+        void close_door();
         bool is_door_open();
 
-        Elevator(elevator_driver* driver, elevator_state* state);
+        void run();
+
         ~Elevator();	
 
 };
