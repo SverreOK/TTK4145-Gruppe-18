@@ -69,7 +69,7 @@ class Call_database {
     private:
 
         std::map<Call_id, Call*> call_list;
-        std::vector<Elevator_id> alive_elevators;
+        //elevator status map
 
         std::shared_mutex call_list_mutex;
 
