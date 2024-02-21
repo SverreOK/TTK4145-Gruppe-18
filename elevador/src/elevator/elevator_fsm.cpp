@@ -1,4 +1,4 @@
-#include "inc/elevator/elevator_fsm.h"
+#include "elevator_fsm.h"
 
 Elevator::Elevator(elevator_driver* driver, Elevator_id id, Super_container* data_container)
     : driver(driver) {

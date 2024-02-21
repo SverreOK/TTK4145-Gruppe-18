@@ -3,9 +3,9 @@
 #include <vector>
 #include "elevator_fsm.h"
 #include "elevator_driver.h"
-#include "inc/data/call_class.h"
+#include "call_class.h"
 
-#include "inc/data/super_container.h"
+#include "super_container.h"
 
 bool requests_above(int current_floor, std::vector<Call*> call_list);
 

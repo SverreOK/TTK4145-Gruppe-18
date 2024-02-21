@@ -4,14 +4,17 @@
 
 //Includes
 #include "elevator_driver.h" 
-#include "inc/elevator/elevator_algorithm.h"
+#include "elevator_algorithm.h"
 
-#include "inc/data/super_container.h"
+#include "super_container.h"
 
-#include "inc/util/event_queue.h"
+// #include "event_queue.h" this does not exist
 
 #include <vector>
 #include <mutex>
+
+// Forward declaration
+class elevator_driver;
 
 // EVENTS
 enum class elevator_event {

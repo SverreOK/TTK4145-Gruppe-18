@@ -57,7 +57,7 @@ class Call {
 
 
         std::vector<Elevator_id> get_elevator_ack_list();
-        button_type get_call_type();
+        button_type get_call_type(); // UNDEFINED!
         Call_id get_call_id();
         int get_floor();
 

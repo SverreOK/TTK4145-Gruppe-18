@@ -5,7 +5,7 @@
 #include <boost/system/error_code.hpp>
 #include <mutex>
 
-#include "inc/elevator/elevator_fsm.h"
+#include "elevator_fsm.h"
 
 // Number of floors. Hardware-dependent, do not modify.
 #define N_FLOORS 4
@@ -19,6 +19,11 @@
 ////////////////////////////////////////////////////////////////////////
 ///////////////////////// Elevator Driver  /////////////////////////////
 ////////////////////////////////////////////////////////////////////////
+
+/// Forward declarations
+class Elevator_state;
+class Elevator;
+
 
 class elevator_driver {
 private:
