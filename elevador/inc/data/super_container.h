@@ -23,6 +23,8 @@ class Super_container {
 
         void add_elevator(Elevator_state* elevator);
 
+        Elevator_state* get_elevator_by_id(Elevator_id id);
+
         std::vector<Call*> get_calls_originating_from_elevator(Elevator_id elevator_id);
         Call_id* get_last_call_id_originating_from_elevator(Elevator_id elevator_id);
 
