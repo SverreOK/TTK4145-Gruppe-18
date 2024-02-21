@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../call_class.h"
+#include "inc/call_class.h"
 #include "elevator_driver.h"
 #include <boost/thread.hpp>
 

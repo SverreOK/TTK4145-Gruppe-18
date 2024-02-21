@@ -45,6 +45,8 @@ class Call {
     public:
         Call(int floor, button_type call_type, Call_id call_id);
 
+
+        std::vector<Elevator_id> get_elevator_ack_list();
         button_type get_call_type();
         Call_id get_call_id();
         int get_floor();
@@ -56,6 +58,7 @@ class Call_database {
     private:
 
         std::vector<Call*> call_list;
+        std::vector<Elevator_id> alive_elevators;
 
         std::shared_mutex call_list_mutex;
 
@@ -69,6 +72,7 @@ class Call_database {
         std::vector<Call*> get_calls_originating_from_elevator(Elevator_id elevator_id);
         Call_id* get_last_call_id_originating_from_elevator(Elevator_id elevator_id);
 
+        std::vector<Elevator_id> get_alive_elevators();
 };
 
 
