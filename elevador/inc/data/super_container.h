@@ -23,4 +23,6 @@ class Super_container {
 
         std::vector<Call*> get_calls_originating_from_elevator(Elevator_id elevator_id);
         Call_id* get_last_call_id_originating_from_elevator(Elevator_id elevator_id);
+
+        std::vector<Call*> get_locally_assigned_calls();
 };
