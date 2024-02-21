@@ -1,7 +1,7 @@
 #pragma once
 
 #include "call_assigner.h"
-#include <jsoncpp/json/json.h> 
+#include <jsoncpp/json/json.h>
 #include <iostream>
 
 std::vector<std::vector<bool>> call_list_to_floor_list(std::vector<Call> &calls) {
