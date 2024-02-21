@@ -15,7 +15,7 @@ bool requests_above(Elevator *elevator, elevator_state *state) {
 }
 
 bool requests_below(Elevator *elevator, elevator_state *state) {
-    for (int i = state->current_floor - 1; floor >= 0; i--) {
+    for (int i = state->current_floor - 1; i >= 0; i--) {
         if (    state->orders[i][button_type::CAB] || 
                 state->orders[i][button_type::DOWN_HALL] || 
                 state->orders[i][button_type::UP_HALL]) {

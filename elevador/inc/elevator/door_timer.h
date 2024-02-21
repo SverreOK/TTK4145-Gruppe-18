@@ -1,20 +1,20 @@
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <functional>
 
 #define RESET_TIME 3
 
-class door_timer {
-private:
-    boost::asio::io_service io;
-    boost::asio::deadline_timer timer;
-
+class DoorTimer {
 public:
-    door_timer();
+    DoorTimer(boost::asio::io_service& io);
+    ~DoorTimer();
 
-    void start();
-
+    void start(std::function<void()> timeoutCallback);
     void reset();
+    bool isRunning();
 
-    bool is_running();
+private:
+    boost::asio::deadline_timer timer;
+    bool running;
 };
