@@ -82,44 +82,56 @@ std::vector<std::vector<bool>> call_list_to_floor_list(std::vector<Call> &calls)
     return floors;
 }
 
-std::string create_hall_request_json(std::vector<Virtual_elevator> &elevators, std::vector<Call> &calls) {
-    std::string argument_string = "{\n\t\"hallRequests\" : \n\t\t[";
-        std::vector<std::vector<bool>> floors = call_list_to_floor_list(calls);
-        for (auto floor : floors) {
-            argument_string += "[";
-            for (auto button : floor) {
-                argument_string += button ? "true" : "false";
-                argument_string += ",";
-            }
-            argument_string.pop_back(); // Remove trailing comma
-            argument_string += "],";
-        }
-        argument_string += "],\n\t\"states\" : {";
-        for (auto elevator : elevators) {
-            argument_string += "\n\t\t\"" + std::to_string(elevator.get_elevator_ID()) + "\" : {\n";
-                argument_string += "\t\t\t\"behaviour\":\"" + elevator.get_current_behaviour() + "\",\n";
-                argument_string += "\t\t\t\"floor\":" + std::to_string(elevator.get_current_floor()) + ",\n";
-                argument_string += "\t\t\t\"direction\":\"" + elevator.get_current_direction() + "\",\n";
-                argument_string += "\t\t\t\"cabRequests\":[";
-                for (auto button : elevator.get_cab_call_floors()) {
-                    argument_string += button ? "true" : "false";
-                    argument_string += ",";
-                }
-                argument_string.pop_back(); // Remove trailing comma
-                argument_string += "]\n";
-            argument_string += "\t\t},";
-        }
-        argument_string.pop_back(); // Remove trailing comma
-        argument_string += "\n\t}\n";
-    argument_string += "}";
+Json::Value create_hall_request_json(std::vector<Virtual_elevator> &elevators, std::vector<Call> &calls) {
+    // Create the root of the JSON structure
+    Json::Value root;
 
-    return argument_string;
-} // Todo re-write using the json library
+    // Populate the hallRequests array of arrays
+    Json::Value hallRequests(Json::arrayValue);
+
+    std::vector<std::vector<bool>> floors = call_list_to_floor_list(calls);
+        for (auto floor : floors) {
+            for (auto button : floor) {
+                hallRequests.append(Json::Value(Json::arrayValue.append(button ? true : false)));
+            }
+        }
+    //hallRequests.append(Json::Value(Json::arrayValue).append(false).append(true));
+    root["hallRequests"] = hallRequests;
+
+    // Create and populate the states object
+    Json::Value states(Json::objectValue);
+
+    for (auto elevator : elevators) {
+        Json::Value state;
+        state["behaviour"] = elevator.get_current_behaviour();
+        state["floor"] = elevator.get_current_floor();
+        state["direction"] = elevator.get_current_direction();
+
+        Json::Value cabRequests(Json::arrayValue);
+        for (auto button : elevator.get_cab_call_floors()) {
+            cabRequests.append(button ? true : false);
+        }
+        state["cabRequests"] = cabRequests;
+
+        // Use the elevator ID as the key
+        states[std::to_string(elevator.get_elevator_ID())] = state;
+    }
+
+    root["states"] = states;
+
+    // Output to demonstrate what we've built
+    Json::StyledWriter writer;
+    std::cout << writer.write(root) << std::endl;
+
+    return root;
+}
 
 void reassign_calls(std::vector<Virtual_elevator> &elevators, std::vector<Call> &calls) {
-    std::string argument_string = create_hall_request_json(elevators, calls);
+    //std::string argument_string = create_hall_request_json(elevators, calls);
+    Json::Value argument_json = create_hall_request_json(elevators, calls);
+    
     std::string response = "";
-    FILE* pipe = popen(("./hall_request_assigner --input '" + argument_string + "'").c_str(), "r"); // Run the hall_request_assigner program that was supplied 
+    FILE* pipe = popen(("./hall_request_assigner --input '" + argument_json + "'").c_str(), "r"); // Run the hall_request_assigner program that was supplied 
     if (pipe) {
         char buffer[128];
         while (!feof(pipe)) {
