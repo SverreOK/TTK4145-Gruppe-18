@@ -68,9 +68,21 @@ std::string generate_hall_request_assigner_json(std::vector<std::vector<bool>> h
     return root_str;
 }
 
+std::vector<Call*> get_locally_assigned_calls(std::string hall_request_assigner_output, std::vector<Call*> calls, Elevator_id local_id) {
+    Json::Reader reader;
+    Json::Value root;
+    reader.parse(hall_request_assigner_output, root);
 
+    std::vector<Call*> locally_assigned_calls;
+    std::vector<bool> floors_to_service = root[local_id.id].asBool();
 
-void reassign_calls(std::vector<std::vector<bool>> hall_call_floors, std::vector<Elevator_state*> elevators) {
+}
+
+void reassign_calls(std::vector<Call*> calls, std::vector<Elevator_state*> elevators, Elevator_id local_id) {
+
+    std::vector<std::vector<bool>> hall_call_floors;
+    // Generate hall_call_floors here!
+
 
     std::string instruction_string = "./hall_request_assigner --input '" + generate_hall_request_assigner_json(hall_call_floors, elevators) + "'";
     // std::cout << instruction_string << std::endl;
