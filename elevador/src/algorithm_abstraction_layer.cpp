@@ -1,5 +1,8 @@
+#pragma once
+
 #include "algorithm_abstraction_layer.h"
 #include <jsoncpp/json/json.h> 
+#include <iostream>
 
 std::vector<std::vector<bool>> call_list_to_floor_list(std::vector<Call> &calls) {
     std::vector<std::vector<bool>> floors(N_FLOORS, std::vector<bool>(N_BUTTONS, false));
