@@ -1,11 +1,12 @@
 #include "inc/elevator/elevator_fsm.h"
 
 Elevator::Elevator(elevator_driver* driver, elevator_state* state)
-    : driver(driver), state(state) {
+    : driver(driver), state(state), door_timer(){
         driver->connect();
         state->current_state = state_enum::IDLE;
         state->current_floor = -1;
         state->obstruction = driver->get_obstruction_signal();
+        
 }
 
 void Elevator::handle_event(elevator_event event) {
@@ -53,13 +54,13 @@ void Elevator::set_floor(int8_t floor) {
 void Elevator::open_door() {
     // Open the door for 3 seconds
     driver->set_door_open_lamp(1);
-    // start timer with a flag
+    door_timer.start();
 }
 
 void Elevator::close_door() {
     while (driver->get_obstruction_signal() == 1) {
         // Wait for obstruction to be cleared
-        // door_timer.reset();
+        door_timer.reset();
     }
     Elevator::handle_event(elevator_event::DOOR_TIMEOUT);
     driver->set_door_open_lamp(0);

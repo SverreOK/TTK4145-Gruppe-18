@@ -5,6 +5,7 @@
 //Includes
 #include "elevator_driver.h" // Include the correct header file for elevator_driver
 #include "elevator_algorithm.h"
+#include "door_timer.h"
 #include "inc/call_class.h"
 #include <vector>
 #include <mutex>
@@ -36,6 +37,8 @@ class Elevator {
     private:
         elevator_driver* driver;
         elevator_state* state;
+
+        door_timer door_timer;
 
         std::mutex event_mutex;
 
