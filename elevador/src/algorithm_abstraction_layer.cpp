@@ -1,22 +1,22 @@
 #include "algorithm_abstraction_layer.h"
-#include "json.h"
+#include <jsoncpp/json/json.h> 
 
-Virtual_elevator::Virtual_elevator(elevator_state state, int8_t floor) {
-    currentState = state;
-    currentFloor = floor;
-}
+// Virtual_elevator::Virtual_elevator(elevator_state state, int8_t floor) {
+//     current_state = state;
+//     currentFloor = floor;
+// }
 
-Virtual_elevator::Virtual_elevator(Elevator local_elevator) {
-    currentState = local_elevator.get_state();
-    currentFloor = local_elevator.get_floor();
-}
+// Virtual_elevator::Virtual_elevator(Elevator local_elevator) {
+//     // elevator_state.current_state = local_elevator.get_state();
+//     // elevator_state.current_floor = local_elevator.get_floor();
+// }
 
-void Virtual_elevator::set_current_state(elevator_state state) {
-    currentState = state;
+void Virtual_elevator::set_current_state(state_enum state) {
+    elevator_state.current_state = state;
 }
 
 void Virtual_elevator::set_current_floor(int8_t floor) {
-    currentFloor = floor;
+    elevator_state.current_floor = floor;
 }
 
 int Virtual_elevator::get_elevator_ID() {
@@ -24,20 +24,20 @@ int Virtual_elevator::get_elevator_ID() {
 }
 
 int Virtual_elevator::get_current_floor() {
-    return currentFloor;
+    return elevator_state.current_floor;
 }
 
-elevator_state Virtual_elevator::get_current_state() {
-    return currentState;
+state_enum Virtual_elevator::get_current_state() {
+    return elevator_state.current_state;
 }
 
 std::string Virtual_elevator::get_current_behaviour() {
-    switch (currentState) {
-        case elevator_state::MOVING_UP:
+    switch (elevator_state.current_state) {
+        case state_enum::MOVING_UP:
             return "moving";
-        case elevator_state::MOVING_DOWN:
+        case state_enum::MOVING_DOWN:
             return "moving";
-        case elevator_state::DOOR_OPEN:
+        case state_enum::DOOR_OPEN:
             return "doorOpen";
         default:
             return "idle";
@@ -45,10 +45,10 @@ std::string Virtual_elevator::get_current_behaviour() {
 }
 
 std::string Virtual_elevator::get_current_direction() {
-    switch (currentState) {
-        case elevator_state::MOVING_UP:
+    switch (elevator_state.current_state) {
+        case state_enum::MOVING_UP:
             return "up";
-        case elevator_state::MOVING_DOWN:
+        case state_enum::MOVING_DOWN:
             return "down";
         default:
             return "stop";
