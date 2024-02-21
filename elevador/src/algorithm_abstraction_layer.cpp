@@ -58,8 +58,8 @@ std::string Virtual_elevator::get_current_direction() {
 std::vector<bool> Virtual_elevator::get_cab_call_floors() {
     std::vector<bool> floors(N_FLOORS, false);
     for (auto call : call_database -> get_call_list()) {
-        if (call.get_call_type() == button_type::CAB) {
-            floors.at(call.get_floor()) = true;
+        if (call -> get_call_type() == button_type::CAB) {
+            floors.at(call -> get_floor()) = true;
         }
     }
     return floors;

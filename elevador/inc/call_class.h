@@ -97,7 +97,7 @@ class Call {
 class Call_database {
     private:
 
-        std::vector<Call*> call_list;
+        std::map<Call_id, Call*> call_list;
         std::vector<Elevator_id> alive_elevators;
 
         std::shared_mutex call_list_mutex;

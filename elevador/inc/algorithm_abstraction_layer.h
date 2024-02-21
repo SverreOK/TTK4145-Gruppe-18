@@ -8,16 +8,16 @@ class Virtual_elevator {
         Call_database* call_database;
     public:
         Virtual_elevator(Elevator local_elevator);
-        void set_current_state(elevator_state state);
+        void set_current_state(state_enum state);
         void set_current_floor(int8_t floor);
         int get_elevator_ID();
         int get_current_floor();
-        elevator_state get_current_state();
+        state_enum get_current_state();
         std::string get_current_behaviour();
         std::string get_current_direction();
         std::vector<bool> get_cab_call_floors();
 };
 
 std::vector<std::vector<bool>> call_list_to_floor_list(std::vector<Call> &calls);
-std::string create_hall_request_json(std::vector<Virtual_elevator> &elevators, std::vector<Call> &calls);
+Json::Value create_hall_request_json(std::vector<Virtual_elevator> &elevators, std::vector<Call> &calls) {
 void reassign_calls(std::vector<Virtual_elevator> &elevators, std::vector<Call> &calls);
