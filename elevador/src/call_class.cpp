@@ -100,3 +100,45 @@ void Elevator_state::set_alive(bool alive){
 }
 
 
+std::string Elevator_state::get_behaviour() {
+    std::string behaviour;
+    switch (current_state) {
+        case state_enum::IDLE:
+            behaviour = "idle";
+            break;
+        case state_enum::MOVING_UP:
+        case state_enum::MOVING_DOWN:
+            behaviour = "moving";
+            break;
+        case state_enum::DOOR_OPEN:
+            behaviour = "door_open";
+            break;
+    }
+    return behaviour;
+}
+
+std::string Elevator_state::get_direction() {
+    std::string direction;
+    switch (current_state) {
+        case state_enum::IDLE:
+            direction = "stop";
+            break;
+        case state_enum::MOVING_UP:
+            direction = "up";
+            break;
+        case state_enum::MOVING_DOWN:
+            direction = "down";
+            break;
+        case state_enum::DOOR_OPEN:
+            direction = "stop";
+            break;
+    }
+    return direction;
+}
+
+
+
+std::vector<bool> Elevator_state::get_cab_requests() {
+    std::vector<bool> requests = {false, false, false, false};
+    return requests;
+} // TODO

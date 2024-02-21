@@ -68,6 +68,12 @@ class Elevator_state {
         void set_current_floor(int floor);
         void set_obstruction(bool obstruction);
         void set_alive(bool alive);
+
+
+        // Needed for json creation:
+        std::string get_behaviour();
+        std::string get_direction();
+        std::vector<bool> get_cab_requests();
 };
 
 
