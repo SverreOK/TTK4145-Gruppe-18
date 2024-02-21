@@ -18,9 +18,8 @@ private:
                 for (int button = 0; button < 3; ++button) {
                     if (driver->get_button_signal(button, floor) == 1) {
 
-                        Call new_call(floor, static_cast<button_type>(button), 0); //TODO ADD REAL CALL ID
-
-                        call_database->add_call(); //TODO ADD REAL CALL FUNC
+                        button_type call_type = (button_type)button;
+                        call_database->add_call(floor, call_type); //TODO ADD REAL CALL FUNC
                     }
                 }
             }

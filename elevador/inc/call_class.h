@@ -2,8 +2,6 @@
 #include <vector>
 #include <string>
 
-#include <iostream> // Add missing include
-
 //enum for direction of elevator
 enum class button_type {
     UP_HALL = 0,
@@ -53,7 +51,7 @@ class Call_database {
 
     public:
 
-        std::vector<Call> get_call_list();
+        std::vector<Call*> get_call_list();
         void add_call(int floor, button_type call_type);
         void change_call(Call call, std::string elevator_id);
 
