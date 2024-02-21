@@ -7,9 +7,10 @@ std::vector<Call*> Call_database::get_call_list(){
 
 void Call_database::add_call(int floor, button_type call_type, Call_id call_id){
 
-    std::unique_lock<std::shared_mutex> lock(call_list_mutex);
-        
     Call* new_call = new Call(floor, call_type, call_id);
+
+
+    std::unique_lock<std::shared_mutex> lock(call_list_mutex);
     call_list.push_back(new_call);
 }
 
@@ -25,6 +26,7 @@ void Call_database::add_call_with_elevatorId(int floor, button_type call_type, E
 std::vector<Call*> Call_database::get_calls_originating_from_elevator(Elevator_id elevator_id){
     std::vector<Call*> calls;
     
+    std::shared_lock<std::shared_mutex> lock(call_list_mutex);
 
     for (auto call : call_list){
         

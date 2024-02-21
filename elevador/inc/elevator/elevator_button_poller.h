@@ -1,6 +1,6 @@
 #pragma once
 
-#include "call_class.h"
+#include "../call_class.h"
 #include "elevator_driver.h"
 #include <boost/thread.hpp>
 
@@ -20,7 +20,7 @@ private:
                     if (driver->get_button_signal(button, floor) == 1) {
 
                         button_type call_type = (button_type)button; //might give wrong button check
-                        call_database->add_call(floor, call_type, elevator_id); 
+                        call_database->add_call_with_elevatorId(floor, call_type, elevator_id); 
                     }
                 }
             }

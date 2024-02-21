@@ -33,10 +33,11 @@ class Call_id {
 class Call {
     private:
 
-        int floor;
-        button_type call_type;
-        Call_id call_id;
-        Elevator_id assigned_elevator; //maybe change to a bool called something like "assigned to local node"?
+        static int floor;
+        static button_type call_type;
+        static Call_id call_id;
+        static Elevator_id assigned_elevator; //maybe change to a bool called something like "assigned to local node"?
+        
         std::vector<bool> serviced_ack_list;
         std::vector<Elevator_id> elevator_ack_list;
 
