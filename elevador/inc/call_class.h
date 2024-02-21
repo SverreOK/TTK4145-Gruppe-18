@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <mutex>
+#include <shared_mutex>
 
 //enum for direction of elevator
 enum class button_type {
@@ -10,20 +12,22 @@ enum class button_type {
 };
 
 struct Elevator_id {
-    std::string elevator_id;
+    std::string id;
 };
 
 class Call_id {
     private:
         Elevator_id elevator_id;
         int call_number;
+
     public:
 
-        Call_id(Elevator_id elevator_id, int call_number);
+        Call_id(Elevator_id elevator_id, int call_number)
+            : elevator_id(elevator_id), call_number(call_number) {};
 
         std::string get_call_id();
-        std::string get_call_elevator_id();
-        int get_call_number();
+        Elevator_id get_call_elevator_id(){return elevator_id;}
+        int get_call_number(){return call_number;};
 };
 
 class Call {
@@ -31,16 +35,19 @@ class Call {
 
         int floor;
         button_type call_type;
-        Call_id ID;
+        Call_id call_id;
         Elevator_id assigned_elevator; //maybe change to a bool called something like "assigned to local node"?
         std::vector<bool> serviced_ack_list;
         std::vector<Elevator_id> elevator_ack_list;
 
+
     public:
-        Call(int floor, button_type call_type, int ID_num);
-        bool get_reassignable();
-        int get_floor();
+        Call(int floor, button_type call_type, Call_id call_id);
+
         button_type get_call_type();
+        Call_id get_call_id();
+        int get_floor();
+
         void service_call(Elevator_id elevator_id);
 };
 
@@ -49,11 +56,17 @@ class Call_database {
 
         std::vector<Call*> call_list;
 
+        std::shared_mutex call_list_mutex;
+
     public:
 
         std::vector<Call*> get_call_list();
-        void add_call(int floor, button_type call_type);
+        void add_call(int floor, button_type call_type, Call_id call_id);
+        void add_call_with_elevatorId(int floor, button_type call_type, Elevator_id elevator_id);
         void change_call(Call call, std::string elevator_id);
+
+        std::vector<Call*> get_calls_originating_from_elevator(Elevator_id elevator_id);
+        Call_id* get_last_call_id_originating_from_elevator(Elevator_id elevator_id);
 
 };
 
