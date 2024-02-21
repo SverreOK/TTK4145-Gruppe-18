@@ -44,6 +44,7 @@ class Elevator_state {
         state_enum current_state;
         int current_floor;
         bool obstruction;
+        bool alive;
 
         std::shared_mutex mutex;
 
@@ -58,11 +59,14 @@ class Elevator_state {
         state_enum get_current_state();
         int get_current_floor();
         bool get_obstruction_status();
+        bool get_alive_status();
         Elevator_id get_id();
+        
 
         void set_current_state(state_enum state);
         void set_current_floor(int floor);
         void set_obstruction(bool obstruction);
+        void set_alive(bool alive);
 };
 
 

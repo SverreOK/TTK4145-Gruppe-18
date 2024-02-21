@@ -28,7 +28,7 @@ class Elevator {
 
     public:
         // Constructor declaration
-        Elevator(elevator_driver* driver, elevator_state* state);
+        Elevator(elevator_driver* driver, Elevator_state* state);
 
         void handle_event(elevator_event event);
 

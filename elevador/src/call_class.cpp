@@ -69,6 +69,11 @@ bool Elevator_state::get_obstruction_status(){
     return obstruction;
 }
 
+bool Elevator_state::get_alive_status(){
+    std::shared_lock<std::shared_mutex> lock(mutex);
+    return alive;
+}
+
 Elevator_id Elevator_state::get_id(){
     return id;
 }
@@ -87,6 +92,11 @@ void Elevator_state::set_current_floor(int floor){
 void Elevator_state::set_obstruction(bool obstruction){
     std::unique_lock<std::shared_mutex> lock(mutex);
     obstruction = obstruction;
+}
+
+void Elevator_state::set_alive(bool alive){
+    std::unique_lock<std::shared_mutex> lock(mutex);
+    alive = alive;
 }
 
 
