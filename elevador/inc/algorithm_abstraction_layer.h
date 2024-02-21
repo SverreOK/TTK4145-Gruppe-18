@@ -2,13 +2,11 @@
 
 class Virtual_elevator {
     private:
-        int currentFloor;
         int elevator_ID;
-        elevator_state currentState;
+        elevator_state elevator_state = {state_enum::IDLE, 0, false, std::vector<int8_t,int8_t>()}; // Todo beautify
         std::vector<Call> assigned_hall_calls;
         Call_database* call_database;
     public:
-        Virtual_elevator(elevator_state state, int8_t floor);
         Virtual_elevator(Elevator local_elevator);
         void set_current_state(elevator_state state);
         void set_current_floor(int8_t floor);
