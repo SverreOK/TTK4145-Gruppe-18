@@ -29,7 +29,7 @@ void Elevator::handle_event(elevator_event event) {
 
     // DOOR TIMEOUT
     case elevator_event::DOOR_TIMEOUT:
-        Elevator::close_door();
+        close_door();
         if (choose_direction(this, *state) == 1) {
             state->current_state = state_enum::MOVING_UP;
             driver->set_motor_direction(1);
@@ -54,15 +54,13 @@ void Elevator::set_floor(int8_t floor) {
 void Elevator::open_door() {
     // Open the door for 3 seconds
     driver->set_door_open_lamp(1);
-    door_timer.start();
+    door_timer.start(handle_event(elevator_event::DOOR_TIMEOUT));
 }
 
 void Elevator::close_door() {
-    while (driver->get_obstruction_signal() == 1) {
-        // Wait for obstruction to be cleared
-        door_timer.reset();
+    while(driver->get_obstruction_signal()) {
+        // Wait for the obstruction to be cleared
     }
-    Elevator::handle_event(elevator_event::DOOR_TIMEOUT);
     driver->set_door_open_lamp(0);
 }
 
