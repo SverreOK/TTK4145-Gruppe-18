@@ -1,6 +1,6 @@
 #pragma once
 
-#include "inc/data/elevator_state_class.h" 
+#include "elevator_state_class.h" 
 
 std::vector<std::vector<bool>> call_list_to_floor_list(std::vector<Call*> calls);
 std::string exec(const char* cmd);

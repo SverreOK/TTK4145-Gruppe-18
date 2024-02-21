@@ -1,10 +1,6 @@
 #pragma once
 
-#include "inc/data/call_class.h"
-
-struct Elevator_id {
-    std::string id;
-};
+#include "call_class.h"
 
 class Elevator_state {
     private:

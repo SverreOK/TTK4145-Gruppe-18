@@ -1,66 +1,25 @@
 # Compiler
+CC = g++
 
+# Compiler flags
+CFLAGS = -Iinc -Iinc/data -Iinc/elevator
 
-ifeq ($(OS),Windows_NT) # IF WINDOWS
-	CC = g++
-	VCPKG_DIR = C:/dev/vcpkg_dev/vcpkg/installed/x64-windows
-
-    INCLUDES = -I$(VCPKG_DIR)/include
-    LIBS = -L$(VCPKG_DIR)/lib -lboost_system-vc140-mt -lboost_thread-vc140-mt -lboost_chrono-vc140-mt -lWs2_32
-
-    CFLAGS = -Wall -std=c++11 -g $(INCLUDES)
-else
-	CC = g++
-	LIBS = -lboost_system -lboost_thread -lpthread
-
-	CFLAGS = -Wall -std=c++11 -g -Iinc
-endif
-
-ifeq ($(detected_OS),Windows)
-    CC = cl
-    LINK = link
-    BOOST_PATH = C:/local/boost_1_84_0
-    CFLAGS = /EHsc /std:c++11 /Iinc /I"$(BOOST_PATH)"
-    LFLAGS = /LIBPATH:"$(BOOST_PATH)"
-    LIBS = boost_system-vc141-mt-gd.lib boost_thread-vc141-mt-gd.lib
-    OBJ_EXT = .obj
-    EXE_EXT = .exe
-    RM = del /Q
-    FIX_PATH = $(subst /,\,$1)
-else
-    CC = g++
-    CFLAGS = -Wall -std=c++11 -g -Iinc
-    LFLAGS =
-    LIBS = -lboost_system -lboost_thread -lpthread
-    OBJ_EXT = .o
-    EXE_EXT =
-    RM = rm -f
-    FIX_PATH = $1
-endif
-
-# Target executable name
-TARGET = main$(EXE_EXT)
+# Source files
+SRC = $(wildcard src/*.cpp src/data/*.cpp src/elevator/*.cpp)
 
 # Object files
-OBJS = main$(OBJ_EXT) elevator_driver$(OBJ_EXT)
+OBJ = $(SRC:.cpp=.o)
 
-# Default target
-all: $(TARGET)
+# Executable name
+EXEC = my_program
 
-$(TARGET): $(OBJS)
-ifeq ($(detected_OS),Windows)
-    $(LINK) $(LFLAGS) /OUT:$(TARGET) $(OBJS) $(LIBS)
-else
-    $(CC) -o $(TARGET) $(OBJS) $(LIBS)
-endif
+all: $(EXEC)
 
-main$(OBJ_EXT): main.cpp inc/elevator_driver.h
-    $(CC) $(CFLAGS) -c main.cpp /Fo$@
+$(EXEC): $(OBJ)
+	$(CC) $(CFLAGS) -o $@ $^
 
-elevator_driver$(OBJ_EXT): src/elevator_driver.cpp inc/elevator_driver.h
-    $(CC) $(CFLAGS) -c src/elevator_driver.cpp /Fo$@
+%.o: %.cpp
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-    $(RM) $(call FIX_PATH,$(TARGET) $(OBJS))
-
-.PHONY: all clean
+	rm -f $(OBJ) $(EXEC)
