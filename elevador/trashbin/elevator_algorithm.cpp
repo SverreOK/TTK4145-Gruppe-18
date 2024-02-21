@@ -3,13 +3,10 @@
 // Check if there are requests above
 static int requests_above(Elevator e) {
     for (int i = e.get_floor(); i < N_FLOORS; i++) {
-        for (int btn = 0; btn < N_BUTTONS; btn++) {
-            // if (e.get_requests[i][btn]) {
+        // if (e.get_requests[i][btn]) {
             //     return 1;
             // }
             // Need to have request list somewhere!!!
-        }
-    }
 }
 
 // Check if there are requests below
@@ -23,7 +20,6 @@ static int requests_below(Elevator e) {
         }
     }
 }
-
 // Check if there are requests at current floor
 static int requests_here(Elevator e) {
     for (int btn = 0; btn < N_BUTTONS; btn++) {
@@ -63,3 +59,8 @@ int should_clear_immediately();
 
 // Clears request from the cab at the current floor
 int clear_at_current_floor();
+
+// Clear call strat
+/*
+When at floor you can assume that all calls that 
+*/

@@ -13,7 +13,7 @@ enum class elevator_event {
     ORDER_RECEIVED,
     STOP_BUTTON_PRESSED,
     ARRIVED_AT_FLOOR,
-    OBSTRUCTION
+    OBSTRUCTION,
 };
 
 // STATES

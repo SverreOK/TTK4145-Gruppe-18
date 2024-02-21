@@ -4,7 +4,6 @@ Elevator::Elevator(elevator_driver* driver, elevator_state initial_state, uint8_
     : driver(driver), current_state(initial_state), current_floor(current_floor){
         stop_button = false;
         obstruction = false;
-        requests = 
     }    
 
 Elevator::~Elevator() {
@@ -146,7 +145,10 @@ elevator_state Elevator::get_state() {
 }
 
 void Elevator::floor_poller() {
-    set_floor(driver->get_floor_sensor_signal());
+    int8_t floor = driver->get_floor_sensor_signal();
+    if (floor != -1) {
+        set_floor(floor);
+    }
 }
 
 // Stop button
