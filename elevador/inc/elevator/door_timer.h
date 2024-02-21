@@ -5,10 +5,10 @@
 
 #define RESET_TIME 3
 
-class DoorTimer {
+class door_timer {
 public:
-    DoorTimer(boost::asio::io_service& io);
-    ~DoorTimer();
+    door_timer(boost::asio::io_service& io);
+    ~door_timer();
 
     void start(std::function<void()> timeoutCallback);
     void reset();

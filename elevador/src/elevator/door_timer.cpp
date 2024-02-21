@@ -1,12 +1,12 @@
 #include "inc/elevator/door_timer.h"
 
-DoorTimer::DoorTimer(boost::asio::io_service& io) : timer(io), running(false) {}
+door_timer::door_timer(boost::asio::io_service& io) : timer(io), running(false) {}
 
-DoorTimer::~DoorTimer() {
+door_timer::~door_timer() {
     timer.cancel();
 }
 
-void DoorTimer::start(std::function<void()> timeoutCallback) {
+void door_timer::start(std::function<void()> timeoutCallback) {
     running = true;
     timer.expires_from_now(boost::posix_time::seconds(RESET_TIME));
     timer.async_wait([this, timeoutCallback](const boost::system::error_code& error) {
@@ -17,11 +17,11 @@ void DoorTimer::start(std::function<void()> timeoutCallback) {
     });
 }
 
-void DoorTimer::reset() {
+void door_timer::reset() {
     running = true;
     timer.expires_from_now(boost::posix_time::seconds(RESET_TIME));
 }
 
-bool DoorTimer::isRunning() {
+bool door_timer::isRunning() {
     return running;
 }
