@@ -4,15 +4,16 @@
 #include <jsoncpp/json/json.h>
 #include <iostream>
 
-std::vector<std::vector<bool>> call_list_to_floor_list(std::vector<Call> &calls) {
-    std::vector<std::vector<bool>> floors(N_FLOORS, std::vector<bool>(N_BUTTONS, false));
+std::vector<std::vector<bool>> call_list_to_floor_list(std::vector<Call*> calls) {
+    int N_FLOORS = 4; // this is technically defined somewhere lmamooasdof
+    std::vector<std::vector<bool>> floors(N_FLOORS, std::vector<bool>(2, false));
     for (auto call : calls) {
-        switch (call.get_call_type()) {
+        switch (call -> get_call_type()) {
             case button_type::UP_HALL:
-                floors[call.get_floor()][0] = true;
+                floors.at(call -> get_floor() -1 )[0] = true; // -1 because the floor number is 1-indexed
                 break;
             case button_type::DOWN_HALL:
-                floors[call.get_floor()][1] = true;
+                floors.at(call -> get_floor() -1)[1] = true;
                 break;
             default:
                 break;
@@ -98,7 +99,7 @@ std::vector<std::vector<bool>> get_assigned_floors_from_json(std::string json_st
     return assigned_floors;
 }
 
-std::vector<Call*> get_assigned_calls(std::string json_string, std::string elevator_id, std::vector<Call*> calls) {
+std::vector<Call*> get_assigned_calls_from_json(std::string json_string, std::string elevator_id, std::vector<Call*> calls) {
     std::vector<std::vector<bool>> assigned_floors = get_assigned_floors_from_json(json_string, elevator_id);
     std::vector<Call*> assigned_calls;
 
@@ -110,14 +111,13 @@ std::vector<Call*> get_assigned_calls(std::string json_string, std::string eleva
     return assigned_calls;
 }
 
-void reassign_calls(std::vector<Call*> calls, std::vector<Elevator_state*> elevators, Elevator_id local_id) {
+std::vector<Call*> get_assigned_calls_for_elevator(std::vector<Call*> calls, std::vector<Elevator_state*> elevators, Elevator_id local_id) {
 
-    std::vector<std::vector<bool>> hall_call_floors;
-    // Generate hall_call_floors here!
-
+    std::vector<std::vector<bool>> hall_call_floors = call_list_to_floor_list(calls);
     std::string argument_string = generate_hall_request_assigner_json(hall_call_floors, elevators);
     std::string execution_string = "./hall_request_assigner --input '" + argument_string + "'";
     std::string hall_request_assigner_output = exec(execution_string.c_str());
-    std::vector<Call*> assigned_calls = get_assigned_calls(hall_request_assigner_output, local_id.id, calls);
+    std::vector<Call*> assigned_calls = get_assigned_calls_from_json(hall_request_assigner_output, local_id.id, calls);
 
+    return assigned_calls;
 }
