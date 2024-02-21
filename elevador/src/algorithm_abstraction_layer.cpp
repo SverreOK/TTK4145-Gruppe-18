@@ -54,6 +54,16 @@ std::string Virtual_elevator::get_current_direction() {
     }
 }
 
+std::vector<bool> Virtual_elevator::get_cab_call_floors() {
+    std::vector<bool> floors(N_FLOORS, false);
+    for (auto call : call_database -> get_call_list()) {
+        if (call.get_call_type() == button_type::CAB) {
+            floors.at(call.get_floor()) = true;
+        }
+    }
+    return floors;
+}
+
 std::vector<std::vector<bool>> call_list_to_floor_list(std::vector<Call> &calls) {
     std::vector<std::vector<bool>> floors(N_FLOORS, std::vector<bool>(N_BUTTONS, false));
     for (auto call : calls) {
@@ -119,5 +129,10 @@ void reassign_calls(std::vector<Virtual_elevator> &elevators, std::vector<Call> 
         pclose(pipe);
     }
 
-    // Set call ownership based on returned json string
+    // convert response to map<Elevator_id, std::vector<bool>> where vector is floors
+    // For elevator in map
+        // for floor in vector
+            // for call in calls
+                // if get_reassignable
+                    // if call floor == floor, call.service_call(elevator_ID)
 }
