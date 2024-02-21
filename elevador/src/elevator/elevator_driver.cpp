@@ -1,8 +1,10 @@
-#include "../inc/elevator_driver.h"
+#include "elevator_driver.h"
 
 #include <boost/asio.hpp>
 #include <boost/system/error_code.hpp>
+#include <thread>
 #include <iostream>
+#include <chrono>
 
 elevator_driver::elevator_driver() : socket(io_service) {
     strncpy(ip, "localhost", sizeof(ip));
@@ -88,4 +90,18 @@ int elevator_driver::get_obstruction_signal() {
 
 bool elevator_driver::get_connected() {
     return elevator_driver::connected;
+}
+
+void elevator_driver::poll_floor(Elevator *elevator, elevator_state state) {
+    int8_t floor = get_floor_sensor_signal();
+    if (floor >= 0 && floor < N_FLOORS) {
+        set_floor_indicator(floor);
+        if (floor != state.current_floor) {
+            state.current_floor = floor;
+        }
+    }
+}
+
+void elevator_driver::poll_obstruction(Elevator *elevator, elevator_state state) {
+    state.obstruction = get_obstruction_signal();
 }

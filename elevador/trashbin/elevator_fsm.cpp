@@ -26,10 +26,6 @@ void Elevator::entry_state(elevator_state state) {
                 driver->connect(); 
             }
             
-            // stop button poller
-            // obstruction poller
-            // floor sensor poller 
-            // find valid state/floor?
             break;
 
         case elevator_state::IDLE:
