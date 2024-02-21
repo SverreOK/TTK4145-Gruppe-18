@@ -1,4 +1,5 @@
 #include "algorithm_abstraction_layer.h"
+#include "json.h"
 
 Virtual_elevator::Virtual_elevator(elevator_state state, int8_t floor) {
     currentState = state;
@@ -113,12 +114,12 @@ std::string create_hall_request_json(std::vector<Virtual_elevator> &elevators, s
     argument_string += "}";
 
     return argument_string;
-}
+} // Todo re-write using the json library
 
 void reassign_calls(std::vector<Virtual_elevator> &elevators, std::vector<Call> &calls) {
     std::string argument_string = create_hall_request_json(elevators, calls);
     std::string response = "";
-    FILE* pipe = popen(("./hall_request_assigner --input '" + argument_string + "'").c_str(), "r");
+    FILE* pipe = popen(("./hall_request_assigner --input '" + argument_string + "'").c_str(), "r"); // Run the hall_request_assigner program that was supplied 
     if (pipe) {
         char buffer[128];
         while (!feof(pipe)) {
@@ -129,10 +130,17 @@ void reassign_calls(std::vector<Virtual_elevator> &elevators, std::vector<Call> 
         pclose(pipe);
     }
 
-    // convert response to map<Elevator_id, std::vector<bool>> where vector is floors
-    // For elevator in map
-        // for floor in vector
-            // for call in calls
-                // if get_reassignable
-                    // if call floor == floor, call.service_call(elevator_ID)
+    Json::Value root;
+    Json::Reader reader;
+    bool parsingSuccessful = reader.parse(response, root);
+    if (!parsingSuccessful) {
+        std::cout << "Failed to parse the response" << std::endl;
+        return;
+    }
+
+    std::map<Elevator_id, std::vector<bool>> elevator_responses;
+    for (auto elevator : elevators) {
+        elevator_responses[elevator.get_elevator_ID()] = obj[elevator.get_elevator_ID()];
+    }   
 }
+
