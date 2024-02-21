@@ -21,6 +21,8 @@ class Super_container {
         void add_call_with_elevatorId(int floor, button_type call_type, Elevator_id elevator_id);
         void change_call(Call* call, std::string elevator_id);
 
+        void add_elevator(Elevator_state* elevator);
+
         std::vector<Call*> get_calls_originating_from_elevator(Elevator_id elevator_id);
         Call_id* get_last_call_id_originating_from_elevator(Elevator_id elevator_id);
 

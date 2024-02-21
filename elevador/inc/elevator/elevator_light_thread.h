@@ -9,7 +9,7 @@
 
 
 
-class light_controller {
+class Light_controller {
 
     private:
         elevator_driver* driver;
@@ -18,6 +18,7 @@ class light_controller {
         Elevator_id elevator_id;
         bool running;
         int number_of_floors;
+        int update_freq = 100; //hz
 
         //a 3 x number_of_floors matrix with bools to represent the current state of the lights
         std::vector<std::vector<bool>> light_matrix;
@@ -44,19 +45,22 @@ class light_controller {
                         }
                     }
                 }
+
+                //wait for x ms before updating the lights again
+                boost::this_thread::sleep_for(boost::chrono::milliseconds(int(1/(update_freq/1000.0))));
+
             }
         }
 
     public:
-        light_controller(elevator_driver* driver, Elevator_id elevator_id) 
+        Light_controller(elevator_driver* driver, Elevator_id elevator_id, Super_container* data_container, int number_of_floors) 
             : driver(driver), running(false), elevator_id(elevator_id) {
-                number_of_floors = 4;
                 light_matrix = std::vector<std::vector<bool>>(3, std::vector<bool>(number_of_floors, false));
             }
         
         void start() {
             running = true;
-            light_thread = boost::thread(&light_controller::update_lights, this);
+            light_thread = boost::thread(&Light_controller::update_lights, this);
         }
 
         void stop() {

@@ -13,9 +13,10 @@ private:
     Super_container* data_container;
     boost::thread poller_thread;
     Elevator_id elevator_id;
+
     bool running;
     int number_of_floors;
-
+    int update_freq = 100; //hz
     int current_floor;
 
     void poll_buttons() {
@@ -30,6 +31,14 @@ private:
         }
     }
 
+    void poller_loop() {
+        while (running) {
+            poll_buttons();
+            // poll_floor_sensors();
+            boost::this_thread::sleep_for(boost::chrono::milliseconds(int(1/(update_freq*1000))));
+        }
+    }
+
     // void poll_floor_sensors() {
     //     int floor = driver->get_floor_sensor_signal();
     //     if (floor != current_floor) {
@@ -37,6 +46,9 @@ private:
     //         data_container->update_elevator_floor(elevator_id, floor);
     //     }
     // }
+
+    //void poll_obstruction_sensor() {
+    //}
 
 
 
@@ -46,7 +58,7 @@ public:
 
     void start() {
         running = true;
-        poller_thread = boost::thread(&Elevator_driver_poller::poll_buttons, this);
+        poller_thread = boost::thread(&Elevator_driver_poller::poller_loop, this);
     }
 
     void stop() {
@@ -54,6 +66,10 @@ public:
         if (poller_thread.joinable()) {
             poller_thread.join();
         }
+    }
+
+    bool get_running() {
+        return running;
     }
 
     ~Elevator_driver_poller() {

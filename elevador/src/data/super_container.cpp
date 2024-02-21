@@ -2,6 +2,7 @@
 
 
 std::vector<Call*> Super_container::get_call_list(){
+    std::shared_lock<std::shared_mutex> lock(call_list_mutex);
     return call_list;
 }
 
@@ -51,4 +52,22 @@ Call_id* Super_container::get_last_call_id_originating_from_elevator(Elevator_id
     }
 
     return last_call_id;
+}
+
+
+void Super_container::add_elevator(Elevator_state* elevator){
+    std::unique_lock<std::shared_mutex> lock(mutex);
+    elevators.push_back(elevator);
+}
+
+std::vector<Elevator_id> Super_container::get_alive_elevators(){
+    std::vector<Elevator_id> alive_elevators;
+
+    std::shared_lock<std::shared_mutex> lock(mutex);
+    for (auto elevator : elevators){
+        if (elevator->get_alive_status()){
+            alive_elevators.push_back(elevator->get_id());
+        }
+    }
+    return alive_elevators;
 }

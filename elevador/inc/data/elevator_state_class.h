@@ -22,6 +22,8 @@ class Elevator_state {
             current_state = state_enum::IDLE;
             current_floor = 0;
             obstruction = false;
+            alive = true;
+
         }
 
         state_enum get_current_state();

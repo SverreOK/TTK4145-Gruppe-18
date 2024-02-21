@@ -92,16 +92,14 @@ bool elevator_driver::get_connected() {
     return elevator_driver::connected;
 }
 
-void elevator_driver::poll_floor(Elevator *elevator, elevator_state state) {
-    int8_t floor = get_floor_sensor_signal();
-    if (floor >= 0 && floor < N_FLOORS) {
-        set_floor_indicator(floor);
-        if (floor != state.current_floor) {
-            state.current_floor = floor;
-        }
-    }
-}
+// void elevator_driver::poll_floor(Elevator *elevator, Super_container* container) {
+//     int8_t floor = get_floor_sensor_signal();
+//     if (floor >= 0 && floor < N_FLOORS) {
+//         set_floor_indicator(floor);
+//         return floor;
+//     }
+// }
 
-void elevator_driver::poll_obstruction(Elevator *elevator, elevator_state state) {
-    state.obstruction = get_obstruction_signal();
-}
+// void elevator_driver::poll_obstruction(Elevator *elevator, Super_container* container) {
+//     state.obstruction = get_obstruction_signal();
+// }

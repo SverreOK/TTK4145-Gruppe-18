@@ -1,73 +1,45 @@
-#include "inc/elevator_driver.h"
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include <boost/thread.hpp>
 #include <vector>
 #include <iostream>
+#include <string>
+
+#include "inc/elevator/elevator_fsm.h"
+#include "inc/elevator/elevator_driver.h"
+
+#include "inc/elevator/elevator_button_poller.h"
+#include "inc/elevator/elevator_light_thread.h"
+
+#include "inc/data/super_container.h"
 
 
 int main() {
 
+    //create an elevator_id
+    Elevator_id elevator_id{"E1"};
 
-    //create elevator driver
+    //create a super container
+    Super_container* data_container = new Super_container();
 
-//     elevator_driver elevator;
-
-//     elevator.connect();
-
-//     int pollingrate_ms = 25;
-//     int floors = 4;
-//     int button_per_floor = 3;
-
-//     int light_status = 0;
-//     //loop through all floors and buttons and turn them on
-//     for (int floor = 0; floor < floors; ++floor) {
-//         for (int button = 0; button < button_per_floor; ++button) {
-//             elevator.set_button_lamp(button, floor, light_status);
-//         }
-//     }
+    //add E1 to the super container
+    Elevator_state* elevator = new Elevator_state(elevator_id);
+    data_container->add_elevator(elevator);
 
 
-//     // Create a matrix to store the previous state of each button
-//     std::vector<std::vector<int>> button_states(floors, std::vector<int>(button_per_floor, 0));
+    //create a driver, poller and light controller
+    elevator_driver* driver = new elevator_driver();
+    Elevator_driver_poller* poller = new Elevator_driver_poller(driver, elevator_id, data_container, 4);
+    Light_controller* light_controller = new Light_controller(driver, elevator_id, data_container, 4);
 
-//     // Create a deadline_timer
-//     boost::asio::io_service io_service;
-//     boost::asio::deadline_timer timer(io_service, boost::posix_time::milliseconds(pollingrate_ms));
+    driver->connect();
+    poller->start();
+    light_controller->start();
 
-//     // Create a function to be called when the timer expires
-//     std::function<void(const boost::system::error_code&)> check_buttons;
-
-// //     int i = 0;
-// //     while(true){
-// //         int state = elevator.get_button_signal(1, 2);
-// //         std::cout << state << " bruh " << i << '\n';
-
-// //         timer.expires_at(boost::posix_time::microsec_clock::universal_time() + boost::posix_time::milliseconds(pollingrate_ms));
-// //         timer.wait();
-// //         i++;
-// //    }
-//     elevator.set_motor_direction(1);
-//     boost::this_thread::sleep(boost::posix_time::seconds(1));
-//     elevator.set_motor_direction(0);
-
-
-//     while(true){
-//         for (int floor = 0; floor < floors; ++floor) {
-//             for (int button = 0; button < button_per_floor; ++button) {
-//                 int state = elevator.get_button_signal(button, floor);
-//                 if (state != button_states[floor][button]) {
-//                     std::cout << "Button " << button << " on floor " << floor << " changed state to " << state << std::endl;
-//                     button_states[floor][button] = state;
-//                     elevator.set_button_lamp(button, floor, state);
-//                 }
-//             }
-//         }
-
-//         // Reset the timer //adasdasdasdasda
-//         timer.expires_at(boost::posix_time::microsec_clock::universal_time() + boost::posix_time::milliseconds(pollingrate_ms));
-//         timer.wait();
-//     }
+    while(poller->get_running()){
+        std::cout << "Elevator is running" << std::endl;
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(1000));
+    }
 
     return 0;
 }
