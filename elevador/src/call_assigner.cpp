@@ -68,17 +68,52 @@ std::string generate_hall_request_assigner_json(std::vector<std::vector<bool>> h
     return root_str;
 }
 
+bool call_is_assigned(Call* call, std::vector<std::vector<bool>> assigned_floors) {
+    bool matches = false;
+    if (assigned_floors.at(call->floor - 1).at(0) && call->up || assigned_floors.at(call->floor - 1).at(1) && call->down) {
+        matches = true;
+    }
+    return matches;
+}
 
+std::vector<std::vector<bool>> get_assigned_floors_from_json(std::string json_string, std::string elevator_id) {
+    Json::Value root;
+    Json::Reader reader;
+    std::vector<std::vector<bool>> assigned_floors;
 
-void reassign_calls(std::vector<std::vector<bool>> hall_call_floors, std::vector<Elevator_state*> elevators) {
+    bool parsingSuccessful = reader.parse(json_string, root);
+    if (parsingSuccessful) {
+        for (auto floor : root[elevator_id]) {
+            std::vector<bool> floor_button_states;
+            for (auto button : floor) {
+                floor_button_states.push_back(button.asBool());
+            }
+            assigned_floors.push_back(floor_button_states);
+        }
+    }
+    return assigned_floors;
+}
 
-    std::string instruction_string = "./hall_request_assigner --input '" + generate_hall_request_assigner_json(hall_call_floors, elevators) + "'";
-    // std::cout << instruction_string << std::endl;
-    std::string output = exec(instruction_string.c_str());
+std::vector<Call*> get_assigned_calls(std::string json_string, std::string elevator_id, std::vector<Call*> calls) {
+    std::vector<std::vector<bool>> assigned_floors = get_assigned_floors_from_json(json_string, elevator_id);
+    std::vector<Call*> assigned_calls;
 
+    for (auto call : calls) {
+        if (call_is_assigned(call, assigned_floors)) {
+            assigned_calls.push_back(call);
+        }
+    }
+    return assigned_calls;
+}
 
+void reassign_calls(std::vector<Call*> calls, std::vector<Elevator_state*> elevators, Elevator_id local_id) {
 
-    std::cout << output << std::endl;
+    std::vector<std::vector<bool>> hall_call_floors;
+    // Generate hall_call_floors here!
 
+    std::string argument_string = generate_hall_request_assigner_json(hall_call_floors, elevators);
+    std::string execution_string = "./hall_request_assigner --input '" + argument_string + "'";
+    std::string hall_request_assigner_output = exec(execution_string.c_str());
+    std::vector<Call*> assigned_calls = get_assigned_calls(hall_request_assigner_output, local_id.id, calls);
 
 }
