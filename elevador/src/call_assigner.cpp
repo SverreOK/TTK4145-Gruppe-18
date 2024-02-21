@@ -70,7 +70,11 @@ std::string generate_hall_request_assigner_json(std::vector<std::vector<bool>> h
 
 bool call_is_assigned(Call* call, std::vector<std::vector<bool>> assigned_floors) {
     bool matches = false;
-    if (assigned_floors.at(call->floor - 1).at(0) && call->up || assigned_floors.at(call->floor - 1).at(1) && call->down) {
+
+    bool going_up = call -> get_call_type() == button_type::UP_HALL;
+    bool going_down = call -> get_call_type() == button_type::DOWN_HALL;
+
+    if (assigned_floors.at(call -> get_floor() - 1).at(0) && going_up || assigned_floors.at(call -> get_floor() - 1).at(1) && going_down) {
         matches = true;
     }
     return matches;
