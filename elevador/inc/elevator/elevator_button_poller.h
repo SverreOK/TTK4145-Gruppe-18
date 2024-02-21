@@ -4,6 +4,7 @@
 #include "inc/data/super_container.h"
 
 #include "inc/elevator/elevator_driver.h"
+
 #include <boost/thread.hpp>
 
 class Elevator_driver_poller {
@@ -29,23 +30,23 @@ private:
         }
     }
 
-    void poll_floor_sensors() {
-        int floor = driver->get_floor_sensor_signal();
-        if (floor != current_floor) {
-            current_floor = floor;
-            data_container->update_elevator_floor(elevator_id, floor);
-        }
-    }
+    // void poll_floor_sensors() {
+    //     int floor = driver->get_floor_sensor_signal();
+    //     if (floor != current_floor) {
+    //         current_floor = floor;
+    //         data_container->update_elevator_floor(elevator_id, floor);
+    //     }
+    // }
 
 
 
 public:
-    Elevator_driver_poller(elevator_driver* driver, Elevator_id elevator_id, Call_database* data_container, int number_of_floors) 
+    Elevator_driver_poller(elevator_driver* driver, Elevator_id elevator_id, Super_container* data_container, int number_of_floors) 
         : driver(driver), running(false), elevator_id(elevator_id), data_container(data_container), number_of_floors(number_of_floors) {}
 
     void start() {
         running = true;
-        poller_thread = boost::thread(&button_poller::poll_buttons, this);
+        poller_thread = boost::thread(&Elevator_driver_poller::poll_buttons, this);
     }
 
     void stop() {
@@ -55,7 +56,7 @@ public:
         }
     }
 
-    ~button_poller() {
+    ~Elevator_driver_poller() {
         stop();
     }
 };
