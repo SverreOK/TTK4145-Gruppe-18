@@ -8,6 +8,8 @@
 
 #include "inc/data/super_container.h"
 
+#include "inc/util/event_queue.h"
+
 #include <vector>
 #include <mutex>
 
@@ -22,26 +24,24 @@ enum class elevator_event {
 class Elevator {
     private:
         elevator_driver* driver;
-        Elevator_state* state;
 
         std::mutex event_mutex;
+
+        Super_container* data_container;
+
+        Elevator_id id;
 
         void initialize_position();
 
     public:
         // Constructor declaration
-        Elevator(elevator_driver* driver, Elevator_state* state);
+        Elevator(elevator_driver* driver, Elevator_id id, Super_container* data_container);
 
         void handle_event(elevator_event event);
-
-        // Floor
-        int8_t get_floor();
-        void set_floor(int8_t floor);
 
         // Door
         void open_door();
         void close_door();
-        bool is_door_open();
 
         void run();
 
