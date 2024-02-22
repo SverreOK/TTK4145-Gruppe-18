@@ -1,5 +1,8 @@
 #include "elevator_state_class.h"
 
+class Elevator_state;
+struct Elevator_id;
+
 //elevator state functions
 state_enum Elevator_state::get_current_state(){
     std::shared_lock<std::shared_mutex> lock(mutex);

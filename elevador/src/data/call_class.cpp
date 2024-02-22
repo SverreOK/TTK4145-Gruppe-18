@@ -1,5 +1,14 @@
 #include "call_class.h"
 
+class Call;
+class Call_id;
+
+Call::Call(int floor, button_type call_type, Call_id call_id) {
+    this->floor = floor;
+    this->call_type = call_type;
+    this->call_id = call_id;
+}
+
 std::vector<Elevator_id> Call::get_elevator_ack_list() {
     return elevator_ack_list;
 }

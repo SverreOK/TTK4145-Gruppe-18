@@ -1,5 +1,6 @@
 #include "super_container.h"
 
+class Call;
 
 std::vector<Call*> Super_container::get_call_list(){
     std::shared_lock<std::shared_mutex> lock(call_list_mutex);

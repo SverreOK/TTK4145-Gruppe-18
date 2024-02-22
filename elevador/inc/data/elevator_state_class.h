@@ -2,9 +2,11 @@
 
 #include "call_class.h"
 
+struct Elevator_id;
+
 class Elevator_state {
     private:
-        static Elevator_id id;
+        Elevator_id id;
         state_enum current_state;
         int current_floor;
         bool obstruction;
