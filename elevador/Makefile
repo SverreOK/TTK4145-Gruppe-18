@@ -5,7 +5,7 @@ CC = g++
 CFLAGS = -Iinc -Iinc/data -Iinc/elevator
 
 # Linker flags
-LDFLAGS = -ljsoncpp
+LDFLAGS = -ljsoncpp -lpthread -lboost_system -lboost_thread -lboost_chrono  
 
 # Source files
 SRC = $(wildcard src/*.cpp src/data/*.cpp src/elevator/*.cpp)
@@ -14,7 +14,7 @@ SRC = $(wildcard src/*.cpp src/data/*.cpp src/elevator/*.cpp)
 OBJ = $(SRC:.cpp=.o)
 
 # Executable name
-EXEC = my_program
+EXEC = main
 
 all: $(EXEC)
 
