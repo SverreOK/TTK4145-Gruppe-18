@@ -57,7 +57,7 @@ public:
     void poll_floor(Elevator *elevator, Elevator_state state);
     void poll_obstruction(Elevator *elevator, Elevator_state state);
 
-    ~elevator_driver();
+    //~elevator_driver();
 
 };
 

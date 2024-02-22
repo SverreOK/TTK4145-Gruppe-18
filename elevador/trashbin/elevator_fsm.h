@@ -63,7 +63,7 @@ public:
 
 
     Elevator(elevator_driver* driver, elevator_state initial_state, uint8_t current_floor);
-    ~Elevator();
+    //~Elevator(); Commented for linker issue
 };
 
 #endif /* ELEVATOR_FSM_H */

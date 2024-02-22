@@ -1,4 +1,4 @@
-#include "inc/elevator_fsm.h"
+#include "elevator_fsm.h"
 
 Elevator::Elevator(elevator_driver* driver, elevator_state initial_state, uint8_t current_floor)
     : driver(driver), current_state(initial_state), current_floor(current_floor){

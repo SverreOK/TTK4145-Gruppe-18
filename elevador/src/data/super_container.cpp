@@ -19,10 +19,12 @@ void Super_container::add_call(int floor, button_type call_type, Call_id call_id
 
 void Super_container::add_call_with_elevatorId(int floor, button_type call_type, Elevator_id elevator_id){
     
-    int call_num = get_last_call_id_originating_from_elevator(elevator_id)->get_call_number() + 1;
+    int call_num; //= get_last_call_id_originating_from_elevator(elevator_id)->call_number + 1;
     
-    Call_id* new_call_id = new Call_id(elevator_id, call_num);
-    add_call(floor, call_type, *new_call_id);
+    //Call_id* new_call_id = new Call_id(elevator_id, call_num);
+    Call_id new_call_id{elevator_id, call_num};
+    
+    add_call(floor, call_type, new_call_id);
 
 }
 
@@ -33,7 +35,7 @@ std::vector<Call*> Super_container::get_calls_originating_from_elevator(Elevator
 
     for (auto call : call_list){
         
-        if (call->get_call_id().get_call_elevator_id().id == elevator_id.id){
+        if (call->get_call_id().elevator_id.id == elevator_id.id){
             calls.push_back(call);
         }
     }

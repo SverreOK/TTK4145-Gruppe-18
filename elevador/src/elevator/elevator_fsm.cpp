@@ -7,10 +7,11 @@ Elevator::Elevator(elevator_driver* driver, Elevator_id id, Super_container* dat
 
 void Elevator::handle_event(elevator_event event) {
 
+    // Commented for linker errors
     // Put algorithm variables here
-    int current_floor = data_container->get_elevator_by_id(id)->get_current_floor();
-    state_enum current_state = data_container->get_elevator_by_id(id)->get_current_state();
-    std::vector<Call*> call_list = data_container->get_locally_assigned_calls();
+    //int current_floor = data_container->get_elevator_by_id(id)->get_current_floor();
+    //state_enum current_state = data_container->get_elevator_by_id(id)->get_current_state();
+    //std::vector<Call*> call_list = data_container->get_locally_assigned_calls();
 
     switch (event)
     {
@@ -68,6 +69,6 @@ void Elevator::run() {
     // sleep for 10 ms
 }
 
-Elevator::~Elevator() {
-    delete driver;
-}
+// Elevator::~Elevator() {
+//     delete driver;
+// } // Commented for linker issues
