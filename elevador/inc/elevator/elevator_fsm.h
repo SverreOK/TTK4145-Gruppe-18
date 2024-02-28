@@ -1,15 +1,18 @@
 #pragma once
 
 //Includes
+#include <boost/thread.hpp>
+
 #include "elevator_driver.h" 
 #include "elevator_algorithm.h"
 
 #include "super_container.h"
 
-// #include "event_queue.h" this does not exist
+#include "util/event_queue.h"
 
 #include <vector>
 #include <mutex>
+#include <iostream>
 
 // Forward declaration
 class elevator_driver;
@@ -32,11 +35,17 @@ class Elevator {
 
         Elevator_id id;
 
+        thread_safe_queue<elevator_event>& event_queue;
+
+        boost::thread fsm_thread;
+
+        int running;
+
         void initialize_position();
 
     public:
         // Constructor declaration
-        Elevator(elevator_driver* driver, Elevator_id id, Super_container* data_container);
+        Elevator(elevator_driver* driver, Elevator_id id, Super_container* data_container, thread_safe_queue<elevator_event>& event_queue);
 
         void handle_event(elevator_event event);
 
@@ -44,7 +53,10 @@ class Elevator {
         void open_door();
         void close_door();
 
-        void run();
+        void run_event_queue();
+
+        void start();
+        void stop();
 
         ~Elevator();	
 
