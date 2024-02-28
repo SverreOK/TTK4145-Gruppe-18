@@ -21,9 +21,10 @@ class Super_container {
 
         std::vector<Call*>get_call_list(); //Change this
 
-        void add_call(int floor, button_type call_type, Call_id call_id);
-        void add_call_with_elevatorId(int floor, button_type call_type, Elevator_id elevator_id);
+        void add_new_call(int floor, button_type call_type, Call_id call_id);
+        void add_new_call_with_elevatorId(int floor, button_type call_type, Elevator_id elevator_id);
         void change_call(Call* call, std::string elevator_id);
+        bool call_exists(button_type call_type, int floor);
 
         void add_elevator(Elevator_state* elevator);
 

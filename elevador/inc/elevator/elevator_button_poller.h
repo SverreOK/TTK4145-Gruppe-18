@@ -8,6 +8,7 @@
 #include <boost/thread.hpp>
 
 class Elevator_driver_poller {
+
 private:
     elevator_driver* driver;
     Super_container* data_container;
@@ -18,13 +19,27 @@ private:
     int update_freq = 100; //hz
     int current_floor;
 
+    std::vector<std::vector<bool>> button_vec =  std::vector<std::vector<bool>>(3, std::vector<bool>(number_of_floors, false));
+
     void poll_buttons() {
         for (int floor = 0; floor < number_of_floors; ++floor) {
-            for (int button = 0; button < 3; ++button) {
-                if (driver->get_button_signal(button, floor) == 1) {
 
-                    button_type call_type = (button_type)button; //might give wrong button check
-                    data_container->add_call_with_elevatorId(floor, call_type, elevator_id); 
+            for (int button = 0; button < 3; ++button) {
+
+                bool btn_status = driver->get_button_signal(button, floor);
+                if ( btn_status != button_vec[button][floor]) {
+                    
+                    if (btn_status) {
+                        button_vec[button][floor] = true;
+
+                        button_type call_type = (button_type)button; //might give wrong button check
+                        data_container->add_new_call_with_elevatorId(floor, call_type, elevator_id); 
+
+                        printf("Button %d on floor %d pressed\n", button, floor);
+                    } else {
+                        button_vec[button][floor] = false;
+                        printf("Button %d on floor %d released\n", button, floor);
+                    }
                 }
             }
         }

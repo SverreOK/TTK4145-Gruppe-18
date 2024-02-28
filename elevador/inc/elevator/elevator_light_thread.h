@@ -37,18 +37,22 @@ class Light_controller {
         std::vector<Elevator_id> alive_elevators = data_container->get_alive_elevators();
         std::vector<Call*> call_list = data_container->get_call_list();
         for (auto call : call_list){
+            int ack_count = 0;
             for (auto elevator : alive_elevators){
 
                 std::vector<Elevator_id> elev_ack_list = call->get_elevator_ack_list();
-
                 for( auto ack : elev_ack_list){
                     if (ack.id == elevator.id){
-                        temp_matrix[static_cast<int>( call->get_call_type() )]
-                                   [call->get_floor()] = true;
+                        ack_count++;
                     }
                 }
             }
+            if (ack_count == alive_elevators.size()){
+                temp_matrix[static_cast<int>( call->get_call_type() )][call->get_floor()] = true;
+            }
         }
+
+
 
         //wait for x ms before updating the lights again
         //print in conside fuck my life :D

@@ -21,9 +21,11 @@ std::vector<Call*> Super_container::get_locally_assigned_calls(){
 }
 
 
-void Super_container::add_call(int floor, button_type call_type, Call_id call_id){
+void Super_container::add_new_call(int floor, button_type call_type, Call_id call_id){
 
     Call* new_call = new Call(floor, call_type, call_id);
+
+    new_call->acknowlegde_call(call_id.elevator_id);
 
     printf("Adding call to call list\n");
     printf("Call id: %d\n", new_call->get_call_id()->call_number);
@@ -32,16 +34,28 @@ void Super_container::add_call(int floor, button_type call_type, Call_id call_id
     call_list.push_back(new_call);
 }
 
-void Super_container::add_call_with_elevatorId(int floor, button_type call_type, Elevator_id elevator_id){
-    
-    int call_num = 0;
-    if (get_last_call_id_originating_from_elevator(elevator_id) != nullptr){
-        call_num = get_last_call_id_originating_from_elevator(elevator_id)->call_number + 1;
+void Super_container::add_new_call_with_elevatorId(int floor, button_type call_type, Elevator_id elevator_id){
+
+    if( !call_exists(call_type, floor)){
+        int call_num = 0;
+        if (get_last_call_id_originating_from_elevator(elevator_id) != nullptr){
+            call_num = get_last_call_id_originating_from_elevator(elevator_id)->call_number + 1;
+        }
+
+        Call_id new_call_id{elevator_id, call_num};
+        add_new_call(floor, call_type, new_call_id);
     }
 
-    Call_id new_call_id{elevator_id, call_num};
-    add_call(floor, call_type, new_call_id);
 
+}
+
+bool Super_container::call_exists(button_type call_type, int floor){
+    for (auto call : call_list){ //TODO ignore serviced calls!
+        if (call->get_call_type() == call_type && floor == call->get_floor()){
+            return true;
+        }
+    }
+    return false;
 }
 
 std::vector<Call*> Super_container::get_calls_originating_from_elevator(Elevator_id elevator_id){
@@ -85,7 +99,7 @@ void Super_container::add_elevator(Elevator_state* elevator){
 }
 
 std::vector<Elevator_id> Super_container::get_alive_elevators(){
-    std::vector<Elevator_id> alive_elevators;
+    std::vector<Elevator_id> alive_elevators = std::vector<Elevator_id>();
 
     
     for (auto elevator : elevators){

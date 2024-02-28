@@ -16,11 +16,11 @@ class Elevator_state {
 
     public:
         Elevator_state(Elevator_id id){
-            id = id;
-            current_state = state_enum::IDLE;
-            current_floor = 0;
-            obstruction = false;
-            alive = true;
+            this->id = id;
+            this->current_state = state_enum::IDLE;
+            this->current_floor = 0;
+            this->obstruction = false;
+            this->alive = true;
 
         }
 

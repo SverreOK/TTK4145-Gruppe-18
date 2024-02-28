@@ -24,6 +24,7 @@ int main() {
 
     //add E1 to the super container
     Elevator_state* elevator = new Elevator_state(elevator_id);
+    elevator->set_alive(true);
     data_container->add_elevator(elevator);
 
     auto a = data_container->get_alive_elevators();
