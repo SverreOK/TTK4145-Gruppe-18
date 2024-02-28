@@ -111,6 +111,7 @@ void Elevator::initialize_position() {
 
     if (driver->get_floor_sensor_signal() != -1) {
         //update current floor
+        data_container->get_elevator_by_id(id)->set_current_floor(driver->get_floor_sensor_signal());
         return;
     }
 
@@ -119,6 +120,7 @@ void Elevator::initialize_position() {
         // Wait for the elevator to reach the nearest floor
     }
     //update current floor
+    data_container->get_elevator_by_id(id)->set_current_floor(driver->get_floor_sensor_signal());
     driver->set_motor_direction(0);
 }
 
