@@ -1,13 +1,13 @@
 #include <boost/asio.hpp>
-#include <boost/bind.hpp>
 #include <boost/thread.hpp>
 #include <vector>
 #include <iostream>
 #include <string>
 
-#include "elevator_fsm.h"
-#include "elevator_driver.h" // Ensure this file exists at the specified path
 
+
+#include "../inc/elevator/elevator_fsm.h"
+#include "elevator_driver.h" 
 #include "elevator_button_poller.h"
 #include "elevator_light_thread.h"
 

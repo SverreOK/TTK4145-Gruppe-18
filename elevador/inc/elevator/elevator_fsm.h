@@ -1,5 +1,4 @@
 #pragma once
-#ifndef ELEVATOR_INC_ELEVATOR_ELEVATOR_FSM_H
 #define ELEVATOR_INC_ELEVATOR_ELEVATOR_FSM_H
 
 //Includes
@@ -51,5 +50,3 @@ class Elevator {
         ~Elevator();	
 
 };
-
-#endif ELEVATOR_INC_ELEVATOR_ELEVATOR_FSM_H
