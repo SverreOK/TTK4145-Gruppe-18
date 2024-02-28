@@ -24,7 +24,7 @@ int main() {
 
     //add E1 to the super container
     Elevator_state* elevator = new Elevator_state(elevator_id);
-    data_container->add_elevator(elevator);
+    // data_container->add_elevator(elevator);
 
 
     //create a driver, poller and light controller
@@ -33,13 +33,19 @@ int main() {
     Light_controller* light_controller = new Light_controller(driver, elevator_id, data_container, 4);
 
     driver->connect();
-    poller->start();
+    //poller->start();
     light_controller->start();
 
-    while(poller->get_running()){
+    while(1){
         std::cout << "Elevator is running" << std::endl;
         boost::this_thread::sleep_for(boost::chrono::milliseconds(1000));
     }
+
+    delete light_controller;
+    delete poller;
+    delete driver;
+    delete elevator;
+    delete data_container;
 
     return 0;
 }

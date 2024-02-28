@@ -2,17 +2,21 @@
 
 #include "call_class.h"
 #include "elevator_state_class.h"
+#include <boost/thread/mutex.hpp>
 
 class Super_container {
     private: 
         std::vector<Elevator_state*> elevators;
-        std::shared_mutex mutex;
+
+        boost::mutex mtx;
+        
 
         std::vector <Call*> locally_assigned_calls;
         std::vector <Call*> call_list;
-        std::shared_mutex call_list_mutex;
-
     public:
+
+        Super_container();
+
         std::vector<Elevator_id> get_alive_elevators();
 
         std::vector<Call*>get_call_list(); //Change this

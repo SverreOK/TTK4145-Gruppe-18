@@ -3,13 +3,21 @@
 class Call;
 
 std::vector<Call*> Super_container::get_call_list(){
-    std::shared_lock<std::shared_mutex> lock(call_list_mutex);
-    return call_list;
+    //boost::unique_lock<boost::mutex> scoped_lock(mtx);
+    std::vector<Call*> copy = call_list;
+    return copy;
 }
 
 std::vector<Call*> Super_container::get_locally_assigned_calls(){
-    std::shared_lock<std::shared_mutex> lock(call_list_mutex);
-    return locally_assigned_calls;
+    //boost::unique_lock<boost::mutex> scoped_lock(mtx);
+    std::vector<Call*> copy =  locally_assigned_calls;
+    return copy;
+}
+
+Super_container::Super_container(){
+    elevators = std::vector<Elevator_state*>();
+    call_list = std::vector<Call*>();
+    locally_assigned_calls = std::vector<Call*>();
 }
 
 
@@ -18,7 +26,7 @@ void Super_container::add_call(int floor, button_type call_type, Call_id call_id
     Call* new_call = new Call(floor, call_type, call_id);
 
 
-    std::unique_lock<std::shared_mutex> lock(call_list_mutex);
+    //boost::unique_lock<boost::mutex> scoped_lock(mtx);
     call_list.push_back(new_call);
 }
 
@@ -36,7 +44,7 @@ void Super_container::add_call_with_elevatorId(int floor, button_type call_type,
 std::vector<Call*> Super_container::get_calls_originating_from_elevator(Elevator_id elevator_id){
     std::vector<Call*> calls;
     
-    std::shared_lock<std::shared_mutex> lock(call_list_mutex);
+    //boost::unique_lock<boost::mutex> scoped_lock(mtx);
 
     for (auto call : call_list){
         
@@ -68,14 +76,14 @@ Call_id* Super_container::get_last_call_id_originating_from_elevator(Elevator_id
 
 
 void Super_container::add_elevator(Elevator_state* elevator){
-    std::unique_lock<std::shared_mutex> lock(mutex);
+    //boost::unique_lock<boost::mutex> scoped_lock(mtx);
     elevators.push_back(elevator);
 }
 
 std::vector<Elevator_id> Super_container::get_alive_elevators(){
     std::vector<Elevator_id> alive_elevators;
 
-    std::shared_lock<std::shared_mutex> lock(mutex);
+    //boost::unique_lock<boost::mutex> scoped_lock(mtx);
     for (auto elevator : elevators){
         if (elevator->get_alive_status()){
             alive_elevators.push_back(elevator->get_id());
@@ -85,7 +93,7 @@ std::vector<Elevator_id> Super_container::get_alive_elevators(){
 }
 
 Elevator_state* Super_container::get_elevator_by_id(Elevator_id id){
-    std::shared_lock<std::shared_mutex> lock(mutex);
+    //boost::unique_lock<boost::mutex> scoped_lock(mtx);
     for (auto elevator : elevators){
         if (elevator->get_id().id == id.id){
             return elevator;
