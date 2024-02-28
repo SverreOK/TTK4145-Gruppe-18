@@ -1,6 +1,6 @@
 #include "elevator/elevator_fsm.h"
 
-Elevator::Elevator(elevator_driver* driver, Elevator_id id, Super_container* data_container, thread_safe_queue<elevator_event>& event_queue)
+Elevator::Elevator(elevator_driver* driver, Elevator_id id, Super_container* data_container, thread_safe_queue* event_queue)
     : driver(driver), id(id), data_container(data_container), event_queue(event_queue){
         driver->connect();        
 }
@@ -147,8 +147,8 @@ void Elevator::initialize_position() {
 void Elevator::run_event_queue() {
     // Implement in main instead
     while (running) {
-        elevator_event event = event_queue.pop();
-        handle_event(event);
+        //elevator_event event = event_queue->pop();
+        //handle_event(event);
     }
 }
 

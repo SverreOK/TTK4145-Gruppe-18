@@ -36,7 +36,7 @@ class Elevator {
 
         Elevator_id id;
 
-        thread_safe_queue<elevator_event>& event_queue;
+        thread_safe_queue* event_queue;
 
         boost::thread fsm_thread;
 
@@ -46,7 +46,7 @@ class Elevator {
 
     public:
         // Constructor declaration
-        Elevator(elevator_driver* driver, Elevator_id id, Super_container* data_container, thread_safe_queue<elevator_event>& event_queue);
+        Elevator(elevator_driver* driver, Elevator_id id, Super_container* data_container, thread_safe_queue* event_queue);
 
         void handle_event(elevator_event event);
 
