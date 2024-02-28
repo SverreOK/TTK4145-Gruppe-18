@@ -6,7 +6,7 @@
 
 
 
-#include "../inc/elevator/elevator_fsm.h"
+#include "elevator_fsm.h"
 #include "elevator_driver.h" 
 #include "elevator_button_poller.h"
 #include "elevator_light_thread.h"
