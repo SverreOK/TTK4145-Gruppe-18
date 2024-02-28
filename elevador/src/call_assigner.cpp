@@ -4,8 +4,7 @@
 #include <jsoncpp/json/json.h>
 #include <iostream>
 
-std::vector<std::vector<bool>> call_list_to_floor_list(std::vector<Call*> calls) {
-    int N_FLOORS = 4; // this is technically defined somewhere lmamooasdof
+std::vector<std::vector<bool>> call_list_to_floor_list(std::vector<Call*> calls, int N_FLOORS) { // Output format: [[up_button, down_button], [up_button, down_button], ...]
     std::vector<std::vector<bool>> floors(N_FLOORS, std::vector<bool>(2, false));
     for (auto call : calls) {
         switch (call -> get_call_type()) {
@@ -64,7 +63,7 @@ std::string generate_hall_request_assigner_json(std::vector<std::vector<bool>> h
     }
     root["states"] = states;
 
-    std::string root_str = root.toStyledString();
+    std::string root_str = root.toStyledString(); // Styled string for easier debug (indentation and newlines)
 
     return root_str;
 }
@@ -78,6 +77,7 @@ bool call_is_assigned(Call* call, std::vector<std::vector<bool>> assigned_floors
     if (assigned_floors.at(call -> get_floor() - 1).at(0) && going_up || assigned_floors.at(call -> get_floor() - 1).at(1) && going_down) {
         matches = true;
     }
+
     return matches;
 }
 
@@ -113,7 +113,7 @@ std::vector<Call*> get_assigned_calls_from_json(std::string json_string, std::st
 
 std::vector<Call*> get_assigned_calls_for_elevator(std::vector<Call*> calls, std::vector<Elevator_state*> elevators, Elevator_id local_id) {
 
-    std::vector<std::vector<bool>> hall_call_floors = call_list_to_floor_list(calls);
+    std::vector<std::vector<bool>> hall_call_floors = call_list_to_floor_list(calls, 4); // Set to 4 for now, should be replaced with a constant
     std::string argument_string = generate_hall_request_assigner_json(hall_call_floors, elevators);
     std::string execution_string = "./hall_request_assigner --input '" + argument_string + "'";
     std::string hall_request_assigner_output = exec(execution_string.c_str());
