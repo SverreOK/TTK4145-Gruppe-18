@@ -8,23 +8,76 @@ Elevator::Elevator(elevator_driver* driver, Elevator_id id, Super_container* dat
 void Elevator::handle_event(elevator_event event) {
 
     // Put algorithm variables here
-    //int current_floor = data_container->get_elevator_by_id(id)->get_current_floor();
-    //state_enum current_state = data_container->get_elevator_by_id(id)->get_current_state();
-    //std::vector<Call*> call_list = data_container->get_locally_assigned_calls();
+    int current_floor = data_container->get_elevator_by_id(id)->get_current_floor();
+    state_enum current_state = data_container->get_elevator_by_id(id)->get_current_state();
+    std::vector<Call*> call_list = data_container->get_locally_assigned_calls();
 
+    int motor_dir = choose_direction(current_floor, current_state, call_list);
+    
     switch (event)
     {
+
+        /* QUESTIONS:
+        - how do you update the state in super_container?
+        - how do you mark an order complete?
+        - how do i see the newest orders floor?
+        
+        */
+
     // ORDER RECEIVED
     case elevator_event::ORDER_RECEIVED:
+        switch (current_state) {
+            case state_enum::IDLE:
+                if (motor_dir = 0) {
+                    open_door();
+                }
+                else {
+                    if (motor_dir = 1) {
+                        // update state to moving up
+                    }
+                    else if (motor_dir = -1) {
+                        // update state to moving down
+                    }
+                }
+            break;
+
+            case state_enum::DOOR_OPEN:
+                if (1) { // if current_floor = new order floor
+                    // reset door timer
+                    // order complete?
+                    break;
+                }
+                break;
+
+            case state_enum::MOVING_DOWN:
+                break;
+            case state_enum::MOVING_UP:
+                break;
+        }
         break;
 
     // ARRIVED AT FLOOR
     case elevator_event::ARRIVED_AT_FLOOR:
-        break;
-        
+        if (1) {
+            driver->set_motor_direction(0);
+            open_door();
+            // order complete at floor
+
+        }    
+        break;    
 
     // DOOR TIMEOUT
     case elevator_event::DOOR_TIMEOUT:
+        driver->set_door_open_lamp(0);
+        int motor_dir = choose_direction(current_floor, current_state, call_list);
+        driver->set_motor_direction(motor_dir);
+        if (motor_dir == 0) {
+            // set state to idle
+        }
+        else {
+            // set state to moving
+            driver->set_motor_direction(motor_dir);
+        }
         break;
     }
 }
@@ -33,6 +86,7 @@ void Elevator::open_door() {
     // Open the door for 3 seconds
     driver->set_door_open_lamp(1);
     // start door timer
+    // state change
 }
 
 void Elevator::close_door() {
@@ -61,10 +115,7 @@ void Elevator::initialize_position() {
 // This function starts the elevator
 void Elevator::run() {
     Elevator::initialize_position();
-    // start the while loop
-    // poll floor
-    // poll obstruction
-    // poll orders?
+    // start the while loop for the event queue?
     // sleep for 10 ms
 }
 
