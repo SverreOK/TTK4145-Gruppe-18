@@ -1,5 +1,4 @@
 #pragma once
-#define ELEVATOR_INC_ELEVATOR_ELEVATOR_FSM_H
 
 //Includes
 #include "elevator_driver.h" 
