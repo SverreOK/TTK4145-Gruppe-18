@@ -13,6 +13,7 @@
 #include <vector>
 #include <mutex>
 #include <iostream>
+#include <thread>
 
 // Forward declaration
 class elevator_driver;
@@ -51,7 +52,6 @@ class Elevator {
 
         // Door
         void open_door();
-        void close_door();
 
         void run_event_queue();
 
