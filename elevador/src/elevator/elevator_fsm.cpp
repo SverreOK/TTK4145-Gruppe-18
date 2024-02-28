@@ -111,16 +111,18 @@ void Elevator::handle_event(elevator_event event) {
 void Elevator::open_door() {
     // Open the door for 3 seconds
     driver->set_door_open_lamp(1);
-    // start door timer
     // state change
     data_container->get_elevator_by_id(id)->set_current_state(state_enum::DOOR_OPEN);
-}
-
-void Elevator::close_door() {
-    while(driver->get_obstruction_signal()) {
-        // Wait for the obstruction to be cleared
+    while (true) {
+        if (!driver->get_obstruction_signal()) {
+            std::this_thread::sleep_for(std::chrono::seconds(3)); // Door remains open for 3 seconds if not obstructed
+            if (!driver->get_obstruction_signal()) { // Check again to avoid
+                break;
+            }
+        }
     }
-    driver->set_door_open_lamp(0);
+    // Door timeout should be handled right after??
+    handle_event(elevator_event::DOOR_TIMEOUT);
 }
 
 // Initializes at closest floor near the bottom
@@ -143,6 +145,7 @@ void Elevator::initialize_position() {
 
 // This function starts the elevator
 void Elevator::run_event_queue() {
+    // Implement in main instead
     while (running) {
         elevator_event event = event_queue.pop();
         handle_event(event);

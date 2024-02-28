@@ -30,6 +30,6 @@ int Call::get_floor() {
     return floor;
 }
 
-void Call::acknowlegde_call(Elevator_id elevator_id) {
-    elevator_ack_list.push_back(elevator_id);
+bool Call::is_serviced() {
+    return elevator_ack_list.size() > 0;
 }
