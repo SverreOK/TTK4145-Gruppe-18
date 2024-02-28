@@ -83,3 +83,13 @@ std::vector<Elevator_id> Super_container::get_alive_elevators(){
     }
     return alive_elevators;
 }
+
+Elevator_state* Super_container::get_elevator_by_id(Elevator_id id){
+    std::shared_lock<std::shared_mutex> lock(mutex);
+    for (auto elevator : elevators){
+        if (elevator->get_id().id == id.id){
+            return elevator;
+        }
+    }
+    return nullptr;
+}
