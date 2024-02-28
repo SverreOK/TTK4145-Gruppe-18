@@ -7,6 +7,11 @@ std::vector<Call*> Super_container::get_call_list(){
     return call_list;
 }
 
+std::vector<Call*> Super_container::get_locally_assigned_calls(){
+    std::shared_lock<std::shared_mutex> lock(call_list_mutex);
+    return locally_assigned_calls;
+}
+
 
 void Super_container::add_call(int floor, button_type call_type, Call_id call_id){
 
