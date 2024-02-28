@@ -110,6 +110,7 @@ void Elevator::handle_event(elevator_event event) {
 
 void Elevator::open_door() {
     // Open the door for 3 seconds
+    std::cout << "Door opened" << std::endl;
     driver->set_door_open_lamp(1);
     // state change
     data_container->get_elevator_by_id(id)->set_current_state(state_enum::DOOR_OPEN);
@@ -130,7 +131,9 @@ void Elevator::initialize_position() {
 
     if (driver->get_floor_sensor_signal() != -1) {
         //update current floor
+        std::cout << "Elevator already at floor" << driver->get_floor_sensor_signal() << std::endl;
         data_container->get_elevator_by_id(id)->set_current_floor(driver->get_floor_sensor_signal());
+        
         return;
     }
 
@@ -152,6 +155,7 @@ void Elevator::run_event_queue() {
             handle_event(event);
         }
         boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
+        open_door();
     }
 }
 

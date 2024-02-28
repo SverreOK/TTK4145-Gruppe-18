@@ -21,6 +21,7 @@ public:
     // Pushes an element to the queue 
     void push(elevator_event item) 
     { 
+        std::cout << "EVENT_QUEUE: Pushed item" << std::endl;
 
         // Acquire lock 
         std::unique_lock<std::mutex> lock(m_mutex); 
