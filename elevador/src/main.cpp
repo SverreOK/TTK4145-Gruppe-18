@@ -13,7 +13,6 @@
 
 #include "super_container.h"
 
-
 int main() {
 
     //create an elevator_id
@@ -30,12 +29,17 @@ int main() {
     auto a = data_container->get_alive_elevators();
     auto b = data_container->get_call_list();
 
-
+    //create event queue
+    thread_safe_queue* event_queue = new thread_safe_queue();
 
     //create a driver, poller and light controller
     elevator_driver* driver = new elevator_driver();
 
     driver->connect();
+
+    // create fsm
+    Elevator* elevator_fsm = new Elevator(driver, elevator_id, data_container, event_queue);
+    elevator_fsm->start();
 
     Light_controller* light_controller = new Light_controller(data_container, driver);
     boost::thread light_thread(&Light_controller::Update_lights, light_controller);

@@ -3,13 +3,6 @@
 //Includes
 #include <boost/thread.hpp>
 
-#include "elevator_driver.h" 
-#include "elevator_algorithm.h"
-
-#include "super_container.h"
-
-#include "util/event_queue.h"
-
 #include <vector>
 #include <mutex>
 #include <iostream>
@@ -24,6 +17,12 @@ enum class elevator_event {
     ARRIVED_AT_FLOOR,
     DOOR_TIMEOUT
 };
+
+
+#include "elevator_driver.h" 
+#include "elevator_algorithm.h"
+#include "super_container.h"
+#include "event_queue.h"
 
 
 class Elevator {

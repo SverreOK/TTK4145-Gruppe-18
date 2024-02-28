@@ -3,13 +3,13 @@
 #include <mutex>
 #include <queue>
 
-#include "elevator/elevator_fsm.h"
+#include "elevator_fsm.h"
 
 // Thread-safe queue 
 class thread_safe_queue { 
 private: 
     // Underlying queue 
-    std::queue<state_enum> m_queue; 
+    std::queue<elevator_event> m_queue; 
   
     // mutex for thread synchronization 
     std::mutex m_mutex; 
@@ -19,7 +19,7 @@ private:
   
 public: 
     // Pushes an element to the queue 
-    void push(state_enum item) 
+    void push(elevator_event item) 
     { 
 
         // Acquire lock 
@@ -38,7 +38,7 @@ public:
     To use, 
     Elevator::handle_event(event_queue.pop());    
     */
-    state_enum pop() 
+    elevator_event pop() 
     { 
   
         // acquire lock 
@@ -49,10 +49,15 @@ public:
                     [this]() { return !m_queue.empty(); }); 
   
         // retrieve item 
-        state_enum item = m_queue.front(); 
+        elevator_event item = m_queue.front(); 
         m_queue.pop(); 
   
         // return item
         return item; 
-    } 
+    }
+
+    bool empty() {
+        std::unique_lock<std::mutex> lock(m_mutex);
+        return m_queue.empty();
+    }
 }; 
