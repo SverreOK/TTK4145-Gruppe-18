@@ -69,7 +69,7 @@ int elevator_driver::get_floor_sensor_signal() {
     boost::asio::write(socket, boost::asio::buffer((char[4]) {7}, 4));
     char response[4];
     boost::asio::read(socket, boost::asio::buffer(response, 4));
-    return response[1];
+    return response[1] ? response[2] : -1;
 }
 
 int elevator_driver::get_stop_signal() {
