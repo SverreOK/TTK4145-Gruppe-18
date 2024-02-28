@@ -51,7 +51,7 @@ class Call {
         button_type get_call_type();
         Call_id* get_call_id();
         int get_floor();
-
+        bool is_serviced();
 
         void service_call(Elevator_id elevator_id);
 };

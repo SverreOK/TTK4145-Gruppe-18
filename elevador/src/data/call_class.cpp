@@ -29,3 +29,7 @@ Call_id* Call::get_call_id() {
 int Call::get_floor() {
     return floor;
 }
+
+bool Call::is_serviced() {
+    return elevator_ack_list.size() > 0;
+}
