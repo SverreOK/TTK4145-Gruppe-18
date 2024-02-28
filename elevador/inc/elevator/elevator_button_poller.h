@@ -16,7 +16,7 @@ private:
 
     bool running;
     int number_of_floors;
-    int update_freq = 100; //hz
+    int update_freq = 420; //hz
     int current_floor;
 
     std::vector<std::vector<bool>> button_vec =  std::vector<std::vector<bool>>(3, std::vector<bool>(number_of_floors, false));

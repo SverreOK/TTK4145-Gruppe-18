@@ -15,8 +15,7 @@ class Elevator_state {
         std::shared_mutex mutex;
 
     public:
-        Elevator_state(Elevator_id id){
-            this->id = id;
+        Elevator_state(Elevator_id id) : id(id){
             this->current_state = state_enum::IDLE;
             this->current_floor = 0;
             this->obstruction = false;

@@ -14,12 +14,12 @@ class Light_controller {
         Super_container* data_container;
         Elevator_id elevator_id;
         bool running;
-        int number_of_floors;
-        int update_freq = 10; //hz
+        int number_of_floors = 4; //TODO CONFIG
+        int update_freq = 420; //hz
 
         //a 3 x number_of_floors matrix with bools to represent the current state of the lights
-        std::vector<std::vector<bool>> light_matrix;
-        std::vector<std::vector<bool>> temp_matrix;
+        std::vector<std::vector<bool>> light_matrix = std::vector<std::vector<bool>>(3, std::vector<bool>(number_of_floors, false));
+        
     
     public:
 
@@ -31,7 +31,7 @@ class Light_controller {
         while (1)
         {
 
-        temp_matrix = std::vector<std::vector<bool>>(3, std::vector<bool>(number_of_floors, false));
+        std::vector<std::vector<bool>> temp_matrix = std::vector<std::vector<bool>>(3, std::vector<bool>(number_of_floors, false));
         //get the current call list and fill the temp matrix
 
         std::vector<Elevator_id> alive_elevators = data_container->get_alive_elevators();
@@ -49,6 +49,16 @@ class Light_controller {
             }
             if (ack_count == alive_elevators.size()){
                 temp_matrix[static_cast<int>( call->get_call_type() )][call->get_floor()] = true;
+            }
+        }
+
+        //compare the temp matrix with the light matrix and update the lights
+        for (int floor = 0; floor < number_of_floors; ++floor) {
+            for (int button = 0; button < 3; ++button) {
+                if (temp_matrix[button][floor] != light_matrix[button][floor]){
+                    driver->set_button_lamp(button, floor, temp_matrix[button][floor]);
+                    light_matrix[button][floor] = temp_matrix[button][floor];
+                }
             }
         }
 
