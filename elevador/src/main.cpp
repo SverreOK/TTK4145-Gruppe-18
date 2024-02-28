@@ -24,28 +24,31 @@ int main() {
 
     //add E1 to the super container
     Elevator_state* elevator = new Elevator_state(elevator_id);
-    // data_container->add_elevator(elevator);
+    data_container->add_elevator(elevator);
+
+    auto a = data_container->get_alive_elevators();
+    auto b = data_container->get_call_list();
+
 
 
     //create a driver, poller and light controller
     elevator_driver* driver = new elevator_driver();
-    Elevator_driver_poller* poller = new Elevator_driver_poller(driver, elevator_id, data_container, 4);
-    Light_controller* light_controller = new Light_controller(driver, elevator_id, data_container, 4);
 
     driver->connect();
-    //poller->start();
-    light_controller->start();
 
+    Light_controller* light_controller = new Light_controller(data_container, driver);
+    boost::thread light_thread(&Light_controller::Update_lights, light_controller);
+
+    
+    Elevator_driver_poller* poller = new Elevator_driver_poller(driver, elevator_id, data_container, 4);
+    boost::thread poller_thread(&Elevator_driver_poller::poll_all, poller);
+
+
+    
     while(1){
         std::cout << "Elevator is running" << std::endl;
         boost::this_thread::sleep_for(boost::chrono::milliseconds(1000));
     }
-
-    delete light_controller;
-    delete poller;
-    delete driver;
-    delete elevator;
-    delete data_container;
 
     return 0;
 }

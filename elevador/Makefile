@@ -39,7 +39,7 @@ $(EXEC_DEBUG): $(OBJ_DEBUG)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 %.debug.o: %.cpp
-	$(CC) $(CFLAGS_DEBUG) -c $< -o $@
+	$(CC) $(CFLAGS_DEBUG) -g -c $< -o $@
 
 clean:
 	rm -f $(OBJ) $(OBJ_DEBUG) $(EXEC) $(EXEC_DEBUG)

@@ -11,7 +11,6 @@ class Elevator_driver_poller {
 private:
     elevator_driver* driver;
     Super_container* data_container;
-    boost::thread poller_thread;
     Elevator_id elevator_id;
 
     bool running;
@@ -31,7 +30,11 @@ private:
         }
     }
 
-    void poller_loop() {
+
+public:
+
+    void poll_all() {
+        running = true;
         while (running) {
             poll_buttons();
             // poll_floor_sensors();
@@ -39,33 +42,12 @@ private:
         }
     }
 
-    // void poll_floor_sensors() {
-    //     int floor = driver->get_floor_sensor_signal();
-    //     if (floor != current_floor) {
-    //         current_floor = floor;
-    //         data_container->update_elevator_floor(elevator_id, floor);
-    //     }
-    // }
-
-    //void poll_obstruction_sensor() {
-    //}
-
-
-
-public:
     Elevator_driver_poller(elevator_driver* driver, Elevator_id elevator_id, Super_container* data_container, int number_of_floors) 
         : driver(driver), running(false), elevator_id(elevator_id), data_container(data_container), number_of_floors(number_of_floors) {}
 
-    void start() {
-        running = true;
-        poller_thread = boost::thread(&Elevator_driver_poller::poller_loop, this);
-    }
 
     void stop() {
         running = false;
-        if (poller_thread.joinable()) {
-            poller_thread.join();
-        }
     }
 
     bool get_running() {

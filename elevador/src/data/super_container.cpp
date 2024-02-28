@@ -76,7 +76,7 @@ Call_id* Super_container::get_last_call_id_originating_from_elevator(Elevator_id
 
 
 void Super_container::add_elevator(Elevator_state* elevator){
-    //boost::unique_lock<boost::mutex> scoped_lock(mtx);
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
     elevators.push_back(elevator);
 }
 
