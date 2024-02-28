@@ -18,25 +18,27 @@ void Elevator::handle_event(elevator_event event) {
     {
 
         /* QUESTIONS:
-        - how do you update the state in super_container?
-        - how do you mark an order complete?
+        - GOOD: how do you update the state in super_container? data_container->get_elevator_by_id(id)->set_current_state();
+        - how do you mark an order complete? 
         - how do i see the newest orders floor?
-        
         */
 
     // ORDER RECEIVED
     case elevator_event::ORDER_RECEIVED:
         switch (current_state) {
             case state_enum::IDLE:
+                driver->set_motor_direction(motor_dir);
                 if (motor_dir = 0) {
                     open_door();
                 }
                 else {
                     if (motor_dir = 1) {
                         // update state to moving up
+                        data_container->get_elevator_by_id(id)->set_current_state(state_enum::MOVING_UP);
                     }
                     else if (motor_dir = -1) {
                         // update state to moving down
+                        data_container->get_elevator_by_id(id)->set_current_state(state_enum::MOVING_DOWN);
                     }
                 }
             break;
@@ -44,7 +46,7 @@ void Elevator::handle_event(elevator_event event) {
             case state_enum::DOOR_OPEN:
                 if (1) { // if current_floor = new order floor
                     // reset door timer
-                    // order complete?
+                    // order complete at floor.
                     break;
                 }
                 break;
@@ -73,10 +75,17 @@ void Elevator::handle_event(elevator_event event) {
         driver->set_motor_direction(motor_dir);
         if (motor_dir == 0) {
             // set state to idle
+            data_container->get_elevator_by_id(id)->set_current_state(state_enum::IDLE);
         }
         else {
             // set state to moving
             driver->set_motor_direction(motor_dir);
+            if (motor_dir == 1) {
+                data_container->get_elevator_by_id(id)->set_current_state(state_enum::MOVING_UP);
+            }
+            if (motor_dir == 0) {
+                data_container->get_elevator_by_id(id)->set_current_state(state_enum::MOVING_DOWN);
+            }
         }
         break;
     }
@@ -87,6 +96,7 @@ void Elevator::open_door() {
     driver->set_door_open_lamp(1);
     // start door timer
     // state change
+    data_container->get_elevator_by_id(id)->set_current_state(state_enum::DOOR_OPEN);
 }
 
 void Elevator::close_door() {
