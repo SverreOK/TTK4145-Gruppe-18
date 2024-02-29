@@ -4,6 +4,17 @@
 #include <mutex>
 #include <shared_mutex>
 #include <map>
+#include "config.h"
+
+struct call_message
+{
+    char elevator_id[8];
+    uint8_t floor;
+    uint8_t call_type;
+    uint8_t call_id;
+    char ack_list[8][NUM_ELEVATORS];
+    char serviced[8][NUM_ELEVATORS];
+};
 
 //enum for direction of elevator
 enum class button_type {
@@ -33,18 +44,19 @@ enum class state_enum {
 class Call {
     private:
 
-         int floor;
-         button_type call_type;
-         Call_id* call_id;
-         Elevator_id assigned_elevator; //maybe change to a bool called something like "assigned to local node"?
+        int floor;
+        button_type call_type;
+        Call_id* call_id;
+        // Elevator_id assigned_elevator; //maybe change to a bool called something like "assigned to local node"?
         
-        std::vector<bool> serviced_ack_list;
+        std::vector<Elevator_id> serviced_ack_list;
         std::vector<Elevator_id> elevator_ack_list;
 
 
     public:
         Call(int floor, button_type call_type, Call_id* call_id);
         Call(int floor, button_type call_type, Call_id call_id);
+        Call(call_message call_msg);
 
 
         std::vector<Elevator_id> get_elevator_ack_list();

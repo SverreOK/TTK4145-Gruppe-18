@@ -1,8 +1,18 @@
 #pragma once
 
 #include "call_class.h"
+#include <boost/asio.hpp>
+#include <boost/thread/mutex.hpp>
 
-struct Elevator_id;
+
+struct elevator_status_network
+{
+    char id[8];
+    uint8_t state;
+    int8_t floor;
+    bool obstruction;
+    bool alive;
+};
 
 class Elevator_state {
     private:
@@ -11,8 +21,8 @@ class Elevator_state {
         int current_floor;
         bool obstruction;
         bool alive;
-
-        std::shared_mutex mutex;
+        boost::asio::ip::udp::endpoint endpoint;
+        boost::mutex mtx;
 
     public:
         Elevator_state(Elevator_id id) : id(id){
@@ -27,6 +37,7 @@ class Elevator_state {
         int get_current_floor();
         bool get_obstruction_status();
         bool get_alive_status();
+        elevator_status_network get_status_network();
         Elevator_id get_id();
         
 

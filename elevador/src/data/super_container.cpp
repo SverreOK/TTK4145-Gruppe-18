@@ -123,3 +123,7 @@ Elevator_state* Super_container::get_elevator_by_id(Elevator_id id){
     }
     return nullptr;
 }
+
+Elevator_id Super_container::get_my_id(){
+    return my_id;
+}

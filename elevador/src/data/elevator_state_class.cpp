@@ -5,22 +5,22 @@ struct Elevator_id;
 
 //elevator state functions
 state_enum Elevator_state::get_current_state(){
-    std::shared_lock<std::shared_mutex> lock(mutex);
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
     return current_state;
 }
 
 int Elevator_state::get_current_floor(){
-    std::shared_lock<std::shared_mutex> lock(mutex);
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
     return current_floor;
 }
 
 bool Elevator_state::get_obstruction_status(){
-    std::shared_lock<std::shared_mutex> lock(mutex);
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
     return obstruction;
 }
 
 bool Elevator_state::get_alive_status(){
-    std::shared_lock<std::shared_mutex> lock(mutex);
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
     return alive;
 }
 
@@ -28,24 +28,35 @@ Elevator_id Elevator_state::get_id(){
     return id;
 }
 
+elevator_status_network Elevator_state::get_status_network(){
+    elevator_status_network status;
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
+    strncpy(status.id, id.id.c_str(), 8);
+    status.state = static_cast<uint8_t>(current_state);
+    status.floor = static_cast<int8_t>(current_floor);
+    status.obstruction = obstruction;
+    status.alive = alive;
+    return status;
+}
+
 
 void Elevator_state::set_current_state(state_enum state){
-    std::unique_lock<std::shared_mutex> lock(mutex);
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
     current_state = state;
 }
 
 void Elevator_state::set_current_floor(int floor){
-    std::unique_lock<std::shared_mutex> lock(mutex);
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
     current_floor = floor;
 }
 
 void Elevator_state::set_obstruction(bool obstruction){
-    std::unique_lock<std::shared_mutex> lock(mutex);
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
     obstruction = obstruction;
 }
 
 void Elevator_state::set_alive(bool alive){
-    std::unique_lock<std::shared_mutex> lock(mutex);
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
     alive = alive;
 }
 

@@ -9,6 +9,7 @@ class Super_container {
         std::vector<Elevator_state*> elevators;
 
         boost::mutex mtx;
+        Elevator_id my_id;
         
 
         std::vector <Call*> locally_assigned_calls;
@@ -25,6 +26,7 @@ class Super_container {
         void add_new_call_with_elevatorId(int floor, button_type call_type, Elevator_id elevator_id);
         void change_call(Call* call, std::string elevator_id);
         bool call_exists(button_type call_type, int floor);
+        void add_call(Call* call); //TODO: implement. should also merge in the if the call already exists
 
         void add_elevator(Elevator_state* elevator);
 
@@ -34,4 +36,6 @@ class Super_container {
         Call_id* get_last_call_id_originating_from_elevator(Elevator_id elevator_id);
 
         std::vector<Call*> get_locally_assigned_calls();
+
+        Elevator_id get_my_id();
 };
