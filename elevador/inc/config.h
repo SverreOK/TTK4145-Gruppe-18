@@ -1,0 +1,1 @@
+#define NUM_ELEVATORS 3 //max, not current

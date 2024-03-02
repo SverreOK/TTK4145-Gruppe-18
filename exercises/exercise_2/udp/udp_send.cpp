@@ -23,7 +23,7 @@ void Udp_Sender::send(const std::string& message) {
 
 
 
-// #define IPAddr "10.100.23.29" //local ip
+// #define IPAddr "10.100.23.29" //local ip 10.255.255.255 255.255.255.255
 #define IPAddr "0.0.0.0" //local ip
 #define PORT "20018"          //port
 
