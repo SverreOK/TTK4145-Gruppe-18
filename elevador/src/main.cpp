@@ -45,7 +45,7 @@ int main() {
     boost::thread light_thread(&Light_controller::Update_lights, light_controller);
 
     
-    Elevator_driver_poller* poller = new Elevator_driver_poller(driver, elevator_id, data_container, 4);
+    Elevator_driver_poller* poller = new Elevator_driver_poller(driver, elevator_id, data_container, 4, event_queue);
     boost::thread poller_thread(&Elevator_driver_poller::poll_all, poller);
 
 

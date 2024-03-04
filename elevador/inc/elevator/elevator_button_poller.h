@@ -13,10 +13,11 @@ private:
     elevator_driver* driver;
     Super_container* data_container;
     Elevator_id elevator_id;
+    thread_safe_queue* event_queue;
 
     bool running;
     int number_of_floors;
-    int update_freq = 420; //hz
+    int update_freq = 20; //hz
     int current_floor;
 
     std::vector<std::vector<bool>> button_vec =  std::vector<std::vector<bool>>(3, std::vector<bool>(number_of_floors, false));
@@ -45,6 +46,18 @@ private:
         }
     }
 
+    void poll_floor_sensors() {
+        
+        int floor_sensor_signal = driver->get_floor_sensor_signal();
+
+        if (floor_sensor_signal != -1 && floor_sensor_signal != data_container->get_elevator_by_id(elevator_id)->get_current_floor()) {
+            
+            data_container->get_elevator_by_id(elevator_id)->set_current_floor(floor_sensor_signal);
+            event_queue->push(elevator_event::ARRIVED_AT_FLOOR);
+            printf("Floor sensor signal: %d\n", floor_sensor_signal);
+        }
+    }
+
 
 public:
 
@@ -52,13 +65,13 @@ public:
         running = true;
         while (running) {
             poll_buttons();
-            // poll_floor_sensors();
+            poll_floor_sensors();
             boost::this_thread::sleep_for(boost::chrono::milliseconds(int(1/(update_freq*1000))));
         }
     }
 
-    Elevator_driver_poller(elevator_driver* driver, Elevator_id elevator_id, Super_container* data_container, int number_of_floors) 
-        : driver(driver), running(false), elevator_id(elevator_id), data_container(data_container), number_of_floors(number_of_floors) {}
+    Elevator_driver_poller(elevator_driver* driver, Elevator_id elevator_id, Super_container* data_container, int number_of_floors, thread_safe_queue* event_queue) 
+        : driver(driver), running(false), elevator_id(elevator_id), data_container(data_container), number_of_floors(number_of_floors), event_queue(event_queue) {}
 
 
     void stop() {

@@ -38,7 +38,7 @@ void Network_driver::infinite_call_recv()
     {
         size_t len = call_socket.receive_from(boost::asio::buffer(buffer), sender_endpoint);
         call_message* incoming_call = (call_message*)buffer;
-        data_container->add_call(new Call(*incoming_call)); //this should also merge the call if it already exists
+        //data_container->add_call(new Call(*incoming_call)); //this should also merge the call if it already exists
         bool retransmit = false;
         for (auto elevators : data_container->get_alive_elevators())
         {
