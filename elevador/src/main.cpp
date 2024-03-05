@@ -17,8 +17,12 @@ int main() {
     //create an elevator_id
     Elevator_id elevator_id{"E1"};
 
+        //create event queue
+    thread_safe_queue* event_queue = new thread_safe_queue();
+
+
     //create a super container
-    Super_container* data_container = new Super_container();
+    Super_container* data_container = new Super_container(event_queue);
 
     //add E1 to the super container
     Elevator_state* elevator = new Elevator_state(elevator_id);
@@ -28,8 +32,6 @@ int main() {
     auto a = data_container->get_alive_elevators();
     auto b = data_container->get_call_list();
 
-    //create event queue
-    thread_safe_queue* event_queue = new thread_safe_queue();
 
     //create a driver, poller and light controller
     elevator_driver* driver = new elevator_driver();
