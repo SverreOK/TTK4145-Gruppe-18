@@ -2,7 +2,8 @@
 
 class Call;
 
-Super_container::Super_container(){
+Super_container::Super_container(thread_safe_queue* event_queue)
+                                : event_queue(event_queue){
     elevators = std::vector<Elevator_state*>();
     call_list = std::vector<Call*>();
     locally_assigned_calls = std::vector<Call*>();
@@ -20,6 +21,13 @@ std::vector<Call*> Super_container::get_locally_assigned_calls(){
     return copy;
 }
 
+void Super_container::add_call(Call* call){
+    //TODO: should check is should merge? also merge in the if the call already exists
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
+    call_list.push_back(call);
+    push_new_call_event();
+}
+
 
 void Super_container::add_new_call(int floor, button_type call_type, Call_id call_id){
 
@@ -30,8 +38,7 @@ void Super_container::add_new_call(int floor, button_type call_type, Call_id cal
     printf("Adding call to call list\n");
     printf("Call id: %d\n", new_call->get_call_id()->call_number);
 
-    boost::unique_lock<boost::mutex> scoped_lock(mtx);
-    call_list.push_back(new_call);
+    add_call(new_call);
 }
 
 void Super_container::add_new_call_with_elevatorId(int floor, button_type call_type, Elevator_id elevator_id){
@@ -126,4 +133,8 @@ Elevator_state* Super_container::get_elevator_by_id(Elevator_id id){
 
 Elevator_id Super_container::get_my_id(){
     return my_id;
+}
+
+void Super_container::push_new_call_event(){
+    event_queue->push(elevator_event::ORDER_RECEIVED);
 }
