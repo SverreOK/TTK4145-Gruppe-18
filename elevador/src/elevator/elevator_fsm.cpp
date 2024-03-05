@@ -55,9 +55,15 @@ void Elevator::handle_event(elevator_event event) {
 
             case state_enum::DOOR_OPEN:
                 std::cout << "Order receieved in DOOR_OPEN" << std::endl;
-                if (1) { // if current_floor = new order floor
-                    // reset door timer
-                    // order complete at floor.
+                // if condition should be to check the newest item in the call list and check if its floor is equal to current flor
+                if (current_floor == call_list[-1]->get_floor()) {
+                    open_door();
+                    // order complete 
+                    for (auto call : call_list) {
+                        if (call->get_floor() == current_floor) {
+                            call->service_call(id);
+                        }
+                    }
                     break;
                 }
                 break;
@@ -74,10 +80,31 @@ void Elevator::handle_event(elevator_event event) {
     // ARRIVED AT FLOOR
     case elevator_event::ARRIVED_AT_FLOOR:
         std::cout << "Arrived at floor" << std::endl;
-        if (1) {
+        //print should stop return and its variables
+        std::cout << "Should stop: " << should_stop(current_floor, current_state, call_list) << std::endl;
+        std::cout << "Current floor: " << current_floor << std::endl;
+        std::cout << "Call list: " << call_list.size() << std::endl;
+        switch (current_state)
+        {
+            case state_enum::MOVING_DOWN:
+                std::cout << "Arrived at floor in MOVING_DOWN" << std::endl;
+                break;
+            case state_enum::MOVING_UP:
+                std::cout << "Arrived at floor in MOVING_UP" << std::endl;
+                break;
+            case state_enum::IDLE:
+                std::cout << "Arrived at floor in IDLE" << std::endl;
+                break;
+        }
+        if (should_stop(current_floor, current_state, call_list)) {
             driver->set_motor_direction(0);
             open_door();
             // order complete at floor
+            for (auto call : call_list) {
+                if (call->get_floor() == current_floor) {
+                    call->service_call(id);
+                }
+            }
 
         }    
         break;    

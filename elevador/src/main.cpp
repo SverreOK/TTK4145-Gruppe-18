@@ -5,7 +5,6 @@
 #include <string>
 
 
-
 #include "elevator_fsm.h"
 #include "elevator_driver.h" 
 #include "elevator_button_poller.h"
@@ -48,8 +47,6 @@ int main() {
     Elevator_driver_poller* poller = new Elevator_driver_poller(driver, elevator_id, data_container, 4, event_queue);
     boost::thread poller_thread(&Elevator_driver_poller::poll_all, poller);
 
-
-    
     while(1){
         std::cout << "Elevator is running" << std::endl;
         boost::this_thread::sleep_for(boost::chrono::milliseconds(1000));
