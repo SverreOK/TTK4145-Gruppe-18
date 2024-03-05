@@ -155,7 +155,7 @@ void Elevator::run_event_queue() {
             handle_event(event);
         }
         boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
-        open_door();
+        //open_door();
     }
 }
 
