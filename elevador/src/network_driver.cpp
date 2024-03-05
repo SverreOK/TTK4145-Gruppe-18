@@ -16,8 +16,6 @@ Network_driver::Network_driver(Super_container* data_container) : data_container
     call_socket.set_option(udp::socket::reuse_address(true));
     call_socket.set_option(udp::socket::broadcast(true));
     call_socket.bind(udp::endpoint(udp::v4(), 12346));
-
-
 }
 
 void Network_driver::infinite_status_broadcast()
