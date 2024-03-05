@@ -9,7 +9,6 @@
 #include "elevator_driver.h" 
 #include "elevator_button_poller.h"
 #include "elevator_light_thread.h"
-
 #include "super_container.h"
 
 int main() {
@@ -50,7 +49,7 @@ int main() {
     boost::thread poller_thread(&Elevator_driver_poller::poll_all, poller);
 
     while(1){
-        std::cout << "Elevator is running" << std::endl;
+        // std::cout << "Elevator is running" << std::endl;
         boost::this_thread::sleep_for(boost::chrono::milliseconds(1000));
     }
 

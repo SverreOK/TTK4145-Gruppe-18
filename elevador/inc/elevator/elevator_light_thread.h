@@ -66,7 +66,6 @@ class Light_controller {
 
         //wait for x ms before updating the lights again
         //print in conside fuck my life :D
-        std::cout << "Call list size: " << call_list.size() << std::endl;
         boost::this_thread::sleep_for(boost::chrono::milliseconds(1000));
 
         }

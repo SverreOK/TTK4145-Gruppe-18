@@ -8,21 +8,17 @@
 #include <iostream>
 #include <thread>
 
-// Forward declaration
-class elevator_driver;
-
-// EVENTS
-enum class elevator_event {
-    ORDER_RECEIVED,
-    ARRIVED_AT_FLOOR,
-    DOOR_TIMEOUT
-};
-
 
 #include "elevator_driver.h" 
 #include "elevator_algorithm.h"
 #include "super_container.h"
 #include "event_queue.h"
+
+// // Forward declaration
+// class elevator_driver;
+
+
+
 
 
 class Elevator {

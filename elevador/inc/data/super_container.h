@@ -20,6 +20,7 @@ class Super_container {
 
     public:
 
+        //constructor
         Super_container(thread_safe_queue* event_queue);
 
         std::vector<Elevator_id> get_alive_elevators();

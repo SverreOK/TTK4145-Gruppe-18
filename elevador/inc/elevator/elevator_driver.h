@@ -20,9 +20,9 @@
 ///////////////////////// Elevator Driver  /////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 
-/// Forward declarations
-class Elevator_state;
-class Elevator;
+// /// Forward declarations
+// class Elevator_state;
+// class Elevator;
 
 
 class elevator_driver {
