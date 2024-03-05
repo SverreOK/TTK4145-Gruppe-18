@@ -52,6 +52,10 @@ void Call::acknowlegde_call(Elevator_id elevator_id) {
     elevator_ack_list.push_back(elevator_id);
 }
 
+void Call::service_call(Elevator_id elevator_id) {
+    serviced_ack_list.push_back(elevator_id);
+}
+
 bool Call::is_serviced() {
     return elevator_ack_list.size() > 0;
 }

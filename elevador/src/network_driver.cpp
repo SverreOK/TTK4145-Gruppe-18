@@ -1,4 +1,3 @@
-#pragma once
 #include "network_driver.h"
 
 using boost::asio::ip::udp;
