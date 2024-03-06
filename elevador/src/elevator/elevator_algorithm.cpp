@@ -46,6 +46,8 @@ bool should_stop(int current_floor, state_enum current_state, std::vector<Call*>
                     return true;
                 }
             }
+            return false;
+
         case state_enum::MOVING_DOWN:
             for (auto call : call_list) {
                 if (
@@ -56,6 +58,8 @@ bool should_stop(int current_floor, state_enum current_state, std::vector<Call*>
                     return true;
                 }
             }
+            return false;
+            
         default:
             return false;
     }
