@@ -33,6 +33,7 @@ class Super_container {
         void change_call(Call* call, std::string elevator_id);
         void push_new_call_event();
         void add_elevator(Elevator_state* elevator);
+        void set_my_id(Elevator_id id);
 
         void service_call(Call* call, Elevator_id elevator_id);
 
@@ -42,6 +43,7 @@ class Super_container {
         Elevator_state* get_elevator_by_id(Elevator_id id);
         std::vector<Call*> get_calls_originating_from_elevator(Elevator_id elevator_id);
         Call_id* get_last_call_id_originating_from_elevator(Elevator_id elevator_id);
+        std::vector<Call*> update_locally_assigned_calls();
         std::vector<Call*> get_locally_assigned_calls();
         Elevator_id get_my_id();
 };

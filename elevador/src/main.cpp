@@ -27,6 +27,7 @@ int main() {
     Elevator_state* elevator = new Elevator_state(elevator_id);
     elevator->set_alive(true);
     data_container->add_elevator(elevator);
+    data_container->set_my_id(elevator_id);
 
     auto a = data_container->get_alive_elevators();
     auto b = data_container->get_call_list();

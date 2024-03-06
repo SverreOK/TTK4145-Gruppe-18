@@ -16,14 +16,30 @@ std::vector<Call*> Super_container::get_call_list(){
     return copy;
 }
 
-std::vector<Call*> Super_container::get_locally_assigned_calls(){
+std::vector<Call*> Super_container::update_locally_assigned_calls(){
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
 
     std::vector<Call*> call_list_copy = call_list;
+    std::vector<Call*> not_serviced_calls = std::vector<Call*>();
+
+    //remove calls that are already serviced by checking if serviced vector length more than 0
+
+    for (auto call : call_list_copy){
+        if (call->get_serviced_ack_list().size() == 0){
+            not_serviced_calls.push_back(call);
+        }
+    }
+
     std::vector<Elevator_state*> elevators_copy = elevators;
-    locally_assigned_calls = get_assigned_calls_for_elevator(call_list, elevators, my_id);
+    locally_assigned_calls = get_assigned_calls_for_elevator(not_serviced_calls, elevators, my_id);
 
     std::vector<Call*> copy =  locally_assigned_calls;
+    return copy;
+}
+
+std::vector<Call*> Super_container::get_locally_assigned_calls(){
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
+    std::vector<Call*> copy = locally_assigned_calls;
     return copy;
 }
 
@@ -31,6 +47,10 @@ void Super_container::add_call(Call* call){
     //TODO: should check is should merge? also merge in the if the call already exists
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
     call_list.push_back(call);
+
+    scoped_lock.unlock();
+    update_locally_assigned_calls();
+
     push_new_call_event();
 }
 
@@ -120,6 +140,11 @@ void Super_container::add_elevator(Elevator_state* elevator){
     elevators.push_back(elevator);
 }
 
+void Super_container::set_my_id(Elevator_id id){
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
+    my_id = id;
+}
+
 std::vector<Elevator_id> Super_container::get_alive_elevators(){
     std::vector<Elevator_id> alive_elevators = std::vector<Elevator_id>();
 
@@ -177,5 +202,7 @@ void Super_container::service_call(Call* call, Elevator_id elevator_id){
             }
         }
     }
+
+    update_locally_assigned_calls();
 
 }

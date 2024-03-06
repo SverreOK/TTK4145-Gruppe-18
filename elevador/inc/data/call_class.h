@@ -60,6 +60,7 @@ class Call {
 
 
         std::vector<Elevator_id> get_elevator_ack_list();
+        std::vector<Elevator_id> get_serviced_ack_list();
         button_type get_call_type();
         Call_id* get_call_id();
         int get_floor();

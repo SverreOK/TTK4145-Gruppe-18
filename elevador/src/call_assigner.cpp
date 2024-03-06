@@ -9,10 +9,10 @@ std::vector<std::vector<bool>> call_list_to_floor_list(std::vector<Call*> calls,
     for (auto call : calls) {
         switch (call -> get_call_type()) {
             case button_type::UP_HALL:
-                floors.at(call -> get_floor() -1 )[0] = true; // -1 because the floor number is 1-indexed
+                floors.at(call -> get_floor() )[0] = true; // -1 because the floor number is 1-indexed
                 break;
             case button_type::DOWN_HALL:
-                floors.at(call -> get_floor() -1)[1] = true;
+                floors.at(call -> get_floor() )[1] = true;
                 break;
             default:
                 break;
@@ -80,8 +80,8 @@ bool call_is_assigned(Call* call, std::vector<std::vector<bool>> assigned_floors
     bool going_down = call -> get_call_type() == button_type::DOWN_HALL;
     int call_floor = call -> get_floor();
 
-    if (assigned_floors.at(call_floor - 1).at(0) && going_up 
-        || assigned_floors.at(call_floor- 1).at(1) && going_down) {
+    if (assigned_floors.at(call_floor).at(0) && going_up 
+        || assigned_floors.at(call_floor).at(1) && going_down) {
         matches = true;
     }
 

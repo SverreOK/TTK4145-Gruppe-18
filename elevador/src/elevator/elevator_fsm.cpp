@@ -10,7 +10,10 @@ void Elevator::handle_event(elevator_event event) {
     // Put algorithm variables here
     int current_floor = data_container->get_elevator_by_id(id)->get_current_floor();
     state_enum current_state = data_container->get_elevator_by_id(id)->get_current_state();
-    std::vector<Call*> call_list = data_container->get_call_list();
+    
+    // std::vector<Call*> call_list = data_container->get_call_list();
+    std::vector<Call*> call_list = data_container->get_locally_assigned_calls();
+
     std::cout << "Current floor: " << current_floor << std::endl;
 
     std::cout << "Call list size: " << call_list.size() << std::endl;
@@ -98,6 +101,7 @@ void Elevator::handle_event(elevator_event event) {
 
         if (should_stop(current_floor, current_state, call_list)) {
             driver->set_motor_direction(0);
+            data_container->get_elevator_by_id(id)->set_current_state(state_enum::DOOR_OPEN);
             // order complete at floor
             for (auto call : call_list) {
                 if (call->get_floor() == current_floor) {

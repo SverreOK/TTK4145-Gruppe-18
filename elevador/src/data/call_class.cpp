@@ -2,7 +2,7 @@
 
 class Call;
 class Call_id;
-
+//TODO MISSING MUTEXES?
 Call::Call(int floor, button_type call_type, Call_id* call_id) 
             : floor(floor), call_type(call_type), call_id(call_id){
 }
@@ -34,6 +34,10 @@ Call::Call(call_message call_msg)
 
 std::vector<Elevator_id> Call::get_elevator_ack_list() {
     return elevator_ack_list;
+}
+
+std::vector<Elevator_id> Call::get_serviced_ack_list() {
+    return serviced_ack_list;
 }
 
 button_type Call::get_call_type() {
