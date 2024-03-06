@@ -1,5 +1,6 @@
 #include "super_container.h"
 
+#include "call_assigner.h"
 class Call;
 
 Super_container::Super_container(thread_safe_queue* event_queue)
@@ -17,6 +18,11 @@ std::vector<Call*> Super_container::get_call_list(){
 
 std::vector<Call*> Super_container::get_locally_assigned_calls(){
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
+
+    std::vector<Call*> call_list_copy = call_list;
+    std::vector<Elevator_state*> elevators_copy = elevators;
+    locally_assigned_calls = get_assigned_calls_for_elevator(call_list, elevators, my_id);
+
     std::vector<Call*> copy =  locally_assigned_calls;
     return copy;
 }
@@ -81,9 +87,7 @@ std::vector<Call*> Super_container::get_calls_originating_from_elevator(Elevator
 }
 
 
-// Function is commented for now because it throws an error. &call->get_call_id(); is a temporary value //fixed?
 Call_id* Super_container::get_last_call_id_originating_from_elevator(Elevator_id elevator_id){
-    //should make sure the returned call_id has the largest call_id.get_call_number()
 
     int last_call_id_number = 0;
     Call_id* last_call_id = nullptr;
@@ -101,6 +105,17 @@ Call_id* Super_container::get_last_call_id_originating_from_elevator(Elevator_id
 
 
 void Super_container::add_elevator(Elevator_state* elevator){
+
+    //check if the elevator is already in the list //TODO is this good?
+    for (auto e : elevators){
+        if (e->get_id().id == elevator->get_id().id){
+            printf("Elevator with id %d already in list\n", elevator->get_id().id);
+            printf("Elevator already in list\n");
+            return;
+
+        }
+    }
+
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
     elevators.push_back(elevator);
 }

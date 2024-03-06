@@ -10,7 +10,7 @@ void Elevator::handle_event(elevator_event event) {
     // Put algorithm variables here
     int current_floor = data_container->get_elevator_by_id(id)->get_current_floor();
     state_enum current_state = data_container->get_elevator_by_id(id)->get_current_state();
-    std::vector<Call*> call_list = data_container->get_call_list();
+    std::vector<Call*> call_list = data_container->get_locally_assigned_calls();
 
     std::cout << "Call list size: " << call_list.size() << std::endl;
 

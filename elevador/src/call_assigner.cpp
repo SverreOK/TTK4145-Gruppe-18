@@ -63,8 +63,10 @@ std::string generate_hall_request_assigner_json(std::vector<std::vector<bool>> h
     }
     root["states"] = states;
 
-    std::string root_str = root.toStyledString(); // Styled string for easier debug (indentation and newlines)
-
+    //std::string root_str = root.toStyledString(); // Styled string for easier debug (indentation and newlines)
+    Json::FastWriter fastWriter;
+    std::string root_str = fastWriter.write(root);
+    root_str = root_str.substr(0, root_str.length() - 1);  // remove trailing newline
     return root_str;
 }
 
@@ -73,8 +75,10 @@ bool call_is_assigned(Call* call, std::vector<std::vector<bool>> assigned_floors
 
     bool going_up = call -> get_call_type() == button_type::UP_HALL;
     bool going_down = call -> get_call_type() == button_type::DOWN_HALL;
+    int call_floor = call -> get_floor();
 
-    if (assigned_floors.at(call -> get_floor() - 1).at(0) && going_up || assigned_floors.at(call -> get_floor() - 1).at(1) && going_down) {
+    if (assigned_floors.at(call_floor - 1).at(0) && going_up 
+        || assigned_floors.at(call_floor- 1).at(1) && going_down) {
         matches = true;
     }
 
@@ -102,6 +106,12 @@ std::vector<std::vector<bool>> get_assigned_floors_from_json(std::string json_st
 std::vector<Call*> get_assigned_calls_from_json(std::string json_string, std::string elevator_id, std::vector<Call*> calls) {
     std::vector<std::vector<bool>> assigned_floors = get_assigned_floors_from_json(json_string, elevator_id);
     std::vector<Call*> assigned_calls;
+
+    //check if assigned_calls has anything inside/is empty
+
+    if (assigned_floors.empty()) {
+        return assigned_calls;
+    }
 
     for (auto call : calls) {
         if (call_is_assigned(call, assigned_floors)) {

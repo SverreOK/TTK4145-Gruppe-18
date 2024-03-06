@@ -1,3 +1,5 @@
+#pragma once
+
 #include "elevator_algorithm.h"
 #include <iostream>
 
@@ -37,8 +39,8 @@ bool should_stop(int current_floor, state_enum current_state, std::vector<Call*>
         case state_enum::MOVING_UP:
             for (auto call : call_list) {
                 if (
-                    (call->get_call_type() == button_type::UP_HALL & call->get_floor() == current_floor) ||
-                    (call->get_call_type() == button_type::CAB & call->get_floor() == current_floor) ||
+                    (call->get_call_type() == button_type::UP_HALL && call->get_floor() == current_floor) ||
+                    (call->get_call_type() == button_type::CAB && call->get_floor() == current_floor) ||
                     !requests_above(current_floor, call_list)
                 ) {
                     return true;
@@ -47,8 +49,8 @@ bool should_stop(int current_floor, state_enum current_state, std::vector<Call*>
         case state_enum::MOVING_DOWN:
             for (auto call : call_list) {
                 if (
-                    (call->get_call_type() == button_type::DOWN_HALL & call->get_floor() == current_floor) ||
-                    (call->get_call_type() == button_type::CAB & call->get_floor() == current_floor) ||
+                    (call->get_call_type() == button_type::DOWN_HALL && call->get_floor() == current_floor) ||
+                    (call->get_call_type() == button_type::CAB && call->get_floor() == current_floor) ||
                     !requests_below(current_floor, call_list)
                 ) {
                     return true;
