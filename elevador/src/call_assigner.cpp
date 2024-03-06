@@ -81,7 +81,7 @@ std::string generate_hall_request_assigner_json(std::vector<std::vector<bool>> h
     root_str = root_str.substr(0, root_str.length() - 1);  // remove trailing newline
     Json::StyledWriter styledWriter;
     std::string root_str_2 = styledWriter.write(root);
-    std::cout << root_str_2 << std::endl;
+    //std::cout << root_str_2 << std::endl;
     return root_str;
 }
 

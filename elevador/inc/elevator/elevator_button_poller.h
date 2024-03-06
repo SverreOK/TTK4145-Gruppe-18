@@ -36,10 +36,10 @@ private:
                         button_type call_type = (button_type)button; //might give wrong button check
                         data_container->add_new_call_with_elevatorId(floor, call_type, elevator_id); 
 
-                        printf("Button %d on floor %d pressed\n", button, floor);
+                        //printf("Button %d on floor %d pressed\n", button, floor);
                     } else {
                         button_vec[button][floor] = false;
-                        printf("Button %d on floor %d released\n", button, floor);
+                        //printf("Button %d on floor %d released\n", button, floor);
                     }
                 }
             }
