@@ -10,33 +10,17 @@ void Elevator::handle_event(elevator_event event) {
     // Put algorithm variables here
     int current_floor = data_container->get_elevator_by_id(id)->get_current_floor();
     state_enum current_state = data_container->get_elevator_by_id(id)->get_current_state();
-    
-    // std::vector<Call*> call_list = data_container->get_call_list();
     std::vector<Call*> call_list = data_container->get_locally_assigned_calls();
-
-    std::cout << "Current floor: " << current_floor << std::endl;
-
-    std::cout << "Call list size: " << call_list.size() << std::endl;
-
     int motor_dir = choose_direction(current_floor, current_state, call_list);
-    std::cout << "Motor dir: " << motor_dir << std::endl;
+
+    std::cout << "DEBUG: Current floor: " << current_floor;
+
+    std::cout << ", Call list size: " << call_list.size();
+
+    std::cout << ", Motor dir: " << motor_dir << "-------------" << std::endl;
     
     switch (event)
     {
-        /* QUESTIONS:
-        - GOOD: how do you update the state in super_container? data_container->get_elevator_by_id(id)->set_current_state();
-        - how do you mark an order complete? 
-        - how do i see the newest orders floor?
-        - where implement event queue?
-        */
-
-       /*
-       EVENT QUEUE:
-        What pushes the order received events?
-        Door_timer pushes the order receieved event
-        Poller pushes the arrived at floor event
-        The class/object that runs the event queue can send handle event to the elevator
-       */
 
     // ORDER RECEIVED
     case elevator_event::ORDER_RECEIVED:
@@ -45,11 +29,7 @@ void Elevator::handle_event(elevator_event event) {
                 std::cout << "Order received in IDLE " << std::endl;
                 driver->set_motor_direction(motor_dir);
                 if (motor_dir == 0) {
-                    for (auto call : call_list) {
-                        if (call->get_floor() == current_floor) {
-                            data_container->service_call(call, id);
-                        }
-                    }
+                    clear_orders(call_list, current_floor);
                     open_door();
                 }
                 else {
@@ -67,11 +47,7 @@ void Elevator::handle_event(elevator_event event) {
             case state_enum::DOOR_OPEN:
                 std::cout << "Order receieved in DOOR_OPEN" << std::endl;
                 // if condition should be to check the newest item in the call list and check if its floor is equal to current flor
-                for (auto call : call_list) {
-                    if (call->get_floor() == current_floor) {
-                        data_container->service_call(call, id);
-                    }
-                }
+                clear_orders(call_list, current_floor);
                 open_door();                
                 break;
 
@@ -103,12 +79,7 @@ void Elevator::handle_event(elevator_event event) {
             driver->set_motor_direction(0);
             data_container->get_elevator_by_id(id)->set_current_state(state_enum::DOOR_OPEN);
             // order complete at floor
-            for (auto call : call_list) {
-                if (call->get_floor() == current_floor) {
-                    // help me
-                    data_container->service_call(call, id);
-                }
-            }
+            clear_orders(call_list, current_floor);
             open_door();
 
         }    
@@ -118,11 +89,7 @@ void Elevator::handle_event(elevator_event event) {
     case elevator_event::DOOR_TIMEOUT:
         std::cout << "Door timeout" << std::endl;
 
-        for (auto call : call_list) {
-            if (call->get_floor() == current_floor) {
-                data_container->service_call(call, id);
-            }
-        }
+        clear_orders(call_list, current_floor);
 
         driver->set_door_open_lamp(0);
         int motor_dir = choose_direction(current_floor, state_enum::IDLE, call_list);
@@ -143,6 +110,14 @@ void Elevator::handle_event(elevator_event event) {
             }
         }
         break;
+    }
+}
+
+void Elevator::clear_orders(std::vector<Call*> call_list, int current_floor) {
+    for (auto call : call_list) {
+        if (call->get_floor() == current_floor) {
+            data_container->service_call(call, id);
+        }
     }
 }
 

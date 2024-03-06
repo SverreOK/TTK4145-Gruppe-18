@@ -1,1 +1,1 @@
-# TTK4145-Gruppe-18
+# Peer-to-peer elevator system in C++

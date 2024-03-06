@@ -39,6 +39,8 @@ class Elevator {
 
         void initialize_position();
 
+        void clear_orders(std::vector<Call*> call_list, int current_floor);
+
     public:
         // Constructor declaration
         Elevator(elevator_driver* driver, Elevator_id id, Super_container* data_container, thread_safe_queue* event_queue);
