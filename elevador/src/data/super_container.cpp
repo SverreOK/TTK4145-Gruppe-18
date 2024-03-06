@@ -206,3 +206,14 @@ void Super_container::service_call(Call* call, Elevator_id elevator_id){
     update_locally_assigned_calls();
 
 }
+
+// std::vector<bool> Super_container::get_local_cab_requests_cheeky() {
+//     std::vector<Call*> calls = get_calls_originating_from_elevator(my_id);
+//     std::vector<bool> requests = {false, false, false, false};
+//     for (auto call : calls) {
+//         if (call->get_call_type() == button_type::CAB) {
+//             requests[call->get_floor()] = true;
+//         }
+//     }
+//     return requests;
+// } // TODO

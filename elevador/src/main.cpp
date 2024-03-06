@@ -23,6 +23,8 @@ int main() {
     //create a super container
     Super_container* data_container = new Super_container(event_queue);
 
+    
+
     //add E1 to the super container
     Elevator_state* elevator = new Elevator_state(elevator_id);
     elevator->set_alive(true);
