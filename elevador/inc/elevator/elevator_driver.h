@@ -5,8 +5,6 @@
 #include <boost/system/error_code.hpp>
 #include <mutex>
 
-#include "elevator_fsm.h"
-
 // Number of floors. Hardware-dependent, do not modify.
 #define N_FLOORS 4
 
@@ -54,8 +52,8 @@ public:
     
     bool get_connected();
 
-    void poll_floor(Elevator *elevator, Elevator_state state);
-    void poll_obstruction(Elevator *elevator, Elevator_state state);
+    // void poll_floor(Elevator *elevator, Elevator_state state);
+    // void poll_obstruction(Elevator *elevator, Elevator_state state);
 
     //~elevator_driver();
 
