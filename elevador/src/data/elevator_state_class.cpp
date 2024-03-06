@@ -68,11 +68,13 @@ std::string Elevator_state::get_behaviour() {
             behaviour = "idle";
             break;
         case state_enum::MOVING_UP:
+            behaviour = "moving";
+            break;
         case state_enum::MOVING_DOWN:
             behaviour = "moving";
             break;
         case state_enum::DOOR_OPEN:
-            behaviour = "door_open";
+            behaviour = "doorOpen";
             break;
     }
     return behaviour;
