@@ -10,13 +10,15 @@ void Elevator::handle_event(elevator_event event) {
     // Put algorithm variables here
     int current_floor = data_container->get_elevator_by_id(id)->get_current_floor();
     state_enum current_state = data_container->get_elevator_by_id(id)->get_current_state();
-    std::vector<Call*> call_list = data_container->get_locally_assigned_calls();
+    std::vector<Call*> call_list = data_container->get_call_list();
+
+    std::cout << "Call list size: " << call_list.size() << std::endl;
 
     int motor_dir = choose_direction(current_floor, current_state, call_list);
+    std::cout << "Motor dir: " << motor_dir << std::endl;
     
     switch (event)
     {
-
         /* QUESTIONS:
         - GOOD: how do you update the state in super_container? data_container->get_elevator_by_id(id)->set_current_state();
         - how do you mark an order complete? 
@@ -61,7 +63,7 @@ void Elevator::handle_event(elevator_event event) {
                     // order complete 
                     for (auto call : call_list) {
                         if (call->get_floor() == current_floor) {
-                            call->service_call(id);
+                            data_container->service_call(call, id);
                         }
                     }
                     break;
@@ -102,7 +104,8 @@ void Elevator::handle_event(elevator_event event) {
             // order complete at floor
             for (auto call : call_list) {
                 if (call->get_floor() == current_floor) {
-                    call->service_call(id);
+                    // help me
+                    data_container->service_call(call, id);
                 }
             }
 
