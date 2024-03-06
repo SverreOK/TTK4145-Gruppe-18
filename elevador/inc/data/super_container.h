@@ -12,7 +12,6 @@ class Super_container {
         boost::mutex mtx;
         Elevator_id my_id;
         
-
         std::vector <Call*> locally_assigned_calls;
         std::vector <Call*> call_list;
 
@@ -35,7 +34,10 @@ class Super_container {
         void push_new_call_event();
         void add_elevator(Elevator_state* elevator);
 
+        void service_call(Call* call, Elevator_id elevator_id);
+
         bool call_exists(button_type call_type, int floor);
+
 
         Elevator_state* get_elevator_by_id(Elevator_id id);
         std::vector<Call*> get_calls_originating_from_elevator(Elevator_id elevator_id);

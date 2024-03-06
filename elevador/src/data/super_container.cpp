@@ -138,3 +138,26 @@ Elevator_id Super_container::get_my_id(){
 void Super_container::push_new_call_event(){
     event_queue->push(elevator_event::ORDER_RECEIVED);
 }
+
+void Super_container::service_call(Call* call, Elevator_id elevator_id){
+    //find the call in the call list and run the service call function
+    for (auto c : call_list){
+        if (c->get_call_id()->call_number == call->get_call_id()->call_number){
+            c->service_call(elevator_id);
+        }
+    }
+
+    //check if the call serviced list has all elevators in the elevators vector
+
+    std::vector<Elevator_id> serviced_calls = call->get_elevator_ack_list();
+
+    if (serviced_calls.size() == elevators.size()){
+        //remove the call from the call list
+        for (int i = 0; i < call_list.size(); i++){
+            if (call_list[i]->get_call_id()->call_number == call->get_call_id()->call_number){
+                call_list.erase(call_list.begin() + i);
+            }
+        }
+    }
+
+}
