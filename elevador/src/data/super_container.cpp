@@ -139,6 +139,7 @@ void Super_container::push_new_call_event(){
     event_queue->push(elevator_event::ORDER_RECEIVED);
 }
 
+//TODO maybe update when fixing with networking
 void Super_container::service_call(Call* call, Elevator_id elevator_id){
     //find the call in the call list and run the service call function
     for (auto c : call_list){
