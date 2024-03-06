@@ -1,4 +1,7 @@
+#pragma once
+
 #include "elevator_state_class.h"
+#include "super_container.h"
 
 class Elevator_state;
 struct Elevator_id;
@@ -102,6 +105,12 @@ std::string Elevator_state::get_direction() {
 
 
 std::vector<bool> Elevator_state::get_cab_requests() {
+    std::vector<Call*> calls = get_calls_originating_from_elevator(id);
     std::vector<bool> requests = {false, false, false, false};
+    for (auto call : calls) {
+        if (call->get_call_type() == button_type::CAB) {
+            requests[call->get_floor()] = true;
+        }
+    }
     return requests;
 } // TODO
