@@ -29,7 +29,7 @@ void Elevator::handle_event(elevator_event event) {
                 std::cout << "Order received in IDLE " << std::endl;
                 driver->set_motor_direction(motor_dir);
                 if (motor_dir == 0) {
-                    clear_orders(call_list, current_floor);
+                    clear_orders(call_list, current_floor, motor_dir);
                     open_door();
                 }
                 else {
@@ -47,7 +47,7 @@ void Elevator::handle_event(elevator_event event) {
             case state_enum::DOOR_OPEN:
                 std::cout << "Order receieved in DOOR_OPEN" << std::endl;
                 // if condition should be to check the newest item in the call list and check if its floor is equal to current flor
-                clear_orders(call_list, current_floor);
+                clear_orders(call_list, current_floor, motor_dir);
                 open_door();                
                 break;
 
@@ -79,7 +79,7 @@ void Elevator::handle_event(elevator_event event) {
             driver->set_motor_direction(0);
             data_container->get_elevator_by_id(id)->set_current_state(state_enum::DOOR_OPEN);
             // order complete at floor
-            clear_orders(call_list, current_floor);
+            clear_orders(call_list, current_floor, motor_dir);
             open_door();
 
         }    
@@ -89,10 +89,13 @@ void Elevator::handle_event(elevator_event event) {
     case elevator_event::DOOR_TIMEOUT:
         std::cout << "Door timeout" << std::endl;
 
-        clear_orders(call_list, current_floor);
+        
 
         driver->set_door_open_lamp(0);
         int motor_dir = choose_direction(current_floor, state_enum::IDLE, call_list);
+
+        clear_orders(call_list, current_floor, motor_dir);
+
         driver->set_motor_direction(motor_dir);
 
         if (motor_dir == 0) {
@@ -113,9 +116,11 @@ void Elevator::handle_event(elevator_event event) {
     }
 }
 
-void Elevator::clear_orders(std::vector<Call*> call_list, int current_floor) {
+void Elevator::clear_orders(std::vector<Call*> call_list, int current_floor, int motor_dir) {
     for (auto call : call_list) {
-        if (call->get_floor() == current_floor) {
+        if ((call->get_floor() == current_floor && call->get_call_type() == button_type::CAB) ||
+            (call->get_floor() == current_floor && call->get_call_type() == button_type::UP_HALL && motor_dir == 1) ||
+            (call->get_floor() == current_floor && call->get_call_type() == button_type::DOWN_HALL && motor_dir == -1)){
             data_container->service_call(call, id);
             std::cout << "Clearing calls at floor " << current_floor << std::endl;
         }
