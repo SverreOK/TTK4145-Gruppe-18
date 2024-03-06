@@ -156,7 +156,9 @@ void Super_container::service_call(Call* call, Elevator_id elevator_id){
         //remove the call from the call list
         for (int i = 0; i < call_list.size(); i++){
             if (call_list[i]->get_call_id()->call_number == call->get_call_id()->call_number){
+                boost::unique_lock<boost::mutex> scoped_lock(mtx);
                 call_list.erase(call_list.begin() + i);
+                scoped_lock.unlock();
             }
         }
     }
