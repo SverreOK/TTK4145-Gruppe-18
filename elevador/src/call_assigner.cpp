@@ -96,6 +96,9 @@ bool call_is_assigned(Call* call, std::vector<std::vector<bool>> assigned_floors
         || assigned_floors.at(call_floor).at(1) && going_down) {
         matches = true;
     }
+    if (call -> get_call_type() == button_type::CAB) {
+        matches = true;
+    }
 
     return matches;
 }
