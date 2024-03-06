@@ -117,6 +117,7 @@ void Elevator::clear_orders(std::vector<Call*> call_list, int current_floor) {
     for (auto call : call_list) {
         if (call->get_floor() == current_floor) {
             data_container->service_call(call, id);
+            std::cout << "Clearing calls at floor " << current_floor << std::endl;
         }
     }
 }

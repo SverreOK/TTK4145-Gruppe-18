@@ -181,26 +181,16 @@ void Super_container::push_new_call_event(){
 
 //TODO maybe update when fixing with networking
 void Super_container::service_call(Call* call, Elevator_id elevator_id){
-    //find the call in the call list and run the service call function
-    for (auto c : call_list){
-        if (c->get_call_id()->call_number == call->get_call_id()->call_number){
-            c->service_call(elevator_id);
-        }
-    }
 
-    //check if the call serviced list has all elevators in the elevators vector
+    call -> service_call(elevator_id);
 
-    std::vector<Elevator_id> serviced_calls = call->get_elevator_ack_list();
-
-    if (serviced_calls.size() == elevators.size()){
-        //remove the call from the call list
-        for (int i = 0; i < call_list.size(); i++){
-            if (call_list[i]->get_call_id()->call_number == call->get_call_id()->call_number){
-                boost::unique_lock<boost::mutex> scoped_lock(mtx);
-                call_list.erase(call_list.begin() + i);
-                scoped_lock.unlock();
-            }
-        }
+    //check if the call serviced list has all elevators in elevators  vector in the serviced vector
+    std::vector<Elevator_id> serviced_list = call -> get_serviced_ack_list();
+    //if all elevators are in the serviced list, remove the call from the call list
+    if (serviced_list.size() == elevators.size()){
+        boost::unique_lock<boost::mutex> scoped_lock(mtx);
+        call_list.erase(std::remove(call_list.begin(), call_list.end(), call), call_list.end()); //sjatt sjippidi idk if it works
+        scoped_lock.unlock();
     }
 
     update_locally_assigned_calls();
