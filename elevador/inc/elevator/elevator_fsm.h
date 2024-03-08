@@ -34,6 +34,11 @@ class Elevator {
         thread_safe_queue* event_queue;
 
         boost::thread fsm_thread;
+        
+        int desired_direction = 0;
+
+        boost::thread door_timer_thread;
+
 
         int running;
 
@@ -49,6 +54,8 @@ class Elevator {
 
         // Door
         void open_door();
+        void door_timer();
+        void on_obstruction_detected();
 
         void run_event_queue();
 
