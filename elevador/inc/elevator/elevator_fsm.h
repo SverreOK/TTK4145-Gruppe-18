@@ -44,7 +44,7 @@ class Elevator {
 
         void initialize_position();
 
-        void clear_orders(std::vector<Call*> call_list, int current_floor, int motor_dir);
+        void clear_orders(std::vector<Call*> call_list, int current_floor, state_enum state);
 
     public:
         // Constructor declaration
