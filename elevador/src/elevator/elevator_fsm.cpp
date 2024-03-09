@@ -115,8 +115,8 @@ void Elevator::clear_orders(std::vector<Call*> call_list, int current_floor, sta
             bool up_and_up_case     = call->get_call_type() == button_type::UP_HALL     && state == state_enum::MOVING_UP;
             bool down_and_down_case = call->get_call_type() == button_type::DOWN_HALL   && state == state_enum::MOVING_DOWN;
 
-            bool up_and_no_more_calls   = call->get_call_type() == button_type::UP_HALL     && !more_calls_up;
-            bool down_and_no_more_calls = call->get_call_type() == button_type::DOWN_HALL   && !more_calls_down;
+            bool up_and_no_more_calls   = call->get_call_type() == button_type::UP_HALL     && !more_calls_down;
+            bool down_and_no_more_calls = call->get_call_type() == button_type::DOWN_HALL   && !more_calls_up;
 
             if ((cab_case) ||
                 (up_and_up_case) ||
