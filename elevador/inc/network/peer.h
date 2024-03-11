@@ -76,8 +76,6 @@ public:
             if (strncmp(recv_elev->get_id().id.c_str(), data_container->get_my_id().id.c_str(), 8) != 0){
                 boost::lock_guard<boost::mutex> lock(mtx);
                 should_delete = data_container->add_elevator(recv_elev); // delete if already exists, else add to elevator list
-                std::cout << "DELETED: Deleted elevator with id: " << recv_elev->get_id().id << std::endl;
-
             }
             if (should_delete){delete recv_elev;}
         }
