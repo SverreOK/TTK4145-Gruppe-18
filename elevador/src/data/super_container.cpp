@@ -129,8 +129,7 @@ int Super_container::add_elevator(Elevator_state* elevator){
     //check if the elevator is already in the list //TODO is this good?
     for (auto e : elevators){
         if (e->get_id().id == elevator->get_id().id){
-            printf("Elevator with id %d already in list\n", elevator->get_id().id);
-            printf("Elevator already in list\n");
+            std::cout << "Elevator with id " << elevator->get_id().id << " already in list" << std::endl;
             //update the elevator
             e->set_alive(true);
             e->set_current_state(elevator->get_current_state());
@@ -138,14 +137,14 @@ int Super_container::add_elevator(Elevator_state* elevator){
             e->set_obstruction(elevator->get_obstruction_status());
             e->set_last_seen();
 
-            return 0;
+            return 1;
 
         }
     }
 
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
     elevators.push_back(elevator);
-    return 1;
+    return 0;
 }
 
 void Super_container::remove_elevator(Elevator_id id){

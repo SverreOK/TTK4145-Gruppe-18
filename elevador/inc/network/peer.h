@@ -24,6 +24,8 @@ private:
     int tx_port = 9879;
     int rx_port = 12345;
 
+    boost::mutex mtx;
+
 
 public:
     Peer(Super_container* data_container) : data_container(data_container) {
@@ -48,7 +50,7 @@ public:
             elevator_status_network status = data_container->get_elevator_by_id(data_container->get_my_id())->get_status_network();
             broadcast_socket_tx.send_to(boost::asio::buffer(&status, sizeof(status)), udp::endpoint(broadcast_address, 12345));
             boost::this_thread::sleep_for(boost::chrono::milliseconds(1000));
-            std::cout << "Broadcasting status" << std::endl;
+            //std::cout << "Broadcasting status" << std::endl;
         }   
     }
 
@@ -62,13 +64,15 @@ public:
             size_t len = broadcast_socket_rx.receive_from(boost::asio::buffer(buffer), sender_endpoint);
             elevator_status_network* incoming_status = (elevator_status_network*)buffer;
             Elevator_state* recv_elev = new Elevator_state(*incoming_status);
+            std::cout << "current floor remote elev: " << recv_elev->get_current_floor() << std::endl;
             int should_delete = 0;
 
             std::cout << "Received elevator with id: " << recv_elev->get_id().id << std::endl;
 
             if (strncmp(recv_elev->get_id().id.c_str(), data_container->get_my_id().id.c_str(), 8) != 0){
+                boost::lock_guard<boost::mutex> lock(mtx);
                 should_delete = data_container->add_elevator(recv_elev); // delete if already exists, else add to elevator list
-                std::cout << "Deleted elevator with id: " << recv_elev->get_id().id << std::endl;
+                //std::cout << "Deleted elevator with id: " << recv_elev->get_id().id << std::endl;
 
             }
             if (should_delete){delete recv_elev;}
