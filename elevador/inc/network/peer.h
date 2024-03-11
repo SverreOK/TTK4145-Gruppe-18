@@ -47,7 +47,8 @@ public:
         while (true) {
             elevator_status_network status = data_container->get_elevator_by_id(data_container->get_my_id())->get_status_network();
             broadcast_socket_tx.send_to(boost::asio::buffer(&status, sizeof(status)), udp::endpoint(broadcast_address, 12345));
-            boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
+            boost::this_thread::sleep_for(boost::chrono::milliseconds(1000));
+            std::cout << "Broadcasting status" << std::endl;
         }   
     }
 
@@ -63,8 +64,11 @@ public:
             Elevator_state* recv_elev = new Elevator_state(*incoming_status);
             int should_delete = 0;
 
+            std::cout << "Received elevator with id: " << recv_elev->get_id().id << std::endl;
+
             if (strncmp(recv_elev->get_id().id.c_str(), data_container->get_my_id().id.c_str(), 8) != 0){
                 should_delete = data_container->add_elevator(recv_elev); // delete if already exists, else add to elevator list
+                std::cout << "Deleted elevator with id: " << recv_elev->get_id().id << std::endl;
 
             }
             if (should_delete){delete recv_elev;}
