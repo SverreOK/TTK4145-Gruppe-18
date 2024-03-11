@@ -43,7 +43,8 @@ void Network_driver::infinite_call_recv()
             for (auto acks : incoming_call->ack_list)
             {   
                 char elev_id[8];
-                if (strncmp(acks, strncpy(elev_id, elevators.id.c_str(), 8), 8) == 0)
+                strncpy(elev_id, elevators.id.c_str(), 8);
+                if (strncmp(acks, elev_id, 8) == 0)
                 {
                     is_acked = true;
                     break;
@@ -56,10 +57,6 @@ void Network_driver::infinite_call_recv()
                 break;
             }
         }
-
-        
-
-
     }
 }
 

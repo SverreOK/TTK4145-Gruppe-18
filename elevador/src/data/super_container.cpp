@@ -124,20 +124,38 @@ Call_id* Super_container::get_last_call_id_originating_from_elevator(Elevator_id
 }
 
 
-void Super_container::add_elevator(Elevator_state* elevator){
+int Super_container::add_elevator(Elevator_state* elevator){
 
     //check if the elevator is already in the list //TODO is this good?
     for (auto e : elevators){
         if (e->get_id().id == elevator->get_id().id){
             printf("Elevator with id %d already in list\n", elevator->get_id().id);
             printf("Elevator already in list\n");
-            return;
+            //update the elevator
+            e->set_alive(true);
+            e->set_current_state(elevator->get_current_state());
+            e->set_current_floor(elevator->get_current_floor());
+            e->set_obstruction(elevator->get_obstruction_status());
+            e->set_last_seen();
+
+            return 0;
 
         }
     }
 
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
     elevators.push_back(elevator);
+    return 1;
+}
+
+void Super_container::remove_elevator(Elevator_id id){
+    for (auto elevator : elevators){
+        if (elevator->get_id().id == id.id){
+            boost::unique_lock<boost::mutex> scoped_lock(mtx);
+            elevators.erase(std::remove(elevators.begin(), elevators.end(), elevator), elevators.end());
+            scoped_lock.unlock();
+        }
+    }
 }
 
 void Super_container::set_my_id(Elevator_id id){

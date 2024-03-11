@@ -23,6 +23,7 @@ class Elevator_state {
         bool alive;
         boost::asio::ip::udp::endpoint endpoint;
         boost::mutex mtx;
+        int last_seen;
 
     public:
         Elevator_state(Elevator_id id) : id(id){
@@ -30,7 +31,14 @@ class Elevator_state {
             this->current_floor = 0;
             this->obstruction = false;
             this->alive = true;
-
+            this->last_seen = time(NULL);
+        }
+        Elevator_state(elevator_status_network status) : id(Elevator_id {status.id}){
+            this->current_state = static_cast<state_enum>(status.state);
+            this->current_floor = status.floor;
+            this->obstruction = status.obstruction;
+            this->alive = status.alive;
+            this->last_seen = time(NULL);
         }
 
         state_enum get_current_state();
@@ -39,12 +47,14 @@ class Elevator_state {
         bool get_alive_status();
         elevator_status_network get_status_network();
         Elevator_id get_id();
+        int get_last_seen();
         
 
         void set_current_state(state_enum state);
         void set_current_floor(int floor);
         void set_obstruction(bool obstruction);
         void set_alive(bool alive);
+        void set_last_seen(void);
 
 
         // Needed for json creation:

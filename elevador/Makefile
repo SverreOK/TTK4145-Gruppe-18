@@ -2,7 +2,7 @@
 CC = g++
 
 # Compiler flags
-CFLAGS = -Iinc -Iinc/data -Iinc/elevator -Iinc/util
+CFLAGS = -Iinc -Iinc/data -Iinc/elevator -Iinc/util -Iinc/network
 
 # Debug compiler flags
 CFLAGS_DEBUG = -g $(CFLAGS)

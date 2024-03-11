@@ -31,6 +31,11 @@ Elevator_id Elevator_state::get_id(){
     return id;
 }
 
+int Elevator_state::get_last_seen(){
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
+    return last_seen;
+}
+
 elevator_status_network Elevator_state::get_status_network(){
     elevator_status_network status;
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
@@ -61,6 +66,11 @@ void Elevator_state::set_obstruction(bool obstruction){
 void Elevator_state::set_alive(bool alive){
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
     alive = alive;
+}
+
+void Elevator_state::set_last_seen(){
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
+    last_seen = time(NULL);
 }
 
 

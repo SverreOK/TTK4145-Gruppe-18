@@ -10,6 +10,7 @@
 #include "elevator_button_poller.h"
 #include "elevator_light_thread.h"
 #include "super_container.h"
+#include "peer.h"
 
 int main() {
 
@@ -50,6 +51,12 @@ int main() {
     
     Elevator_driver_poller* poller = new Elevator_driver_poller(driver, elevator_id, data_container, 4, event_queue);
     boost::thread poller_thread(&Elevator_driver_poller::poll_all, poller);
+
+    //create a peer
+    Peer* peer = new Peer(data_container);
+    boost::thread peer_thread(&Peer::infinite_status_broadcast, peer);
+    boost::thread peer_thread2(&Peer::infinite_status_recieve, peer);
+    boost::thread peer_thread3(&Peer::dead_connection_remover, peer);
 
     while(1){
         // std::cout << "Elevator is running" << std::endl;

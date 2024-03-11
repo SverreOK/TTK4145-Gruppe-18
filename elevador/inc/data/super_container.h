@@ -4,6 +4,7 @@
 #include "event_queue.h"
 #include "elevator_state_class.h"
 #include <boost/thread/mutex.hpp>
+#include <boost/chrono.hpp>
 
 class Super_container {
     private: 
@@ -32,7 +33,8 @@ class Super_container {
 
         void change_call(Call* call, std::string elevator_id);
         void push_new_call_event();
-        void add_elevator(Elevator_state* elevator);
+        int add_elevator(Elevator_state* elevator); //Return 1 if added, 0 if updated
+        void remove_elevator(Elevator_id id);
         void set_my_id(Elevator_id id);
 
 
