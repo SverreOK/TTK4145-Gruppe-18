@@ -72,65 +72,73 @@ void Peer::dead_connection_remover() {
 }
 
 void Peer::infinite_call_recieve() {
-    char buffer[1024];
-    boost::asio::ip::udp::endpoint sender_endpoint;
-    while (true) {
+        char buffer[1024];
+        boost::asio::ip::udp::endpoint sender_endpoint;
+        while (true) {
 
-        size_t len = call_socket_rx.receive_from(boost::asio::buffer(buffer), sender_endpoint);
-        call_message* incoming_call = (call_message*)buffer;
-        //data_container->add_call(new Call(*incoming_call)); //this should also merge the call if it already exists
-        bool retransmit = false;
-        for (auto elevators : data_container->get_alive_elevators()) { // check if the call has been acked by all elevators
-
-            bool is_acked = false;
-            for (auto acks : incoming_call->ack_list) {
-
-                char elev_id[8];
-                strncpy(elev_id, elevators.id.c_str(), 8);
-                if (strncmp(acks, elev_id, 8) == 0)
-                {
-                    is_acked = true;
-                    break;
-                }
-            }
-
-            if (!is_acked)
-            {
-                retransmit = true;
-                break;
-            }
-        }
-        if (retransmit)
-        {
-            //Check if own id is in the ack list, if not, add it and retransmit
-            bool is_acked = false;
-            for (auto acks : incoming_call->ack_list) {
-                if (strncmp(acks, my_id.id.c_str(), 8) == 0)
-                {
-                    is_acked = true;
-                    break;
-                }
-            }
-            if (!is_acked)
-            {
+            size_t len = call_socket_rx.receive_from(boost::asio::buffer(buffer), sender_endpoint);
+            call_message* incoming_call = (call_message*)buffer;
+            //data_container->add_call(new Call(*incoming_call)); //this should also merge the call if it already exists
+            bool retransmit = false;
+            for (auto elevators : data_container->get_alive_elevators()) { // check if the call has been acked by all elevators
+                
+                bool is_acked = false;
                 for (auto acks : incoming_call->ack_list) {
-                    bool all_null = true;
-                    for (int i = 0; i < 8; i++) {
-                        if (acks[i] != 0) {
-                            all_null = false;
-                            break;
-                        }
-                    }
-                    if (all_null) {
-                        strncpy(acks, my_id.id.c_str(), 8);
+                       
+                    char elev_id[8];
+                    strncpy(elev_id, elevators.id.c_str(), 8);
+                    if (strncmp(acks, elev_id, 8) == 0)
+                    {
+                        is_acked = true;
                         break;
                     }
                 }
+                
+                if (!is_acked)
+                {
+                    retransmit = true;
+                    break;
+                }
             }
-            call_transmit(new Call(*incoming_call), 10);
-            std::cout << "Retransmitted call" << std::endl;
+            if (retransmit)
+            {
+                //Check if own id is in the ack list, if not, add it and retransmit
+                bool is_acked = false;
+                for (auto acks : incoming_call->ack_list) {
+                    if (strncmp(acks, my_id.id.c_str(), 8) == 0)
+                    {
+                        is_acked = true;
+                        break;
+                    }
+                }
+                if (!is_acked)
+                {
+                    //Find an open slot in the ack list and add own id
+                    for (auto acks : incoming_call->ack_list) {
+                        bool all_null = true;
+                        for (int i = 0; i < 8; i++)
+                        {
+                            if (acks[i] != 0)
+                            {
+                                all_null = false;
+                                break;
+                            }
+                        }
+                        if (all_null)
+                        {
+                            strncpy(acks, my_id.id.c_str(), 8);
+                            break;
+                        }
+                    }
+                }
+                call_transmit((new Call(*incoming_call)), 10);
+            }
+            else
+            {
+                data_container->add_call(new Call(*incoming_call));
+            }
+
         }
-    }
 }
 
 /*
@@ -169,6 +177,6 @@ void Peer::infinite_call_transmit() {
 
 void Peer::call_transmit(Call* call, int burst_size) {
     for (int i = 0; i < burst_size; i++) {
-        call_socket_tx.send_to(boost::asio::buffer(call, sizeof(Call)), udp::endpoint(broadcast_address, call_tx_port));
+        call_socket_tx.send_to(boost::asio::buffer(call, sizeof(Call)), udp::endpoint(broadcast_address, call_rx_port));
     }
 }
