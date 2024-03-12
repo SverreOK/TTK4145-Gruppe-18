@@ -34,8 +34,10 @@ class Elevator {
         thread_safe_queue* event_queue;
 
         boost::thread fsm_thread;
+
+        int Current_direction;
         
-        int desired_direction = 0;
+        state_enum last_move_state;
 
         boost::thread door_timer_thread;
 
@@ -44,7 +46,7 @@ class Elevator {
 
         void initialize_position();
 
-        void clear_orders(std::vector<Call*> call_list, int current_floor, state_enum state);
+        void clear_orders(std::vector<Call*> call_list, int current_floor, int current_direction);
 
     public:
         // Constructor declaration

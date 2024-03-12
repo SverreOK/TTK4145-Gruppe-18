@@ -34,138 +34,73 @@ bool requests_same_floor(int current_floor, std::vector<Call*> call_list) {
     return false;
 }
 
-bool should_stop(int current_floor, state_enum current_state, std::vector<Call*> call_list) {
-    switch(current_state) {
-        case state_enum::MOVING_UP:
-            for (auto call : call_list) {
-                if (
-                    (call->get_call_type() == button_type::UP_HALL && call->get_floor() == current_floor) ||
-                    (call->get_call_type() == button_type::CAB && call->get_floor() == current_floor) ||
-                    !requests_above(current_floor, call_list)
-                ) {
-                    return true;
-                }
-            }
-            return false;
+bool should_stop(int current_floor, int current_direction, std::vector<Call*> call_list) {
 
-        case state_enum::MOVING_DOWN:
-            for (auto call : call_list) {
-                if (
-                    (call->get_call_type() == button_type::DOWN_HALL && call->get_floor() == current_floor) ||
-                    (call->get_call_type() == button_type::CAB && call->get_floor() == current_floor) ||
-                    !requests_below(current_floor, call_list)
-                ) {
+
+    for (auto call : call_list) {
+
+        int call_floor = call->get_floor();
+        button_type call_type = call->get_call_type();
+
+        if (call_floor == current_floor) {
+            switch (current_direction){
+                case 1: //UP
+                    return ((call_type == button_type::UP_HALL  && call_floor == current_floor) ||
+                            (call_type == button_type::CAB      && call_floor == current_floor) ||
+                            !requests_above(current_floor, call_list) ||
+                            current_floor == 0 ||
+                            current_floor == N_FLOORS - 1
+                            );
+                break;
+
+                case -1: //DOWN
+                    return ((call_type == button_type::DOWN_HALL && call_floor == current_floor) ||
+                            (call_type == button_type::CAB       && call_floor == current_floor) ||
+                            !requests_below(current_floor, call_list) ||
+                            current_floor == 0 ||
+                            current_floor == N_FLOORS - 1
+                            );
+                break;
+
+                case 0:
                     return true;
-                }
+                break;
             }
-            return false;
-            
+        }
+    }
+}
+
+
+int choose_direction(int current_floor, int current_direction, std::vector<Call*> call_list) {
+
+    switch(current_direction) {
+        case 1: // Up
+            if(requests_above(current_floor, call_list)) {
+                return 1; // Up
+            } else if(requests_same_floor(current_floor, call_list)) {
+                return 0; // Stop
+            } else if(requests_below(current_floor, call_list)) {
+                return -1; // Down
+            } else {
+                return 0; // Stop
+            }
+
+        case -1: // Down
+        case 0: // Stop
+            if(requests_below(current_floor, call_list)) {
+                return -1; // Down
+            } else if(requests_same_floor(current_floor, call_list)) {
+                return 0; // Stop
+            } else if(requests_above(current_floor, call_list)) {
+                return 1; // Up
+            } else {
+                return 0; // Stop
+            }
+
         default:
-            return false;
+            return 0; // uhoh what happened
     }
 }
-
-int choose_direction(int current_floor, state_enum current_state, std::vector<Call*> call_list) {
-    switch (current_state) {
-        case state_enum::MOVING_UP:
-            if (requests_above(current_floor, call_list)) {
-                return 1;
-            } else if (requests_below(current_floor, call_list)) {
-                return -1;
-            } else {
-                return 0;
-            }
-        case state_enum::MOVING_DOWN:
-            if (requests_below(current_floor, call_list)) {
-                return -1;
-            } else if (requests_above(current_floor, call_list)) {
-                return 1;
-            } else {
-                return 0;
-            }
-        case state_enum::IDLE:
-            if (requests_above(current_floor, call_list)) {
-                return 1;
-            } else if (requests_below(current_floor, call_list)) {
-                return -1;
-            } else {
-                return 0;
-            }
-    }
-    return 0;
-}
-
-/*
-#pragma once
-#include <vector>
-#include <string>
-#include <mutex>
-#include <shared_mutex>
-#include <map>
-
-//enum for direction of elevator
-enum class button_type {
-    UP_HALL = 0,
-    DOWN_HALL = 1,
-    CAB = 2
-};
-
-struct Elevator_id {
-    std::string id;
-};
-
-class Call_id {
-    private:
-        Elevator_id elevator_id;
-        int call_number;
-
-    public:
-
-        Call_id(Elevator_id elevator_id, int call_number)
-            : elevator_id(elevator_id), call_number(call_number) {};
-
-        std::string get_call_id();
-        Elevator_id get_call_elevator_id(){return elevator_id;}
-        int get_call_number(){return call_number;};
-};
-
-// STATES
-enum class state_enum {
-    IDLE,
-    MOVING_UP,
-    MOVING_DOWN,
-    DOOR_OPEN
-};
-
-
-class Call {
-    private:
-
-        static int floor;
-        static button_type call_type;
-        static Call_id call_id;
-        static Elevator_id assigned_elevator; //maybe change to a bool called something like "assigned to local node"?
-        
-        std::vector<bool> serviced_ack_list;
-        std::vector<Elevator_id> elevator_ack_list;
-
-
-    public:
-        Call(int floor, button_type call_type, Call_id call_id);
-
-
-        std::vector<Elevator_id> get_elevator_ack_list();
-        button_type get_call_type();
-        Call_id get_call_id();
-        int get_floor();
-
-
-        void service_call(Elevator_id elevator_id);
-};
-
-
-
-
 
 
 

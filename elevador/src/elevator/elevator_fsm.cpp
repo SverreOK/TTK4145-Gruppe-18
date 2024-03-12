@@ -3,6 +3,7 @@
 Elevator::Elevator(elevator_driver* driver, Elevator_id id, Super_container* data_container, thread_safe_queue* event_queue)
     : driver(driver), id(id), data_container(data_container), event_queue(event_queue){
         //driver->connect();        
+        Current_direction = 0;
 }
 
 void Elevator::handle_event(elevator_event event) {
@@ -11,12 +12,13 @@ void Elevator::handle_event(elevator_event event) {
     int current_floor = data_container->get_elevator_by_id(id)->get_current_floor();
     state_enum current_state = data_container->get_elevator_by_id(id)->get_current_state();
     std::vector<Call*> call_list = data_container->get_locally_assigned_calls();
-    int motor_dir = choose_direction(current_floor, current_state, call_list);
+    //int motor_dir = choose_direction(current_floor, current_state, call_list);
 
     std::cout << "DEBUG: Current floor: " << current_floor;
     std::cout << ", Call list size: " << call_list.size();
-    std::cout << ", Motor dir: " << motor_dir << "-------------";
+    std::cout << ", Motor dir: " << Current_direction << "-------------";
 
+    //debug print using switch case stuff
     switch (current_state){
         case state_enum::IDLE:
             std::cout << "IDLE" << std::endl;
@@ -36,73 +38,73 @@ void Elevator::handle_event(elevator_event event) {
         break;
     }
 
-    switch (current_state)
-    {
-        case state_enum::IDLE:
-            if(event == elevator_event::ORDER_RECEIVED){
-                std::cout << "Order received in IDLE " << std::endl;
-                driver->set_motor_direction(motor_dir);
+    //main FSM logic:
+    switch (current_state){
 
-                if (motor_dir == 0 && event == elevator_event::ORDER_RECEIVED) {
+        case state_enum::MOVING_UP:
+        case state_enum::MOVING_DOWN:
+            if(event == elevator_event::ARRIVED_AT_FLOOR){
+                if (should_stop(current_floor, Current_direction, call_list)){
+                    driver->set_motor_direction(0);
                     data_container->get_elevator_by_id(id)->set_current_state(state_enum::DOOR_OPEN);
-                    clear_orders(call_list, current_floor, current_state);
-                    open_door();
-                    data_container->get_elevator_by_id(id)->set_current_state(state_enum::IDLE);
+                    open_door(); //NOTE: this might need to be moved to after the clear_orders function
+                    clear_orders(call_list, current_floor, Current_direction);
                 }
-                else if (motor_dir == 1) {
-                    data_container->get_elevator_by_id(id)->set_current_state(state_enum::MOVING_UP);
-                }
-                else if (motor_dir == -1) {
-                    data_container->get_elevator_by_id(id)->set_current_state(state_enum::MOVING_DOWN);
-                }
-            }
-
-            if (event == elevator_event::DOOR_TIMEOUT) {
-                driver->set_motor_direction(motor_dir);
-                if (motor_dir == 1) {
-                    data_container->get_elevator_by_id(id)->set_current_state(state_enum::MOVING_UP);
-                }
-                else if (motor_dir == -1) {
-                    data_container->get_elevator_by_id(id)->set_current_state(state_enum::MOVING_DOWN);
+                else{
+                    //do nothing?
                 }
             }
         break;
 
-        case state_enum::MOVING_DOWN:
-        case state_enum::MOVING_UP:
+        case state_enum::IDLE:
 
-            if (event == elevator_event::ARRIVED_AT_FLOOR){
-                if (should_stop(current_floor, current_state, call_list)) {
-                    driver->set_motor_direction(0);
+            //only trigger if new call is received or door closes?
 
-                    state_enum last_move_state = current_state;
-                    data_container->get_elevator_by_id(id)->set_current_state(state_enum::DOOR_OPEN);
-                    clear_orders(call_list, current_floor, current_state);
-                    open_door();
-                    data_container->get_elevator_by_id(id)->set_current_state(last_move_state);
+            if (event == elevator_event::ORDER_RECEIVED ||
+                event == elevator_event::DOOR_CLOSED){
+                    int motor_dir = choose_direction(current_floor, Current_direction, call_list);
+                    Current_direction = motor_dir;
+                    driver->set_motor_direction(motor_dir);
+                    if (Current_direction == 0){
+                        if(requests_same_floor(current_floor, call_list)){
+                            data_container->get_elevator_by_id(id)->set_current_state(state_enum::DOOR_OPEN);
+                            open_door(); //NOTE: this might need to be moved to after the clear_orders function
+                            clear_orders(call_list, current_floor, Current_direction);
+                        }
+                    }
+                    if (Current_direction != 0){ //moving!
+                        if (Current_direction == 1){
+                        data_container->get_elevator_by_id(id)->set_current_state(state_enum::MOVING_UP);
+                        }
+                        else if (Current_direction == -1){
+                            data_container->get_elevator_by_id(id)->set_current_state(state_enum::MOVING_DOWN);
+                        }
+                    }
+
                 }
+            else {
+                std::cout << "wierd event while in IDLE" << std::endl;
             }
 
 
-            if (event == elevator_event::DOOR_TIMEOUT) {
-                driver->set_motor_direction(motor_dir);
-                if (motor_dir == 0){
-                    data_container->get_elevator_by_id(id)->set_current_state(state_enum::IDLE);
-                }
-                else if (motor_dir == 1) {
-                    data_container->get_elevator_by_id(id)->set_current_state(state_enum::MOVING_UP);
-                }
-                else if (motor_dir == -1) {
-                    data_container->get_elevator_by_id(id)->set_current_state(state_enum::MOVING_DOWN);
-                }
+        break;
 
+        case state_enum::DOOR_OPEN:
+
+            if(event == elevator_event::ORDER_RECEIVED){
+                clear_orders(call_list, current_floor, Current_direction);
+            }
+
+            else if(event == elevator_event::DOOR_TIMEOUT){
+                //close door light
+                data_container->get_elevator_by_id(id)->set_current_state(state_enum::IDLE);
+                event_queue->push(elevator_event::DOOR_CLOSED);
             }
         break;
     }
 }
 
-
-void Elevator::clear_orders(std::vector<Call*> call_list, int current_floor, state_enum state) {
+void Elevator::clear_orders(std::vector<Call*> call_list, int current_floor, int current_direction) {
     
     bool more_calls_up = requests_above(current_floor, call_list);
     bool more_calls_down = requests_below(current_floor, call_list);
@@ -110,24 +112,43 @@ void Elevator::clear_orders(std::vector<Call*> call_list, int current_floor, sta
     for (auto call : call_list) {
         if (call->get_floor() == current_floor){
 
-            bool cab_case = call->get_call_type() == button_type::CAB;
+            
+            button_type call_type = call->get_call_type();
 
-            bool up_and_up_case     = call->get_call_type() == button_type::UP_HALL     && state == state_enum::MOVING_UP;
-            bool down_and_down_case = call->get_call_type() == button_type::DOWN_HALL   && state == state_enum::MOVING_DOWN;
+            if (call_type == button_type::CAB){ //always clear cab call if its at the current floor
+                data_container->service_call(call, id); 
+            }
 
-            bool up_and_no_more_calls   = call->get_call_type() == button_type::UP_HALL     && !more_calls_down;
-            bool down_and_no_more_calls = call->get_call_type() == button_type::DOWN_HALL   && !more_calls_up;
+            switch (current_direction){
+                case 1: //moving up
+                    if (call_type == button_type::UP_HALL){ //and call is up at this floor
+                        data_container->service_call(call, id);
+                    }
+                    else if(call_type == button_type::DOWN_HALL && !more_calls_up){ //or call is down at this floor and there are no more calls up
+                        data_container->service_call(call, id);
+                    }
+                break;
 
-            if ((cab_case) ||
-                (up_and_up_case) ||
-                (down_and_down_case) ||
-                (up_and_no_more_calls) ||
-                (down_and_no_more_calls)) {
+                case -1: //moving down
+                    if (call_type == button_type::DOWN_HALL){ //and call is down at this floor
+                        data_container->service_call(call, id);
+                    }
+                    else if(call_type == button_type::UP_HALL && !more_calls_down){ //or call is up at this floor and there are no more calls down
+                        data_container->service_call(call, id);
+                    }
+                break;
 
-            data_container->service_call(call, id);
-            std::cout << "Clearing calls at floor " << current_floor << std::endl;
+                // case 0: //standing still
+                //     if (call_type == button_type::UP_HALL || call_type == button_type::DOWN_HALL){ //and call is up or down at this floor
+                //         data_container->service_call(call, id);
+                //     }
+                // break;
+                case 0:
+                    if (call_type == button_type::UP_HALL || call_type == button_type::DOWN_HALL){ //and call is up or down at this floor
+                        data_container->service_call(call, id);
+                    }
+            }
         }
-        } 
     }
 }
 
@@ -195,7 +216,6 @@ void Elevator::run_event_queue() {
             handle_event(event);
         }
         boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
-        //open_door();
     }
 }
 

@@ -12,7 +12,9 @@
 enum class elevator_event {
     ORDER_RECEIVED,
     ARRIVED_AT_FLOOR,
-    DOOR_TIMEOUT
+    DOOR_TIMEOUT,
+    OBSTRUCTION_DETECTED,
+    DOOR_CLOSED
 };
 
 // Thread-safe queue 
