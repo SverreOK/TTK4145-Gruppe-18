@@ -128,6 +128,7 @@ void Peer::infinite_call_recieve() {
                 }
             }
             call_transmit(new Call(*incoming_call), 10);
+            std::cout << "Retransmitted call" << std::endl;
         }
     }
 }
@@ -156,10 +157,13 @@ void Peer::infinite_call_transmit() {
                 if (!is_acked)
                 {
                     call_transmit(call, 1);
+                    std::cout << "Transmitted call" << std::endl;
                     break;
                 }
             }
         }
+        //sleep
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
     }
 }
 
