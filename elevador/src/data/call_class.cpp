@@ -53,10 +53,25 @@ int Call::get_floor() {
 }
 
 void Call::acknowlegde_call(Elevator_id elevator_id) {
-    elevator_ack_list.push_back(elevator_id);
+
+    //check if elevator_id is already in the list
+    for (auto id : elevator_ack_list){
+        if (id.id == elevator_id.id){
+            return;
+        }
+    }
+    
+    elevator_ack_list.push_back(elevator_id);// elevator id is added to the list since it is not already there
 }
 
 void Call::service_call(Elevator_id elevator_id) {
+
+    //check if elevator_id is already in the list
+    for (auto id : serviced_ack_list){
+        if (id.id == elevator_id.id){
+            return;
+        }
+    }
     serviced_ack_list.push_back(elevator_id);
 }
 

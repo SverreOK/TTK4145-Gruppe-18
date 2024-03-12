@@ -43,12 +43,32 @@ std::vector<Call*> Super_container::get_locally_assigned_calls(){
     return copy;
 }
 
-void Super_container::add_call(Call* call){
+void Super_container::add_call(Call* new_call){
     //TODO: should check is should merge? also merge in the if the call already exists
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
-    call_list.push_back(call);
+    // std::vector<Call*> call_list_copy = call_list;
+    //check if call with same ID exists
+    bool already_exists = false;
+    for (auto c : call_list){
+        if (c->get_call_id()->call_number == new_call->get_call_id()->call_number){
+            already_exists = true;
+            for(auto elevator_id : new_call->get_elevator_ack_list()){
+                c->acknowlegde_call(elevator_id);
+            }
+
+            for (auto elevator_id : new_call->get_serviced_ack_list()){
+                c->service_call(elevator_id);
+            }
+
+        }
+    }
+
+    if (!already_exists){
+        call_list.push_back(new_call);
+    }
 
     scoped_lock.unlock();
+
     update_locally_assigned_calls();
 
     push_new_call_event();
@@ -204,11 +224,11 @@ void Super_container::service_call(Call* call, Elevator_id elevator_id){
     //check if the call serviced list has all elevators in elevators  vector in the serviced vector
     std::vector<Elevator_id> serviced_list = call -> get_serviced_ack_list();
     //if all elevators are in the serviced list, remove the call from the call list
-    if (serviced_list.size() == elevators.size()){
-        boost::unique_lock<boost::mutex> scoped_lock(mtx);
-        call_list.erase(std::remove(call_list.begin(), call_list.end(), call), call_list.end()); //sjatt sjippidi idk if it works
-        scoped_lock.unlock();
-    }
+    // if (serviced_list.size() == elevators.size()){
+    //     boost::unique_lock<boost::mutex> scoped_lock(mtx);
+    //     call_list.erase(std::remove(call_list.begin(), call_list.end(), call), call_list.end()); //sjatt sjippidi idk if it works
+    //     scoped_lock.unlock();
+    // }
 
     update_locally_assigned_calls();
 

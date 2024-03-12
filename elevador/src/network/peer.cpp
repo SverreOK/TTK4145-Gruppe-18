@@ -2,6 +2,7 @@
 #include "super_container.h"
 #include "config.h"
 
+// CONSTRUCTOR
 Peer::Peer(Super_container* data_container) : data_container(data_container) {
         broadcast_socket_tx.open(udp::v4());
         broadcast_socket_tx.set_option(udp::socket::reuse_address(true));
@@ -24,6 +25,7 @@ Peer::Peer(Super_container* data_container) : data_container(data_container) {
         broadcast_address = boost::asio::ip::address::from_string("255.255.255.255");
 }
 
+// Broadcast elevator status to whole network
 void Peer::infinite_status_broadcast() {
 
     while (true) {
@@ -38,6 +40,7 @@ void Peer::infinite_status_broadcast() {
     }   
 }
 
+// Receives status from other elevators and adds them to the list of alive elevators
 void Peer::infinite_status_recieve() {
 
     char buffer[1024];
@@ -60,6 +63,7 @@ void Peer::infinite_status_recieve() {
     }
 }
 
+// Removes connections after they have been dead for 5 seconds
 void Peer::dead_connection_remover() {
     while (true) {
         for (auto id : data_container->get_alive_elevators()) {
@@ -102,7 +106,7 @@ void Peer::infinite_call_recieve() {
             }
             if (retransmit)
             {
-                //Check if own id is in the ack list, if not, add it and retransmit
+                //Check if own id is in the ack list, if not, add it first, then retransmit
                 bool is_acked = false;
                 for (auto& acks : incoming_call->ack_list) {
                     if (strncmp(acks, my_id.id.c_str(), 8) == 0)
@@ -114,7 +118,7 @@ void Peer::infinite_call_recieve() {
                 if (!is_acked)
                 {
                     //Find an open slot in the ack list and add own id
-                    for (auto acks : incoming_call->ack_list) {
+                    for (auto& acks : incoming_call->ack_list) {
                         bool all_null = true;
                         for (int i = 0; i < 8; i++)
                         {
@@ -123,6 +127,8 @@ void Peer::infinite_call_recieve() {
                                 all_null = false;
                                 break;
                             }
+
+                            std::cout << "acks: " << acks << std::endl;
                         }
                         if (all_null)
                         {
@@ -132,12 +138,11 @@ void Peer::infinite_call_recieve() {
                     }
                 }
                 call_transmit((new Call(*incoming_call)), 1);
+                
                 std::cout << "Retransmitted call" << std::endl;
             }
-            else
-            {
-                data_container->add_call(new Call(*incoming_call));
-            }
+            
+            data_container->add_call(new Call(*incoming_call));
 
         }
 }
@@ -150,13 +155,14 @@ void Peer::infinite_call_transmit() {
     
     while (true) {
         for (auto call : data_container->get_call_list()) {
+            bool call_transmitted = false;
             
-            for (auto elevators : data_container->get_alive_elevators()) { // check if the call has been acked by all elevators
+            for (auto elevator : data_container->get_alive_elevators()) { // check if the call has been acked by all elevators
 
                 bool is_acked = false;
                 for (auto& acks : call->get_elevator_ack_list()) {
                     char elev_id[8];
-                    strncpy(elev_id, elevators.id.c_str(), 8);
+                    strncpy(elev_id, elevator.id.c_str(), 8);
                     if (strncmp(acks.id.c_str(), elev_id, 8) == 0) {
                         is_acked = true;
                         break;
@@ -167,8 +173,19 @@ void Peer::infinite_call_transmit() {
                 {
                     call_transmit(call, 1);
                     std::cout << "Transmitted call" << std::endl;
+                    // print the ack list in a readable format
+                    std::vector<Elevator_id> ack_list = call->get_elevator_ack_list();
+                    for (size_t i = 0; i < ack_list.size(); i++) {
+                        std::cout << "ack_list[" << i << "]: " << ack_list[i].id << std::endl;
+                    }
+                    call_transmitted = true;
                     break;
                 }
+            }
+
+            if (call_transmitted)
+            {
+                break;
             }
         }
         //sleep
