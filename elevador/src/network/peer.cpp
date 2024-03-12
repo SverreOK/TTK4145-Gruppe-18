@@ -83,7 +83,7 @@ void Peer::infinite_call_recieve() {
             for (auto elevators : data_container->get_alive_elevators()) { // check if the call has been acked by all elevators
                 
                 bool is_acked = false;
-                for (auto acks : incoming_call->ack_list) {
+                for (auto& acks : incoming_call->ack_list) {
                        
                     char elev_id[8];
                     strncpy(elev_id, elevators.id.c_str(), 8);
@@ -104,7 +104,7 @@ void Peer::infinite_call_recieve() {
             {
                 //Check if own id is in the ack list, if not, add it and retransmit
                 bool is_acked = false;
-                for (auto acks : incoming_call->ack_list) {
+                for (auto& acks : incoming_call->ack_list) {
                     if (strncmp(acks, my_id.id.c_str(), 8) == 0)
                     {
                         is_acked = true;
@@ -131,7 +131,8 @@ void Peer::infinite_call_recieve() {
                         }
                     }
                 }
-                call_transmit((new Call(*incoming_call)), 10);
+                call_transmit((new Call(*incoming_call)), 1);
+                std::cout << "Retransmitted call" << std::endl;
             }
             else
             {
@@ -153,7 +154,7 @@ void Peer::infinite_call_transmit() {
             for (auto elevators : data_container->get_alive_elevators()) { // check if the call has been acked by all elevators
 
                 bool is_acked = false;
-                for (auto acks : call->get_elevator_ack_list()) {
+                for (auto& acks : call->get_elevator_ack_list()) {
                     char elev_id[8];
                     strncpy(elev_id, elevators.id.c_str(), 8);
                     if (strncmp(acks.id.c_str(), elev_id, 8) == 0) {
