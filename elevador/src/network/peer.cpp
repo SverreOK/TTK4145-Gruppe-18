@@ -34,7 +34,7 @@ void Peer::infinite_status_broadcast() {
         boost::this_thread::sleep_for(boost::chrono::milliseconds(1000));
         //std::cout << "Broadcasting status" << std::endl;
         for (auto id : data_container->get_alive_elevators()) {
-            std::cout << "Alive elevator: " << id.id << std::endl;
+            std::cout << "Alive elevator: " << id.id << '\n';
         }
         std::cout << "--------------------------------------" << std::endl;
     }   
@@ -197,4 +197,12 @@ void Peer::call_transmit(Call* call, int burst_size) {
     for (int i = 0; i < burst_size; i++) {
         call_socket_tx.send_to(boost::asio::buffer(call, sizeof(Call)), udp::endpoint(broadcast_address, call_rx_port));
     }
+}
+
+void Peer::run_peer() {
+    boost::thread peer_thread(&Peer::infinite_status_broadcast, this);
+    boost::thread peer_thread2(&Peer::infinite_status_recieve, this);
+    boost::thread peer_thread3(&Peer::dead_connection_remover, this);
+    boost::thread peer_thread4(&Peer::infinite_call_recieve, this);
+    boost::thread peer_thread5(&Peer::infinite_call_transmit, this);
 }
