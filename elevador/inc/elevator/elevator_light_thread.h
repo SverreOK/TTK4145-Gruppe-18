@@ -47,7 +47,9 @@ class Light_controller {
                     }
                 }
             }
-            if (ack_count == alive_elevators.size()){
+            if (ack_count == alive_elevators.size() && 
+                call->get_serviced_ack_list().size() == 0){
+                    
                 temp_matrix[static_cast<int>( call->get_call_type() )][call->get_floor()] = true;
             }
         }

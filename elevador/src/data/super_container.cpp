@@ -17,6 +17,9 @@ std::vector<Call*> Super_container::get_call_list(){
 }
 
 std::vector<Call*> Super_container::update_locally_assigned_calls(){
+
+    std::vector<Elevator_id> alive_elevators = get_alive_elevators();
+
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
 
     std::vector<Call*> call_list_copy = call_list;
@@ -103,8 +106,11 @@ void Super_container::add_new_call_with_elevatorId(int floor, button_type call_t
 }
 
 bool Super_container::call_exists(button_type call_type, int floor){
-    for (auto call : call_list){ //TODO ignore serviced calls!
-        if (call->get_call_type() == call_type && floor == call->get_floor()){
+    for (auto call : call_list){ 
+        if (call->get_call_type() == call_type &&           //call has same type as provided button type
+            floor == call->get_floor() &&                   //call has same floor as provided nr
+            call->get_serviced_ack_list().size() == 0 ){    //call has empty serviced list
+
             return true;
         }
     }
@@ -134,7 +140,7 @@ Call_id* Super_container::get_last_call_id_originating_from_elevator(Elevator_id
     std::vector<Call*> calls = get_calls_originating_from_elevator(elevator_id);
     
     for (auto call : call_list){
-        if (call->get_call_id()->call_number > last_call_id_number){
+        if (call->get_call_id()->call_number >= last_call_id_number){
             last_call_id = call->get_call_id();
             last_call_id_number = last_call_id->call_number;
         }
@@ -222,7 +228,8 @@ void Super_container::service_call(Call* call, Elevator_id elevator_id){
     call -> service_call(elevator_id);
 
     //check if the call serviced list has all elevators in elevators  vector in the serviced vector
-    std::vector<Elevator_id> serviced_list = call -> get_serviced_ack_list();
+
+    // std::vector<Elevator_id> serviced_list = call -> get_serviced_ack_list();
     //if all elevators are in the serviced list, remove the call from the call list
     // if (serviced_list.size() == elevators.size()){
     //     boost::unique_lock<boost::mutex> scoped_lock(mtx);
