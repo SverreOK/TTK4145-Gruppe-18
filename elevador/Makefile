@@ -11,7 +11,7 @@ CFLAGS_DEBUG = -g $(CFLAGS)
 LDFLAGS = -ljsoncpp -lpthread -lboost_system -lboost_thread -lboost_chrono  
 
 # Source files
-SRC = $(wildcard src/*.cpp src/data/*.cpp src/elevator/*.cpp)
+SRC = $(wildcard src/*.cpp src/data/*.cpp src/elevator/*.cpp src/network/*.cpp)
 
 # Object files
 OBJ = $(SRC:.cpp=.o)

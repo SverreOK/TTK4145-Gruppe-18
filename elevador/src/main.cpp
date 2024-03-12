@@ -57,6 +57,8 @@ int main() {
     boost::thread peer_thread(&Peer::infinite_status_broadcast, peer);
     boost::thread peer_thread2(&Peer::infinite_status_recieve, peer);
     boost::thread peer_thread3(&Peer::dead_connection_remover, peer);
+    boost::thread peer_thread4(&Peer::infinite_call_recieve, peer);
+    boost::thread peer_thread5(&Peer::infinite_call_transmit, peer);
 
     while(1){
         // std::cout << "Elevator is running" << std::endl;
