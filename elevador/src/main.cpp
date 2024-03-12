@@ -54,11 +54,7 @@ int main() {
 
     //create a peer
     Peer* peer = new Peer(data_container);
-    boost::thread peer_thread(&Peer::infinite_status_broadcast, peer);
-    boost::thread peer_thread2(&Peer::infinite_status_recieve, peer);
-    boost::thread peer_thread3(&Peer::dead_connection_remover, peer);
-    boost::thread peer_thread4(&Peer::infinite_call_recieve, peer);
-    boost::thread peer_thread5(&Peer::infinite_call_transmit, peer);
+    peer->run_peer();
 
     while(1){
         // std::cout << "Elevator is running" << std::endl;

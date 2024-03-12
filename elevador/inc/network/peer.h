@@ -47,4 +47,6 @@ public:
     void infinite_call_transmit();
 
     void call_transmit(Call* call, int burst_size);
+
+    void run_peer();
 };
