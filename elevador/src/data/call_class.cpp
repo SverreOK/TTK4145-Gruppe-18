@@ -1,8 +1,8 @@
 #include "call_class.h"
 #include <cstring>
 
-class Call;
-class Call_id;
+// class Call;
+// class Call_id;
 //TODO MISSING MUTEXES?
 Call::Call(int floor, button_type call_type, Call_id* call_id) 
             : floor(floor), call_type(call_type), call_id(call_id){
@@ -15,15 +15,15 @@ Call::Call(int floor, button_type call_type, Call_id call_id)
 
 Call::Call(call_message call_msg) 
             : floor(call_msg.floor), call_type(static_cast<button_type>(call_msg.call_type)){
+    
+    Elevator_id new_elevator_id{ std::string(call_msg.elevator_id) };
+    int new_call_id_num = int{call_msg.call_id};
+    this->call_id = new Call_id{new_elevator_id, new_call_id_num};
 
-    Call_id new_call_id{Elevator_id{call_msg.elevator_id}, call_msg.call_id};
-    this->call_id = new Call_id(new_call_id);
     std::vector<Elevator_id> elevator_ack_list;
 
     for (auto elevator_id : call_msg.ack_list){
-        //convert 8 char array to string
         std::string id_str(call_msg.elevator_id); //TODO: Double check that this is cast correctly in runtime
-
         //check that the id_str is not an empty string
         if (id_str != ""){
             elevator_ack_list.push_back(Elevator_id{id_str});
@@ -99,7 +99,7 @@ call_message Call::get_call_message() {
     call_msg.call_id = call_id->call_number;
     strncpy(call_msg.elevator_id, call_id->elevator_id.id.c_str(), 8);
     
-    
+
     for (size_t i = 0; i < elevator_ack_list.size(); i++) {
         strncpy(call_msg.ack_list[i], elevator_ack_list[i].id.c_str(), 8);
     }
