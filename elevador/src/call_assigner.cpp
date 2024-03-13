@@ -85,7 +85,7 @@ std::string generate_hall_request_assigner_json(std::vector<std::vector<bool>> h
     return root_str;
 }
 
-bool call_is_assigned(Call* call, std::vector<std::vector<bool>> assigned_floors) {
+bool call_is_assigned(Call* call, std::vector<std::vector<bool>> assigned_floors, std::string elevator_id) {
     bool matches = false;
 
     bool going_up = call -> get_call_type() == button_type::UP_HALL;
@@ -96,7 +96,7 @@ bool call_is_assigned(Call* call, std::vector<std::vector<bool>> assigned_floors
         || assigned_floors.at(call_floor).at(1) && going_down) {
         matches = true;
     }
-    if (call -> get_call_type() == button_type::CAB) {
+    if (call -> get_call_type() == button_type::CAB && call -> get_call_id()->elevator_id.id == elevator_id) {
         matches = true;
     }
 
@@ -107,6 +107,8 @@ std::vector<std::vector<bool>> get_assigned_floors_from_json(std::string json_st
     Json::Value root;
     Json::Reader reader;
     std::vector<std::vector<bool>> assigned_floors;
+
+    std::cout << json_string << std::endl;
 
     bool parsingSuccessful = reader.parse(json_string, root);
     if (parsingSuccessful) {
@@ -132,7 +134,7 @@ std::vector<Call*> get_assigned_calls_from_json(std::string json_string, std::st
     }
 
     for (auto call : calls) {
-        if (call_is_assigned(call, assigned_floors)) {
+        if (call_is_assigned(call, assigned_floors, elevator_id)) {
             assigned_calls.push_back(call);
         }
     }
