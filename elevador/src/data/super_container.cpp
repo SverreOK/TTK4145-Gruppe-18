@@ -53,7 +53,8 @@ void Super_container::add_call(Call* new_call){
     //check if call with same ID exists
     bool already_exists = false;
     for (auto c : call_list){
-        if (c->get_call_id()->call_number == new_call->get_call_id()->call_number){
+        if (c->get_call_id()->call_number == new_call->get_call_id()->call_number &&
+            c->get_call_id()->elevator_id.id == new_call->get_call_id()->elevator_id.id){
             already_exists = true;
             for(auto elevator_id : new_call->get_elevator_ack_list()){
                 c->acknowlegde_call(elevator_id);

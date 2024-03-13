@@ -122,22 +122,15 @@ void Peer::infinite_call_recieve() {
             if (!already_exists) {
                 //data_container->add_call(new Call(*incoming_call)); //this should also merge the call if it already exists
                 bool retransmit = false;
-                if (!vectors_are_equal(new_call->get_elevator_ack_list(), data_container->get_alive_elevators())) {
+                if (!vectors_are_equal(new_call->get_elevator_ack_list(), data_container->get_alive_elevators()) ||
+                    new_call->get_serviced_ack_list().size() > 0 && new_call->get_serviced_ack_list().size() < data_container->get_alive_elevators().size()){
                     retransmit = true;
                 }
                 
+                new_call->acknowlegde_call(my_id); //if the id is already in the ack list, it will not be added
 
-                //Check if own id is in the ack list, if not, add it first, then retransmit
-                bool is_acked = false;
-                for (auto ack_elevator_id : new_call->get_elevator_ack_list()) {
-                    if (ack_elevator_id.id == my_id.id) {
-                        is_acked = true;
-                        break;
-                    }
-                }
-                if (!is_acked)
-                {
-                    new_call->acknowlegde_call(my_id);
+                if( new_call->get_serviced_ack_list().size() > 0){ //if the call has already been serviced by some elevator, ack
+                    new_call->service_call(my_id);
                 }
 
                 data_container->add_call(new_call);
@@ -164,7 +157,8 @@ void Peer::infinite_call_transmit() {
     while (true) {
         for (auto call : data_container->get_call_list()) {
             
-            if(!vectors_are_equal(call->get_elevator_ack_list(), data_container->get_alive_elevators())){
+            if(!vectors_are_equal(call->get_elevator_ack_list(), data_container->get_alive_elevators()) ||
+                call->get_serviced_ack_list().size() > 0 && call->get_serviced_ack_list().size() < data_container->get_alive_elevators().size()){
                 call_transmit(call, 1);
             }
         }
