@@ -125,6 +125,9 @@ void Peer::infinite_call_recieve() {
                     }
                 }
             }
+
+
+            data_container->add_call(new Call(*incoming_call));
             
 
             if (retransmit)
@@ -134,7 +137,6 @@ void Peer::infinite_call_recieve() {
                 std::cout << "Retransmitted call" << std::endl;
             }
             
-            data_container->add_call(new Call(*incoming_call));
 
             //delay for 50ms
             boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
