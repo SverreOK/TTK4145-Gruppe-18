@@ -195,7 +195,10 @@ void Peer::infinite_call_transmit() {
 
 void Peer::call_transmit(Call* call, int burst_size) {
     for (int i = 0; i < burst_size; i++) {
-        call_socket_tx.send_to(boost::asio::buffer(call, sizeof(Call)), udp::endpoint(broadcast_address, call_rx_port));
+        // make the call into a call_message
+        call_message call_msg = call->get_call_message();
+        call_socket_tx.send_to(boost::asio::buffer(&call_msg, sizeof(call_message)), udp::endpoint(broadcast_address, call_rx_port));
+        //call_socket_tx.send_to(boost::asio::buffer(call_msg, sizeof(call_message)), udp::endpoint(broadcast_address, call_rx_port));
     }
 }
 
