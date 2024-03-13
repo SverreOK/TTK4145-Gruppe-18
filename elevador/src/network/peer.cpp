@@ -20,6 +20,7 @@ Peer::Peer(Super_container* data_container) : data_container(data_container) {
 
         call_socket_rx.open(udp::v4());
         call_socket_rx.set_option(udp::socket::reuse_address(true));
+        call_socket_rx.non_blocking(true);
         call_socket_rx.bind(udp::endpoint(udp::v4(), call_rx_port));
 
         broadcast_address = boost::asio::ip::address::from_string("255.255.255.255");
@@ -125,8 +126,18 @@ void Peer::infinite_call_recieve() {
         char buffer[1024];
         boost::asio::ip::udp::endpoint sender_endpoint;
         while (true) {
-
-            size_t len = call_socket_rx.receive_from(boost::asio::buffer(buffer), sender_endpoint);
+            
+            try
+            {
+                size_t len = call_socket_rx.receive_from(boost::asio::buffer(buffer), sender_endpoint);
+            }
+            catch(const std::exception& e)
+            {
+                // std::cout << "emty buffer" << std::endl;
+                boost::this_thread::sleep_for(boost::chrono::milliseconds(32));
+                continue;
+            }
+            
             call_message* incoming_call = (call_message*)buffer;
 
             Call* new_call = new Call(*incoming_call);
@@ -221,10 +232,16 @@ void Peer::call_transmit(Call* call, int burst_size) {
 */
 
 void purge_receive_buffers(boost::asio::ip::udp::socket& call_socket_rx) {
-    while(1){
-        char buffer[1024];
-        boost::asio::ip::udp::endpoint sender_endpoint;
-        size_t len = call_socket_rx.receive_from(boost::asio::buffer(buffer), sender_endpoint);
+    try {
+        for(int i = 0; i < 1000; i++){
+            char buffer[1024];
+            boost::asio::ip::udp::endpoint sender_endpoint;
+            size_t len = call_socket_rx.receive_from(boost::asio::buffer(buffer), sender_endpoint);
+            boost::this_thread::interruption_point();
+        }
+    } catch (std::exception& e) {
+        // Thread was interrupted, handle it if necessary
+        std::cout << "I've been excepting you, Mr. Bond" << std::endl;
     }
 }
 
