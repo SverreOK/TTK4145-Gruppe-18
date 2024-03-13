@@ -58,6 +58,8 @@ class Call {
         Call(int floor, button_type call_type, Call_id call_id);
         Call(call_message call_msg);
 
+        call_message get_call_message();
+
 
         std::vector<Elevator_id> get_elevator_ack_list();
         std::vector<Elevator_id> get_serviced_ack_list();

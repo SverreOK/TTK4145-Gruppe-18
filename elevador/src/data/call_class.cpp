@@ -1,4 +1,5 @@
 #include "call_class.h"
+#include <cstring>
 
 class Call;
 class Call_id;
@@ -89,4 +90,21 @@ void Call::service_call(Elevator_id elevator_id) {
 
 bool Call::is_serviced() {
     return elevator_ack_list.size() > 0;
+}
+
+call_message Call::get_call_message() {
+    call_message call_msg;
+    call_msg.floor = floor;
+    call_msg.call_type = static_cast<uint8_t>(call_type);
+    call_msg.call_id = call_id->call_number;
+    // create 2d char array for call_msg.ack_list
+    for (size_t i = 0; i < elevator_ack_list.size(); i++) {
+        strncpy(call_msg.ack_list[i], elevator_ack_list[i].id.c_str(), 8);
+    }
+
+    for (size_t i = 0; i < serviced_ack_list.size(); i++) {
+        strncpy(call_msg.serviced[i], serviced_ack_list[i].id.c_str(), 8);
+    }
+
+
 }
