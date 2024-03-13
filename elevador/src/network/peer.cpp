@@ -219,12 +219,23 @@ void Peer::call_transmit(Call* call, int burst_size) {
 /*
 * Runs the peer threads
 */
-void Peer::run_peer() {
-    for (int i = 0; i < 1000; i++) { //purge receive buffers
+
+void purge_receive_buffers(boost::asio::ip::udp::socket& call_socket_rx) {
+    while(1){
         char buffer[1024];
         boost::asio::ip::udp::endpoint sender_endpoint;
-        size_t len = call_socket_rx.receive_from(boost::asio::buffer(buffer), sender_endpoint);        
+        size_t len = call_socket_rx.receive_from(boost::asio::buffer(buffer), sender_endpoint);
     }
+}
+
+
+void Peer::run_peer() {
+
+    boost::thread purge_thread(purge_receive_buffers, std::ref(call_socket_rx));
+    boost::this_thread::sleep_for(boost::chrono::seconds(1));
+    purge_thread.interrupt();
+    purge_thread.join();
+    std::cout << "Purged receive buffers :grinning:" << std::endl;
 
     boost::thread peer_thread(&Peer::infinite_status_broadcast, this);
     boost::thread peer_thread2(&Peer::infinite_status_recieve, this);
