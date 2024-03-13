@@ -108,11 +108,12 @@ void Peer::infinite_call_recieve() {
             call_message* incoming_call = (call_message*)buffer;
 
             Call* new_call = new Call(*incoming_call);
-
+            
             bool already_exists = false;
             //check if an IDENTICAL call, with same id, ack list and serviced list already exists
+            
             for (auto call : data_container->get_call_list()) {
-                if (call->get_call_id()->call_number == new_call->get_call_id()->call_number ||
+                if (call->get_call_id()->call_number == new_call->get_call_id()->call_number &&
                     call->get_call_id()->elevator_id.id == new_call->get_call_id()->elevator_id.id) {
 
                         bool sameacklist = vectors_are_equal(call->get_elevator_ack_list(), new_call->get_elevator_ack_list());
