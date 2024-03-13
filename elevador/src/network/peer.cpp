@@ -75,9 +75,10 @@ void Peer::dead_connection_remover() {
     }
 }
 
-bool vectors_are_equal(const std::vector<Elevator_id>& list1, const std::vector<Elevator_id>& list2) {
-    if (list1.size() != list2.size()) {
-        return false;
+bool vector_elements_in_A_found_in_B(const std::vector<Elevator_id>& list1, const std::vector<Elevator_id>& list2) {
+
+    if (list1.size() == 0) {
+        return true;
     }
 
     for (const auto& item1 : list1) {
@@ -92,9 +93,23 @@ bool vectors_are_equal(const std::vector<Elevator_id>& list1, const std::vector<
             return false;
         }
     }
-
     return true;
 }
+
+bool vectors_are_equal(const std::vector<Elevator_id>& list1, const std::vector<Elevator_id>& list2) {
+    if (list1.size() != list2.size()) {
+        return false;
+    }
+
+    if (vector_elements_in_A_found_in_B(list1, list2) &&
+        vector_elements_in_A_found_in_B(list2, list1)){
+        return true;
+    }
+    
+    return false;
+}
+
+
 
 void Peer::infinite_call_recieve() {
         char buffer[1024];
@@ -122,8 +137,13 @@ void Peer::infinite_call_recieve() {
             if (!already_exists) {
                 //data_container->add_call(new Call(*incoming_call)); //this should also merge the call if it already exists
                 bool retransmit = false;
-                if (!vectors_are_equal(new_call->get_elevator_ack_list(), data_container->get_alive_elevators()) ||
-                    new_call->get_serviced_ack_list().size() > 0 && new_call->get_serviced_ack_list().size() < data_container->get_alive_elevators().size()){
+
+                std::vector<Elevator_id> new_call_ack_list = new_call->get_elevator_ack_list();
+                std::vector<Elevator_id> new_call_serviced_list = new_call->get_serviced_ack_list();
+                std::vector<Elevator_id> alive_elevators = data_container->get_alive_elevators();
+
+                if (!vector_elements_in_A_found_in_B(alive_elevators, new_call_ack_list) ||
+                    new_call_serviced_list.size() > 0 && new_call_serviced_list.size() < alive_elevators.size()) {
                     retransmit = true;
                 }
                 
@@ -144,7 +164,7 @@ void Peer::infinite_call_recieve() {
             
 
             //delay for 50ms
-            boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
+            boost::this_thread::sleep_for(boost::chrono::milliseconds(32));
         }
 }
 
@@ -156,9 +176,13 @@ void Peer::infinite_call_transmit() {
     
     while (true) {
         for (auto call : data_container->get_call_list()) {
+
+            std::vector<Elevator_id> call_ack_list = call->get_elevator_ack_list();
+            std::vector<Elevator_id> call_serviced_list = call->get_serviced_ack_list();
+            std::vector<Elevator_id> alive_elevators = data_container->get_alive_elevators();
             
-            if(!vectors_are_equal(call->get_elevator_ack_list(), data_container->get_alive_elevators()) ||
-                call->get_serviced_ack_list().size() > 0 && call->get_serviced_ack_list().size() < data_container->get_alive_elevators().size()){
+            if(!vector_elements_in_A_found_in_B(alive_elevators, call_ack_list) ||
+               !vector_elements_in_A_found_in_B(alive_elevators, call_serviced_list)){
                 call_transmit(call, 1);
             }
         }
