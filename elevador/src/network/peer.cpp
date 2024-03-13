@@ -126,23 +126,6 @@ void Peer::infinite_call_recieve() {
                     retransmit = true;
                 }
                 
-                for (auto elevators : data_container->get_alive_elevators()) { // check if the call has been acked by all elevators
-                    
-                    bool is_acked = false;
-                    for (auto ack_elevator_id : new_call->get_elevator_ack_list()) {
-                        
-                    if(ack_elevator_id.id == elevators.id) {
-                        is_acked = true;
-                        break;
-                    }
-                    }
-                    
-                    if (!is_acked)
-                    {
-                        retransmit = true;
-                        break;
-                    }
-                }
 
                 //Check if own id is in the ack list, if not, add it first, then retransmit
                 bool is_acked = false;
