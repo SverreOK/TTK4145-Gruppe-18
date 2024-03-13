@@ -101,9 +101,15 @@ call_message Call::get_call_message() {
     for (size_t i = 0; i < elevator_ack_list.size(); i++) {
         strncpy(call_msg.ack_list[i], elevator_ack_list[i].id.c_str(), 8);
     }
+    for (size_t i = elevator_ack_list.size(); i < call_msg.ack_list.size(); i++) {
+        strncpy(call_msg.ack_list[i], "", 8);
+    }
 
     for (size_t i = 0; i < serviced_ack_list.size(); i++) {
         strncpy(call_msg.serviced[i], serviced_ack_list[i].id.c_str(), 8);
+    }
+    for (size_t i = serviced_ack_list.size(); i < call_msg.serviced.size()-serviced_ack_list.size(); i++) {
+        strncpy(call_msg.serviced[i], "", 8);
     }
 
     return call_msg;
