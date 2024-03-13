@@ -181,7 +181,7 @@ void Peer::infinite_call_transmit() {
             }
         }
         //sleep
-        boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(1000));
     }
 }
 
