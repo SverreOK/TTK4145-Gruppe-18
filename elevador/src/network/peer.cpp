@@ -110,7 +110,17 @@ bool vectors_are_equal(const std::vector<Elevator_id>& list1, const std::vector<
 }
 
 
-
+/*
+ * This function is responsible for continuously receiving calls from other peers.
+ * It runs an infinite loop that listens for incoming data on the socket.
+ * For each received call, it checks if an identical call already exists in the data container.
+ * If the call does not exist, it checks if the call needs to be retransmitted.
+ * A call needs to be retransmitted if there are any alive elevators that have not acknowledged the call,
+ * or if the call has been serviced by some elevators but not all.
+ * The function then acknowledges the call and adds it to the data container.
+ * If the call is marked for retransmission, it transmits the call.
+ * After processing the call, the function sleeps for 32 milliseconds before starting the next iteration.
+ */
 void Peer::infinite_call_recieve() {
         char buffer[1024];
         boost::asio::ip::udp::endpoint sender_endpoint;
@@ -169,9 +179,15 @@ void Peer::infinite_call_recieve() {
 }
 
 /*
-Shall transfer all calls from the call list that has not been acked by all elevators yet
+ * This function is responsible for continuously transmitting calls to elevators.
+ * It runs an infinite loop that iterates over all the calls in the data container.
+ * For each call, it retrieves the list of elevators that have acknowledged the call,
+ * the list of elevators that have serviced the call, and the list of currently alive elevators.
+ * If there are any elevators in the alive list that have not acknowledged or serviced the call,
+ * it transmits the call to those elevators.
+ * After processing all calls, the function sleeps for 100 milliseconds before starting the next iteration.
+ */ 
 
-*/
 void Peer::infinite_call_transmit() {
     
     while (true) {
@@ -200,6 +216,9 @@ void Peer::call_transmit(Call* call, int burst_size) {
     }
 }
 
+/*
+* Runs the peer threads
+*/
 void Peer::run_peer() {
     boost::thread peer_thread(&Peer::infinite_status_broadcast, this);
     boost::thread peer_thread2(&Peer::infinite_status_recieve, this);

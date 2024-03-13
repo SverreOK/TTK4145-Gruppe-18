@@ -69,13 +69,12 @@ void Super_container::add_call(Call* new_call){
 
     if (!already_exists){
         call_list.push_back(new_call);
+        push_new_call_event();
     }
 
     scoped_lock.unlock();
 
     update_locally_assigned_calls();
-
-    push_new_call_event();
 }
 
 
