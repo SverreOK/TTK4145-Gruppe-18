@@ -163,33 +163,10 @@ void Peer::infinite_call_transmit() {
     
     while (true) {
         for (auto call : data_container->get_call_list()) {
-            bool call_transmitted = false;
             
-            for (auto elevator : data_container->get_alive_elevators()) { // check if the call has been acked by all elevators
-
-                bool is_acked = false;
-                for (auto& acks : call->get_elevator_ack_list()) {
-                    char elev_id[8];
-                    strncpy(elev_id, elevator.id.c_str(), 8);
-                    if (strncmp(acks.id.c_str(), elev_id, 8) == 0) {
-                        is_acked = true;
-                        break;
-                    }
-                }
-
-                if (!is_acked)
-                {
-                    call_transmit(call, 1);
-                    std::cout << "Transmitted call" << std::endl;
-                    // print the ack list in a readable format
-                    // std::vector<Elevator_id> ack_list = call->get_elevator_ack_list();
-                    // for (size_t i = 0; i < ack_list.size(); i++) {
-                    //     std::cout << "ack_list[" << i << "]: " << ack_list[i].id << std::endl;
-                    // }
-                    break;
-                }
+            if(!vectors_are_equal(call->get_elevator_ack_list(), data_container->get_alive_elevators())){
+                call_transmit(call, 1);
             }
-
         }
         //sleep
         boost::this_thread::sleep_for(boost::chrono::milliseconds(1000));
