@@ -168,7 +168,7 @@ void Peer::infinite_call_recieve() {
                 if (retransmit)
                 {
                     call_transmit(new_call, 1);
-                    std::cout << "Retransmitted call" << std::endl;
+                    std::cout << "Retransmitted call" << new_call->get_call_id()->call_number <<std::endl;
                 }
             }
             
@@ -220,6 +220,12 @@ void Peer::call_transmit(Call* call, int burst_size) {
 * Runs the peer threads
 */
 void Peer::run_peer() {
+    for (int i = 0; i < 1000; i++) { //purge receive buffers
+        char buffer[1024];
+        boost::asio::ip::udp::endpoint sender_endpoint;
+        size_t len = call_socket_rx.receive_from(boost::asio::buffer(buffer), sender_endpoint);        
+    }
+
     boost::thread peer_thread(&Peer::infinite_status_broadcast, this);
     boost::thread peer_thread2(&Peer::infinite_status_recieve, this);
     boost::thread peer_thread3(&Peer::dead_connection_remover, this);
