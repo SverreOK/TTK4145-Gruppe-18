@@ -22,8 +22,8 @@ Call::Call(call_message call_msg)
 
     std::vector<Elevator_id> elevator_ack_list;
 
-    for (auto elevator_id : call_msg.ack_list){
-        std::string id_str(call_msg.elevator_id); //TODO: Double check that this is cast correctly in runtime
+    for (auto ack_elevator_id : call_msg.ack_list){
+        std::string id_str(ack_elevator_id); //TODO: Double check that this is cast correctly in runtime
         //check that the id_str is not an empty string
         if (id_str != ""){
             elevator_ack_list.push_back(Elevator_id{id_str});
@@ -33,9 +33,9 @@ Call::Call(call_message call_msg)
     this->elevator_ack_list = elevator_ack_list;
     std::vector<Elevator_id> serviced_ack_list;
 
-    for (auto elevator_id : call_msg.serviced){
+    for (auto serviced_elevator_id : call_msg.serviced){
         //convert 8 char array to string
-        std::string id_str(call_msg.elevator_id); //TODO: Double check that this is cast correctly in runtime
+        std::string id_str(serviced_elevator_id); //TODO: Double check that this is cast correctly in runtime
 
         //check that the id_str is not an empty string
         if (id_str != ""){
