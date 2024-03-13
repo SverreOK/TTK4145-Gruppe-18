@@ -118,7 +118,7 @@ void Peer::infinite_call_recieve() {
             {
                 //loop through the ack list and add own id in first slot that is empty
                 for (auto& acks : incoming_call->ack_list) {
-                    if (acks[0] == 0 || acks[0] == '') //if the first byte is 0, the slot is empty
+                    if (acks[0] == 0 ) //if the first byte is 0, the slot is empty
                     {
                         strncpy(acks, my_id.id.c_str(), 8);
                         break;
@@ -138,7 +138,7 @@ void Peer::infinite_call_recieve() {
 
             //delay for 50ms
             boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
-        }is_acked
+        }
 }
 
 /*

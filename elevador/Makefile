@@ -10,7 +10,7 @@ CFLAGS_DEBUG = -g $(CFLAGS)
 # Linker flags
 LDFLAGS = -ljsoncpp -lpthread -lboost_system -lboost_thread -lboost_chrono  
 
-# Source files
+# Source filesm
 SRC = $(wildcard src/*.cpp src/data/*.cpp src/elevator/*.cpp src/network/*.cpp)
 
 # Object files
