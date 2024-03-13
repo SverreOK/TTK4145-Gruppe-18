@@ -1,6 +1,4 @@
 #include "peer.h"
-#include "super_container.h"
-#include "config.h"
 
 // CONSTRUCTOR
 Peer::Peer(Super_container* data_container) : data_container(data_container) {
@@ -20,7 +18,6 @@ Peer::Peer(Super_container* data_container) : data_container(data_container) {
 
         call_socket_rx.open(udp::v4());
         call_socket_rx.set_option(udp::socket::reuse_address(true));
-        call_socket_rx.non_blocking(true);
         call_socket_rx.bind(udp::endpoint(udp::v4(), call_rx_port));
 
         broadcast_address = boost::asio::ip::address::from_string("255.255.255.255");
@@ -76,68 +73,14 @@ void Peer::dead_connection_remover() {
     }
 }
 
-bool vector_elements_in_A_found_in_B(const std::vector<Elevator_id>& list1, const std::vector<Elevator_id>& list2) {
-
-    if (list1.size() == 0) {
-        return true;
-    }
-
-    for (const auto& item1 : list1) {
-        bool found = false;
-        for (const auto& item2 : list2) {
-            if (item1.id == item2.id) {
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
-            return false;
-        }
-    }
-    return true;
-}
-
-bool vectors_are_equal(const std::vector<Elevator_id>& list1, const std::vector<Elevator_id>& list2) {
-    if (list1.size() != list2.size()) {
-        return false;
-    }
-
-    if (vector_elements_in_A_found_in_B(list1, list2) &&
-        vector_elements_in_A_found_in_B(list2, list1)){
-        return true;
-    }
-    
-    return false;
-}
 
 
-/*
- * This function is responsible for continuously receiving calls from other peers.
- * It runs an infinite loop that listens for incoming data on the socket.
- * For each received call, it checks if an identical call already exists in the data container.
- * If the call does not exist, it checks if the call needs to be retransmitted.
- * A call needs to be retransmitted if there are any alive elevators that have not acknowledged the call,
- * or if the call has been serviced by some elevators but not all.
- * The function then acknowledges the call and adds it to the data container.
- * If the call is marked for retransmission, it transmits the call.
- * After processing the call, the function sleeps for 32 milliseconds before starting the next iteration.
- */
 void Peer::infinite_call_recieve() {
         char buffer[1024];
         boost::asio::ip::udp::endpoint sender_endpoint;
         while (true) {
-            
-            try
-            {
-                size_t len = call_socket_rx.receive_from(boost::asio::buffer(buffer), sender_endpoint);
-            }
-            catch(const std::exception& e)
-            {
-                // std::cout << "emty buffer" << std::endl;
-                boost::this_thread::sleep_for(boost::chrono::milliseconds(32));
-                continue;
-            }
-            
+
+            size_t len = call_socket_rx.receive_from(boost::asio::buffer(buffer), sender_endpoint);
             call_message* incoming_call = (call_message*)buffer;
 
             Call* new_call = new Call(*incoming_call);
@@ -179,7 +122,7 @@ void Peer::infinite_call_recieve() {
                 if (retransmit)
                 {
                     call_transmit(new_call, 1);
-                    std::cout << "Retransmitted call" << new_call->get_call_id()->call_number <<std::endl;
+                    std::cout << "Retransmitted call" << std::endl;
                 }
             }
             
@@ -190,15 +133,9 @@ void Peer::infinite_call_recieve() {
 }
 
 /*
- * This function is responsible for continuously transmitting calls to elevators.
- * It runs an infinite loop that iterates over all the calls in the data container.
- * For each call, it retrieves the list of elevators that have acknowledged the call,
- * the list of elevators that have serviced the call, and the list of currently alive elevators.
- * If there are any elevators in the alive list that have not acknowledged or serviced the call,
- * it transmits the call to those elevators.
- * After processing all calls, the function sleeps for 100 milliseconds before starting the next iteration.
- */ 
+Shall transfer all calls from the call list that has not been acked by all elevators yet
 
+*/
 void Peer::infinite_call_transmit() {
     
     while (true) {
@@ -214,7 +151,7 @@ void Peer::infinite_call_transmit() {
             }
         }
         //sleep
-        boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(1000));
     }
 }
 
@@ -227,33 +164,7 @@ void Peer::call_transmit(Call* call, int burst_size) {
     }
 }
 
-/*
-* Runs the peer threads
-*/
-
-void purge_receive_buffers(boost::asio::ip::udp::socket& call_socket_rx) {
-    try {
-        for(int i = 0; i < 1000; i++){
-            char buffer[1024];
-            boost::asio::ip::udp::endpoint sender_endpoint;
-            size_t len = call_socket_rx.receive_from(boost::asio::buffer(buffer), sender_endpoint);
-            boost::this_thread::interruption_point();
-        }
-    } catch (std::exception& e) {
-        // Thread was interrupted, handle it if necessary
-        std::cout << "I've been excepting you, Mr. Bond" << std::endl;
-    }
-}
-
-
 void Peer::run_peer() {
-
-    boost::thread purge_thread(purge_receive_buffers, std::ref(call_socket_rx));
-    boost::this_thread::sleep_for(boost::chrono::seconds(1));
-    purge_thread.interrupt();
-    purge_thread.join();
-    std::cout << "Purged receive buffers :grinning:" << std::endl;
-
     boost::thread peer_thread(&Peer::infinite_status_broadcast, this);
     boost::thread peer_thread2(&Peer::infinite_status_recieve, this);
     boost::thread peer_thread3(&Peer::dead_connection_remover, this);

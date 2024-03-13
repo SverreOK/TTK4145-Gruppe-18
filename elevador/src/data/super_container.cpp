@@ -27,8 +27,14 @@ std::vector<Call*> Super_container::update_locally_assigned_calls(){
 
     //remove calls that are already serviced by checking if serviced vector length more than 0
 
+
+
     for (auto call : call_list_copy){
-        if (call->get_serviced_ack_list().size() == 0){
+
+        std::vector<Elevator_id> call_ack_list = call->get_elevator_ack_list();
+
+        if (call->get_serviced_ack_list().size() == 0 &&
+            vector_elements_in_A_found_in_B(alive_elevators, call_ack_list)){
             not_serviced_calls.push_back(call);
         }
     }
@@ -69,12 +75,14 @@ void Super_container::add_call(Call* new_call){
 
     if (!already_exists){
         call_list.push_back(new_call);
-        push_new_call_event();
     }
+
+    
 
     scoped_lock.unlock();
 
     update_locally_assigned_calls();
+    push_new_call_event();
 }
 
 
