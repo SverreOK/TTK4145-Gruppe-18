@@ -9,12 +9,11 @@ bool vector_elements_in_A_found_in_B(std::vector<Elevator_id> list1, std::vector
 
     for (auto item1 : list1) {
         bool found = false;
-        for (const auto item2 : list2) {
+        for (auto item2 : list2) {
             if (item1.id == item2.id) {
                 found = true;
                 break;
             }
-            break;
         }
         if (!found) {
             return false;
