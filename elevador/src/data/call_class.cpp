@@ -106,5 +106,6 @@ call_message Call::get_call_message() {
         strncpy(call_msg.serviced[i], serviced_ack_list[i].id.c_str(), 8);
     }
 
+    return call_msg;
 
 }

@@ -12,8 +12,8 @@ struct call_message
     uint8_t floor;
     uint8_t call_type;
     uint8_t call_id;
-    char ack_list[8][NUM_ELEVATORS];
-    char serviced[8][NUM_ELEVATORS];
+    char ack_list[NUM_ELEVATORS][8];
+    char serviced[NUM_ELEVATORS][8];
 };
 
 //enum for direction of elevator
