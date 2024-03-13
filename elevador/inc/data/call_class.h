@@ -74,8 +74,8 @@ class Call {
 
 
 
-bool vector_elements_in_A_found_in_B(const std::vector<Elevator_id>& list1, const std::vector<Elevator_id>& list2);
-bool vectors_are_equal(const std::vector<Elevator_id>& list1, const std::vector<Elevator_id>& list2);
+bool vector_elements_in_A_found_in_B(std::vector<Elevator_id> list1, std::vector<Elevator_id> list2);
+bool vectors_are_equal(std::vector<Elevator_id> list1, std::vector<Elevator_id> list2);
 
 
 

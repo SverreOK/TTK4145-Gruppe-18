@@ -114,8 +114,12 @@ void Peer::infinite_call_recieve() {
             for (auto call : data_container->get_call_list()) {
                 if (call->get_call_id()->call_number == new_call->get_call_id()->call_number ||
                     call->get_call_id()->elevator_id.id == new_call->get_call_id()->elevator_id.id) {
-                        if (vectors_are_equal(call->get_elevator_ack_list(), new_call->get_elevator_ack_list()) &&
-                            vectors_are_equal(call->get_serviced_ack_list(), new_call->get_serviced_ack_list())) {
+
+                        bool sameacklist = vectors_are_equal(call->get_elevator_ack_list(), new_call->get_elevator_ack_list());
+                        bool sameservicedlist = vectors_are_equal(call->get_serviced_ack_list(), new_call->get_serviced_ack_list());
+                        // fuck me
+                        if (sameacklist &&
+                            sameservicedlist) {
                                 already_exists = true;
                                 break;
                         }

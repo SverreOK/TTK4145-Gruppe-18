@@ -1,15 +1,15 @@
 #include "call_class.h"
 #include <cstring>
 
-bool vector_elements_in_A_found_in_B(const std::vector<Elevator_id>& list1, const std::vector<Elevator_id>& list2) {
+bool vector_elements_in_A_found_in_B(std::vector<Elevator_id> list1, std::vector<Elevator_id> list2) {
 
     if (list1.size() == 0) {
         return true;
     }
 
-    for (const auto& item1 : list1) {
+    for (auto item1 : list1) {
         bool found = false;
-        for (const auto& item2 : list2) {
+        for (const auto item2 : list2) {
             if (item1.id == item2.id) {
                 found = true;
                 break;
@@ -23,7 +23,7 @@ bool vector_elements_in_A_found_in_B(const std::vector<Elevator_id>& list1, cons
     return true;
 }
 
-bool vectors_are_equal(const std::vector<Elevator_id>& list1, const std::vector<Elevator_id>& list2) {
+bool vectors_are_equal(std::vector<Elevator_id> list1, std::vector<Elevator_id> list2) {
     if (list1.size() != list2.size()) {
         return false;
     }
