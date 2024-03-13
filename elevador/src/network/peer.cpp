@@ -122,6 +122,10 @@ void Peer::infinite_call_recieve() {
             if (!already_exists) {
                 //data_container->add_call(new Call(*incoming_call)); //this should also merge the call if it already exists
                 bool retransmit = false;
+                if (!vectors_are_equal(new_call->get_elevator_ack_list(), data_container->get_alive_elevators())) {
+                    retransmit = true;
+                }
+                
                 for (auto elevators : data_container->get_alive_elevators()) { // check if the call has been acked by all elevators
                     
                     bool is_acked = false;
@@ -195,19 +199,14 @@ void Peer::infinite_call_transmit() {
                     call_transmit(call, 1);
                     std::cout << "Transmitted call" << std::endl;
                     // print the ack list in a readable format
-                    std::vector<Elevator_id> ack_list = call->get_elevator_ack_list();
-                    for (size_t i = 0; i < ack_list.size(); i++) {
-                        std::cout << "ack_list[" << i << "]: " << ack_list[i].id << std::endl;
-                    }
-                    call_transmitted = true;
+                    // std::vector<Elevator_id> ack_list = call->get_elevator_ack_list();
+                    // for (size_t i = 0; i < ack_list.size(); i++) {
+                    //     std::cout << "ack_list[" << i << "]: " << ack_list[i].id << std::endl;
+                    // }
                     break;
                 }
             }
 
-            if (call_transmitted)
-            {
-                break;
-            }
         }
         //sleep
         boost::this_thread::sleep_for(boost::chrono::milliseconds(1000));
