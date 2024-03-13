@@ -75,6 +75,27 @@ void Peer::dead_connection_remover() {
     }
 }
 
+bool vectors_are_equal(const std::vector<Elevator_id>& list1, const std::vector<Elevator_id>& list2) {
+    if (list1.size() != list2.size()) {
+        return false;
+    }
+
+    for (const auto& item1 : list1) {
+        bool found = false;
+        for (const auto& item2 : list2) {
+            if (item1.id == item2.id) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 void Peer::infinite_call_recieve() {
         char buffer[1024];
         boost::asio::ip::udp::endpoint sender_endpoint;
@@ -82,59 +103,63 @@ void Peer::infinite_call_recieve() {
 
             size_t len = call_socket_rx.receive_from(boost::asio::buffer(buffer), sender_endpoint);
             call_message* incoming_call = (call_message*)buffer;
-            //data_container->add_call(new Call(*incoming_call)); //this should also merge the call if it already exists
-            bool retransmit = false;
-            for (auto elevators : data_container->get_alive_elevators()) { // check if the call has been acked by all elevators
-                
-                bool is_acked = false;
-                for (auto& acks : incoming_call->ack_list) {
-                       
-                    char elev_id[8];
-                    strncpy(elev_id, elevators.id.c_str(), 8);
-                    if (strncmp(acks, elev_id, 8) == 0) //suggestion?: if (strncmp(acks, elevators.id.c_str(), 8) == 0)
+
+            Call* new_call = new Call(*incoming_call);
+
+            bool already_exists = false;
+            //check if an IDENTICAL call, with same id, ack list and serviced list already exists
+            for (auto call : data_container->get_call_list()) {
+                if (call->get_call_id()->call_number == new_call->get_call_id()->call_number ||
+                    call->get_call_id()->elevator_id.id == new_call->get_call_id()->elevator_id.id) {
+                        if (vectors_are_equal(call->get_elevator_ack_list(), new_call->get_elevator_ack_list()) &&
+                            vectors_are_equal(call->get_serviced_ack_list(), new_call->get_serviced_ack_list())) {
+                                already_exists = true;
+                                break;
+                        }
+                    }
+            }
+
+            if (!already_exists) {
+                //data_container->add_call(new Call(*incoming_call)); //this should also merge the call if it already exists
+                bool retransmit = false;
+                for (auto elevators : data_container->get_alive_elevators()) { // check if the call has been acked by all elevators
+                    
+                    bool is_acked = false;
+                    for (auto ack_elevator_id : new_call->get_elevator_ack_list()) {
+                        
+                    if(ack_elevator_id.id == elevators.id) {
+                        is_acked = true;
+                        break;
+                    }
+                    }
+                    
+                    if (!is_acked)
                     {
+                        retransmit = true;
+                        break;
+                    }
+                }
+
+                //Check if own id is in the ack list, if not, add it first, then retransmit
+                bool is_acked = false;
+                for (auto ack_elevator_id : new_call->get_elevator_ack_list()) {
+                    if (ack_elevator_id.id == my_id.id) {
                         is_acked = true;
                         break;
                     }
                 }
-                
                 if (!is_acked)
                 {
-                    retransmit = true;
-                    break;
+                    new_call->acknowlegde_call(my_id);
                 }
-            }
 
-            //Check if own id is in the ack list, if not, add it first, then retransmit
-            bool is_acked = false;
-            for (auto& acks : incoming_call->ack_list) {
-                if (strncmp(acks, my_id.id.c_str(), 8) == 0)
-                {
-                    is_acked = true;
-                    break;
-                }
-            }
-            if (!is_acked)
-            {
-                //loop through the ack list and add own id in first slot that is empty
-                for (auto& acks : incoming_call->ack_list) {
-                    if (acks[0] == 0 ) //if the first byte is 0, the slot is empty
-                    {
-                        strncpy(acks, my_id.id.c_str(), 8);
-                        break;
-                    }
-                }
-            }
-
-
-            data_container->add_call(new Call(*incoming_call));
-            
-
-            if (retransmit)
-            {
-                call_transmit((new Call(*incoming_call)), 1);
+                data_container->add_call(new_call);
                 
-                std::cout << "Retransmitted call" << std::endl;
+                if (retransmit)
+                {
+                    call_transmit(new_call, 1);
+                    std::cout << "Retransmitted call" << std::endl;
+                }
             }
             
 
@@ -185,7 +210,7 @@ void Peer::infinite_call_transmit() {
             }
         }
         //sleep
-        boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(1000));
     }
 }
 
