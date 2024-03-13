@@ -91,7 +91,7 @@ void Peer::infinite_call_recieve() {
                        
                     char elev_id[8];
                     strncpy(elev_id, elevators.id.c_str(), 8);
-                    if (strncmp(acks, elev_id, 8) == 0)
+                    if (strncmp(acks, elev_id, 8) == 0) //suggestion?: if (strncmp(acks, elevators.id.c_str(), 8) == 0)
                     {
                         is_acked = true;
                         break;
@@ -104,39 +104,31 @@ void Peer::infinite_call_recieve() {
                     break;
                 }
             }
-            if (retransmit)
+
+            //Check if own id is in the ack list, if not, add it first, then retransmit
+            bool is_acked = false;
+            for (auto& acks : incoming_call->ack_list) {
+                if (strncmp(acks, my_id.id.c_str(), 8) == 0)
+                {
+                    is_acked = true;
+                    break;
+                }
+            }
+            if (!is_acked)
             {
-                //Check if own id is in the ack list, if not, add it first, then retransmit
-                bool is_acked = false;
+                //loop through the ack list and add own id in first slot that is empty
                 for (auto& acks : incoming_call->ack_list) {
-                    if (strncmp(acks, my_id.id.c_str(), 8) == 0)
+                    if (acks[0] == 0 || acks[0] == '') //if the first byte is 0, the slot is empty
                     {
-                        is_acked = true;
+                        strncpy(acks, my_id.id.c_str(), 8);
                         break;
                     }
                 }
-                if (!is_acked)
-                {
-                    //Find an open slot in the ack list and add own id
-                    for (auto& acks : incoming_call->ack_list) {
-                        bool all_null = true;
-                        for (int i = 0; i < 8; i++)
-                        {
-                            if (acks[i] != 0)
-                            {
-                                all_null = false;
-                                break;
-                            }
+            }
+            
 
-                            std::cout << "acks: " << acks << std::endl;
-                        }
-                        if (all_null)
-                        {
-                            strncpy(acks, my_id.id.c_str(), 8);
-                            break;
-                        }
-                    }
-                }
+            if (retransmit)
+            {
                 call_transmit((new Call(*incoming_call)), 1);
                 
                 std::cout << "Retransmitted call" << std::endl;
@@ -144,7 +136,9 @@ void Peer::infinite_call_recieve() {
             
             data_container->add_call(new Call(*incoming_call));
 
-        }
+            //delay for 50ms
+            boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
+        }is_acked
 }
 
 /*
