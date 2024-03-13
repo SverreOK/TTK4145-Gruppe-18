@@ -1,6 +1,41 @@
 #include "call_class.h"
 #include <cstring>
 
+bool vector_elements_in_A_found_in_B(const std::vector<Elevator_id>& list1, const std::vector<Elevator_id>& list2) {
+
+    if (list1.size() == 0) {
+        return true;
+    }
+
+    for (const auto& item1 : list1) {
+        bool found = false;
+        for (const auto& item2 : list2) {
+            if (item1.id == item2.id) {
+                found = true;
+                break;
+            }
+            break;
+        }
+        if (!found) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool vectors_are_equal(const std::vector<Elevator_id>& list1, const std::vector<Elevator_id>& list2) {
+    if (list1.size() != list2.size()) {
+        return false;
+    }
+
+    if (vector_elements_in_A_found_in_B(list1, list2) &&
+        vector_elements_in_A_found_in_B(list2, list1)){
+        return true;
+    }
+    
+    return false;
+}
+
 // class Call;
 // class Call_id;
 //TODO MISSING MUTEXES?
