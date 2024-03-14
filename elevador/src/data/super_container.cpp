@@ -248,7 +248,7 @@ Elevator_state* Super_container::get_elevator_by_id(Elevator_id id){
 
 Elevator_id Super_container::get_my_id(){
 
-    boost::shared_lock<boost::mutex> scoped_lock(mtx);
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
     return my_id;
 }
 
