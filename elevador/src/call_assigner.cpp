@@ -108,7 +108,7 @@ std::vector<std::vector<bool>> get_assigned_floors_from_json(std::string json_st
     Json::Reader reader;
     std::vector<std::vector<bool>> assigned_floors;
 
-    std::cout << json_string << std::endl;
+    //std::cout << json_string << std::endl;
 
     bool parsingSuccessful = reader.parse(json_string, root);
     if (parsingSuccessful) {

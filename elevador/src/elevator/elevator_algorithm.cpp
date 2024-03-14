@@ -10,7 +10,6 @@ bool requests_above(int current_floor, std::vector<Call*> call_list) {
     for (auto call : call_list) {
         if (call->get_floor() > current_floor) {
             return true;
-            std::cout << "Request above" << std::endl;
         }
     }
     return false;

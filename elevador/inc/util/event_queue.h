@@ -33,19 +33,6 @@ class thread_safe_queue {
         // Pushes an element to the queue 
         void push(elevator_event item) 
         { 
-            switch (item)
-            { 
-                case elevator_event::ORDER_RECEIVED:
-                    std::cout << "EVENT_QUEUE: Pushing order received event" << std::endl;
-                    break;
-                case elevator_event::ARRIVED_AT_FLOOR:
-                    std::cout << "EVENT_QUEUE: Pushing arrived at floor event" << std::endl;
-                    break;
-                case elevator_event::DOOR_TIMEOUT:
-                    std::cout << "EVENT_QUEUE: Pushing door timer expired event" << std::endl;
-                    break;
-            }
-
             // Acquire lock 
             std::unique_lock<std::mutex> lock(m_mutex); 
     
@@ -83,5 +70,10 @@ class thread_safe_queue {
         bool empty() {
             std::unique_lock<std::mutex> lock(m_mutex);
             return m_queue.empty();
+        }
+
+        elevator_event front() {
+            std::unique_lock<std::mutex> lock(m_mutex);
+            return m_queue.front();
         }
 }; 

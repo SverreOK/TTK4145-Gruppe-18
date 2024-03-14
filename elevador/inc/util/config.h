@@ -22,13 +22,13 @@
 #define STATUS_RECEIVE_RATE_MS 10
 
 // Network broadcast address
-#define BROADCAST_ADDRESS "192.168.1.255"
+#define BROADCAST_ADDRESS "127.0.0.1"
 
 // Network ports
 #define BROADCAST_TX_PORT 9879
-#define BROADCAST_RX_PORT 12345
+#define BROADCAST_RX_PORT 11132 //this is only testing
 #define CALL_TX_PORT 9878
-#define CALL_RX_PORT 12346
+#define CALL_RX_PORT 12348 //this is only testing
 
 // Dead connection removal time
 #define DEAD_CONNECTION_REMOVAL_TIME_S 5

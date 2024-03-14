@@ -33,10 +33,6 @@ void Peer::infinite_status_broadcast() {
         broadcast_socket_tx.send_to(boost::asio::buffer(&status, sizeof(status)), udp::endpoint(broadcast_address, 12345));
         boost::this_thread::sleep_for(boost::chrono::milliseconds(BROADCAST_RATE_MS));
         //std::cout << "Broadcasting status" << std::endl;
-        for (auto id : data_container->get_alive_elevators()) {
-            std::cout << "Alive elevator: " << id.id << '\n';
-        }
-        std::cout << "--------------------------------------" << std::endl;
     }   
 }
 
@@ -76,7 +72,6 @@ void Peer::dead_connection_remover() {
         for (auto id : data_container->get_alive_elevators()) {
             if (data_container->get_elevator_by_id(id)->get_last_seen() < time(NULL) - DEAD_CONNECTION_REMOVAL_TIME_S && strncmp(id.id.c_str(), my_id.id.c_str(), 8) != 0) {
                 data_container->remove_elevator(id);
-                std::cout << "Removed elevator with id: " << id.id << std::endl;
             }
         }
     }
@@ -157,7 +152,6 @@ void Peer::infinite_call_recieve() {
                 if (retransmit)
                 {
                     call_transmit(new_call, 1);
-                    std::cout << "Retransmitted call" << new_call->get_call_id()->call_number <<std::endl;
                 }
             }
             

@@ -58,8 +58,8 @@ int main() {
     peer->run_peer();
 
     // debug print
-    Debug_prints* debug_prints = new Debug_prints(data_container, elevator_id);
-    boost::thread debug_thread(&Debug_prints::debug_print_start, debug_prints, data_container, elevator_id);
+    Debug_prints* debug_prints = new Debug_prints(data_container, elevator_id, event_queue);
+    boost::thread debug_thread(&Debug_prints::debug_print_start, debug_prints, data_container, elevator_id, event_queue);
     
 
     while(1){

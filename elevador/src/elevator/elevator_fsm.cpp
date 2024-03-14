@@ -14,30 +14,6 @@ void Elevator::handle_event(elevator_event event) {
     std::vector<Call*> call_list = data_container->get_locally_assigned_calls();
     //int motor_dir = choose_direction(current_floor, current_state, call_list);
 
-    std::cout << "DEBUG: Current floor: " << current_floor;
-    std::cout << ", Call list size: " << call_list.size();
-    std::cout << ", Motor dir: " << Current_direction << "-------------";
-
-    //debug print using switch case stuff
-    switch (current_state){
-        case state_enum::IDLE:
-            std::cout << "IDLE" << std::endl;
-        break;
-        case state_enum::MOVING_UP:
-            std::cout << "MOVING_UP" << std::endl;
-        break;
-        case state_enum::MOVING_DOWN:
-            std::cout << "MOVING_DOWN" << std::endl;
-        break;
-    }
-
-    switch (event)
-    {
-    case elevator_event::DOOR_TIMEOUT:
-        std::cout << "DOOR_TIMEOUT" << std::endl;
-        break;
-    }
-
     //main FSM logic:
     switch (current_state){
 
@@ -83,7 +59,7 @@ void Elevator::handle_event(elevator_event event) {
 
                 }
             else {
-                std::cout << "wierd event while in IDLE" << std::endl;
+                //std::cout << "wierd event while in IDLE" << std::endl;
             }
 
 
@@ -154,7 +130,7 @@ void Elevator::clear_orders(std::vector<Call*> call_list, int current_floor, int
 
 
 void Elevator::open_door() {
-    std::cout << "Door opened" << std::endl;
+    //std::cout << "Door opened" << std::endl;
     driver->set_door_open_lamp(1);
     // data_container->get_elevator_by_id(id)->set_current_state(state_enum::DOOR_OPEN);
 
