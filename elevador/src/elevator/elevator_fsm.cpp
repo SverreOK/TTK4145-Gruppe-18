@@ -215,7 +215,7 @@ void Elevator::run_event_queue() {
             elevator_event event = event_queue->pop();
             handle_event(event);
         }
-        boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(5));
     }
 }
 

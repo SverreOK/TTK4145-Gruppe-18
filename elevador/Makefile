@@ -43,3 +43,5 @@ $(EXEC_DEBUG): $(OBJ_DEBUG)
 
 clean:
 	rm -f $(OBJ) $(OBJ_DEBUG) $(EXEC) $(EXEC_DEBUG)
+
+dirty: $(EXEC)

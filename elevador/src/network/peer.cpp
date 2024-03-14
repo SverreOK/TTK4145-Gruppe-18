@@ -24,7 +24,7 @@ Peer::Peer(Super_container* data_container) : data_container(data_container) {
         call_socket_rx.non_blocking(true);
         call_socket_rx.bind(udp::endpoint(udp::v4(), call_rx_port));
 
-        broadcast_address = boost::asio::ip::address::from_string("255.255.255.255");
+        broadcast_address = boost::asio::ip::address::from_string("192.168.1.255");
 }
 
 // Broadcast elevator status to whole network
@@ -33,7 +33,7 @@ void Peer::infinite_status_broadcast() {
     while (true) {
         elevator_status_network status = data_container->get_elevator_by_id(data_container->get_my_id())->get_status_network();
         broadcast_socket_tx.send_to(boost::asio::buffer(&status, sizeof(status)), udp::endpoint(broadcast_address, 12345));
-        boost::this_thread::sleep_for(boost::chrono::milliseconds(1000));
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
         //std::cout << "Broadcasting status" << std::endl;
         for (auto id : data_container->get_alive_elevators()) {
             std::cout << "Alive elevator: " << id.id << '\n';
@@ -165,7 +165,7 @@ void Peer::infinite_call_recieve() {
             
 
             //delay for 50ms
-            boost::this_thread::sleep_for(boost::chrono::milliseconds(32));
+            // boost::this_thread::sleep_for(boost::chrono::milliseconds(32));
         }
 }
 
@@ -213,7 +213,7 @@ void Peer::call_transmit(Call* call, int burst_size) {
 
 void purge_receive_buffers(boost::asio::ip::udp::socket& call_socket_rx) {
     try {
-        for(int i = 0; i < 1000; i++){
+        while (1){
             char buffer[1024];
             boost::asio::ip::udp::endpoint sender_endpoint;
             size_t len = call_socket_rx.receive_from(boost::asio::buffer(buffer), sender_endpoint);
@@ -230,7 +230,7 @@ void Peer::run_peer() {
 
     boost::thread purge_thread(purge_receive_buffers, std::ref(call_socket_rx));
     boost::thread purge_thread_2(purge_receive_buffers, std::ref(broadcast_socket_rx));
-    boost::this_thread::sleep_for(boost::chrono::seconds(1));
+    boost::this_thread::sleep_for(boost::chrono::seconds(5));
     purge_thread.interrupt();
     purge_thread_2.interrupt();
     purge_thread.join();

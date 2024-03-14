@@ -5,6 +5,6 @@
 #define POLLER_RATE 100 
 #define LIGHT_RATE 100
 
-#define ELEVATOR_ID "ola_bol"
+#define ELEVATOR_ID "sver"
 
 #define DEBUG 0 // 1 for debug, 0 for no debug --> implement a command line based GUI?
