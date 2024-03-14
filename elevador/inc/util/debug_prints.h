@@ -85,6 +85,7 @@ class Debug_prints {
                     j = 0;
                     clear();
                 }
+                j++;
 
                 // UPDATE VARIABLES
                 floor = super_container->get_elevator_by_id(id)->get_current_floor();
