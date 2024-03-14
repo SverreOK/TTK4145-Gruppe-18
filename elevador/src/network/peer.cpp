@@ -227,12 +227,9 @@ void purge_receive_buffers(boost::asio::ip::udp::socket& call_socket_rx) {
 void Peer::run_peer() {
 
     boost::thread purge_thread(purge_receive_buffers, std::ref(call_socket_rx));
-    boost::thread purge_thread_2(purge_receive_buffers, std::ref(broadcast_socket_rx));
     boost::this_thread::sleep_for(boost::chrono::milliseconds(SOCKET_CLEAR_RATE_MS));
     purge_thread.interrupt();
-    purge_thread_2.interrupt();
     purge_thread.join();
-    purge_thread_2.join();
     std::cout << "Purged receive buffers :grinning:" << std::endl;
 
     boost::thread peer_thread(&Peer::infinite_status_broadcast, this);

@@ -5,6 +5,8 @@
 #include <boost/system/error_code.hpp>
 #include <mutex>
 
+#include "config.h"
+
 // Number of floors. Hardware-dependent, do not modify.
 #define N_FLOORS 4
 

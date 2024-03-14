@@ -14,16 +14,35 @@ elevator_driver::elevator_driver() : socket(io_service) {
 
 void elevator_driver::connect() {
     boost::asio::ip::tcp::resolver resolver(io_service);
-    try {
-        boost::asio::connect(socket, resolver.resolve({ip, port}));
-    } catch (boost::system::system_error& e) {
-        std::cout << "Failed to connect: " << e.what() << std::endl;
-        return;
+
+    const std::chrono::milliseconds retry_delay(DRIVER_RETRY_DELAY_MS);
+
+    while (elevator_driver::connected == false) {
+        try {
+            boost::asio::connect(socket, resolver.resolve({ip, port}));
+            std::cout << "Connected successfully" << std::endl;
+            elevator_driver::connected = true;
+        }
+        catch (boost::system::system_error& e) {
+            std::cout << "Failed to connect: " << e.what() << std::endl;
+            std::cout << "Retrying in " << DRIVER_RETRY_DELAY_MS << "ms" << std::endl;
+            std::this_thread::sleep_for(retry_delay);
+        }
     }
-    std::cout << "Connected successfully" << std::endl;
-    
-    elevator_driver::connected = true;
 }
+
+
+
+
+    // try {
+    //     boost::asio::connect(socket, resolver.resolve({ip, port}));
+    // } catch (boost::system::system_error& e) {
+    //     std::cout << "Failed to connect: " << e.what() << std::endl;
+    //     return;
+    // }
+    // std::cout << "Connected successfully" << std::endl;
+    
+    // elevator_driver::connected = true;
 
 void elevator_driver::set_motor_direction(int dir) {
     std::lock_guard<std::mutex> lock(mtx);

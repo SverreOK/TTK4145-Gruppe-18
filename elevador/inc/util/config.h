@@ -2,6 +2,7 @@
 #define NUM_ELEVATORS 3 //max, not current
 #define NUM_FLOORSS 4 //max, not current  // I had double s because it might be used, idk, change when going through the code
 #define ELEVATOR_ID "sver"
+#define DRIVER_RETRY_DELAY_MS 1000
 
 // Door configuration
 #define DOOR_OPEN_TIME_MS 3000 //ms
