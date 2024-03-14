@@ -182,6 +182,7 @@ int Super_container::add_elevator(Elevator_state* elevator){
 }
 
 void Super_container::remove_elevator(Elevator_id id){
+
     for (auto elevator : elevators){
         if (elevator->get_id().id == id.id){
             boost::unique_lock<boost::mutex> scoped_lock(mtx);
@@ -189,6 +190,12 @@ void Super_container::remove_elevator(Elevator_id id){
             scoped_lock.unlock();
         }
     }
+
+    //loop through all calls, and remove the elevator from the serviced and ack list if it exists there
+    for (auto call : call_list){
+        call->remove_elevator_data(id);
+    }
+
 }
 
 void Super_container::set_my_id(Elevator_id id){

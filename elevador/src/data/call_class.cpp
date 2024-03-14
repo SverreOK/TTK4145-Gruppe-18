@@ -151,3 +151,20 @@ call_message Call::get_call_message() {
     return call_msg;
 
 }
+
+void Call::remove_elevator_data(Elevator_id id){
+    //remove elevator_id from elevator_ack_list and serviced_ack_list if it finds it
+    for (auto it = elevator_ack_list.begin(); it != elevator_ack_list.end(); it++){
+        if (it->id == id.id){
+            elevator_ack_list.erase(it);
+            break;
+        }
+    }
+
+    for (auto it = serviced_ack_list.begin(); it != serviced_ack_list.end(); it++){
+        if (it->id == id.id){
+            serviced_ack_list.erase(it);
+            break;
+        }
+    }
+}
