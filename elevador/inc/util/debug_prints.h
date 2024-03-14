@@ -80,6 +80,8 @@ class Debug_prints {
 
             while (DEBUG) {
 
+                refresh();
+
                 // UPDATE VARIABLES
                 floor = super_container->get_elevator_by_id(id)->get_current_floor();
                 current_state = state_enum_to_string(super_container->get_elevator_by_id(id)->get_current_state());
