@@ -11,6 +11,7 @@
 #include "elevator_light_thread.h"
 #include "super_container.h"
 #include "peer.h"
+#include "debug_prints.h"
 
 int main() {
 
@@ -55,6 +56,11 @@ int main() {
     //create a peer
     Peer* peer = new Peer(data_container);
     peer->run_peer();
+
+    // debug print
+    Debug_prints* debug_prints = new Debug_prints(data_container, elevator_id, event_queue);
+    boost::thread debug_thread(&Debug_prints::debug_print_start, debug_prints, data_container, elevator_id, event_queue);
+    
 
     while(1){
         // std::cout << "Elevator is running" << std::endl;

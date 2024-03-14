@@ -92,9 +92,6 @@ void Super_container::add_new_call(int floor, button_type call_type, Call_id cal
 
     new_call->acknowlegde_call(call_id.elevator_id);
 
-    printf("Adding call to call list\n");
-    printf("Call id: %d\n", new_call->get_call_id()->call_number);
-
     add_call(new_call);
 }
 
@@ -176,7 +173,6 @@ int Super_container::add_elevator(Elevator_state* elevator){
 
     for (auto e : elevators){
         if (e->get_id().id == elevator->get_id().id){
-            std::cout << "Elevator with id " << elevator->get_id().id << " already in list" << std::endl;
             //update the elevator
             e->set_alive(true);
             e->set_current_state(elevator->get_current_state());

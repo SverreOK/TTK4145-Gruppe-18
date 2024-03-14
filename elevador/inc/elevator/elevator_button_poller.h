@@ -54,7 +54,6 @@ private:
             
             data_container->get_elevator_by_id(elevator_id)->set_current_floor(floor_sensor_signal);
             event_queue->push(elevator_event::ARRIVED_AT_FLOOR);
-            printf("Floor sensor signal: %d\n", floor_sensor_signal);
         }
     }
 
