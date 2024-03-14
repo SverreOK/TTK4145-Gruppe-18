@@ -22,7 +22,7 @@ Peer::Peer(Super_container* data_container) : data_container(data_container) {
         call_socket_rx.non_blocking(true);
         call_socket_rx.bind(udp::endpoint(udp::v4(), call_rx_port));
 
-        broadcast_address = boost::asio::ip::address::from_string("192.168.1.255");
+        broadcast_address = boost::asio::ip::address::from_string(BROADCAST_ADDRESS);
 }
 
 // Broadcast elevator status to whole network

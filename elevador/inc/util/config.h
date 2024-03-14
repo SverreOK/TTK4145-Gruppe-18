@@ -21,6 +21,9 @@
 #define CALL_RECEIVE_RATE_MS 10
 #define STATUS_RECEIVE_RATE_MS 10
 
+// Network broadcast address
+#define BROADCAST_ADDRESS "192.168.1.255"
+
 // Network ports
 #define BROADCAST_TX_PORT 9879
 #define BROADCAST_RX_PORT 12345
