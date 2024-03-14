@@ -11,6 +11,7 @@ Peer::Peer(Super_container* data_container) : data_container(data_container) {
 
         broadcast_socket_rx.open(udp::v4());
         broadcast_socket_rx.set_option(udp::socket::reuse_address(true));
+        broadcast_socket_rx.non_blocking(true);
         broadcast_socket_rx.bind(udp::endpoint(udp::v4(), broadcast_rx_port));
 
         call_socket_tx.open(udp::v4());
@@ -46,9 +47,16 @@ void Peer::infinite_status_recieve() {
 
     char buffer[1024];
     boost::asio::ip::udp::endpoint sender_endpoint;
-        while (true) {
-
-        size_t len = broadcast_socket_rx.receive_from(boost::asio::buffer(buffer), sender_endpoint);
+    while (true) {
+        try
+        {
+            size_t len = broadcast_socket_rx.receive_from(boost::asio::buffer(buffer), sender_endpoint);
+        }
+        catch(const std::exception& e)
+        {
+            boost::this_thread::sleep_for(boost::chrono::milliseconds(32));
+            continue;
+        }
         elevator_status_network* incoming_status = (elevator_status_network*)buffer;
         Elevator_state* recv_elev = new Elevator_state(*incoming_status);
         //std::cout << "current floor remote elev: " << recv_elev->get_current_floor() << std::endl;
@@ -221,9 +229,12 @@ void purge_receive_buffers(boost::asio::ip::udp::socket& call_socket_rx) {
 void Peer::run_peer() {
 
     boost::thread purge_thread(purge_receive_buffers, std::ref(call_socket_rx));
+    boost::thread purge_thread_2(purge_receive_buffers, std::ref(broadcast_socket_rx));
     boost::this_thread::sleep_for(boost::chrono::seconds(1));
     purge_thread.interrupt();
+    purge_thread_2.interrupt();
     purge_thread.join();
+    purge_thread_2.join();
     std::cout << "Purged receive buffers :grinning:" << std::endl;
 
     boost::thread peer_thread(&Peer::infinite_status_broadcast, this);
