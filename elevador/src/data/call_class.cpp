@@ -80,26 +80,33 @@ Call::Call(call_message call_msg)
 }
 
 std::vector<Elevator_id> Call::get_elevator_ack_list() {
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
     return elevator_ack_list;
 }
 
 std::vector<Elevator_id> Call::get_serviced_ack_list() {
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
     return serviced_ack_list;
 }
 
 button_type Call::get_call_type() {
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
     return call_type;
 }
 
 Call_id* Call::get_call_id() {
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
     return call_id;
 }
 
 int Call::get_floor() {
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
     return floor;
 }
 
 void Call::acknowlegde_call(Elevator_id elevator_id) {
+
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
 
     //check if elevator_id is already in the list
     for (auto id : elevator_ack_list){
@@ -113,6 +120,8 @@ void Call::acknowlegde_call(Elevator_id elevator_id) {
 
 void Call::service_call(Elevator_id elevator_id) {
 
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
+
     //check if elevator_id is already in the list
     for (auto id : serviced_ack_list){
         if (id.id == elevator_id.id){
@@ -123,10 +132,12 @@ void Call::service_call(Elevator_id elevator_id) {
 }
 
 bool Call::is_serviced() {
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
     return elevator_ack_list.size() > 0;
 }
 
 call_message Call::get_call_message() {
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
     call_message call_msg;
     call_msg.floor = floor;
     call_msg.call_type = static_cast<uint8_t>(call_type);
@@ -153,7 +164,11 @@ call_message Call::get_call_message() {
 }
 
 void Call::remove_elevator_data(Elevator_id id){
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
     //remove elevator_id from elevator_ack_list and serviced_ack_list if it finds it
+
+
+
     for (auto it = elevator_ack_list.begin(); it != elevator_ack_list.end(); it++){
         if (it->id == id.id){
             elevator_ack_list.erase(it);

@@ -1,10 +1,9 @@
 #pragma once
 #include <vector>
 #include <string>
-#include <mutex>
-#include <shared_mutex>
 #include <map>
 #include "config.h"
+#include <boost/thread/mutex.hpp>
 
 struct call_message
 {
@@ -51,6 +50,10 @@ class Call {
         
         std::vector<Elevator_id> serviced_ack_list;
         std::vector<Elevator_id> elevator_ack_list;
+
+        boost::mutex mtx;
+
+
 
 
     public:
