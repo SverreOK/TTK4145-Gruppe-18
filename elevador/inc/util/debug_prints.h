@@ -34,9 +34,22 @@ class Debug_prints {
                     return "ARRIVED_AT_FLOOR";
                 case elevator_event::DOOR_TIMEOUT:
                     return "DOOR_TIMEOUT";
+                case elevator_event::DOOR_CLOSED:
+                    return "DOOR_CLOSED";
 
                 default:
                     return "";
+            }
+        }
+
+        std::string call_type_enum_to_string(button_type call_type) {
+            switch (call_type) {
+                case button_type::CAB:
+                    return "CAB";
+                case button_type::UP_HALL:
+                    return "UP";
+                case button_type::DOWN_HALL:
+                    return "DOWN";
             }
         }
 
@@ -46,10 +59,18 @@ class Debug_prints {
 
         void debug_print_start(Super_container *super_container, Elevator_id id, thread_safe_queue *event_queue) {
 
+            //Physical
             uint8_t floor;
             std::string current_state;
             int last_seen;
             std::string last_popped_event;
+
+            // Cab requests
+            std::vector<Call *> locally_assigned_calls;
+
+            //Network
+            std::vector<Elevator_id> alive_elevators;
+            int i = 1;
 
             
             initscr();
@@ -67,17 +88,40 @@ class Debug_prints {
                 // UPDATE VARIABLES
                 floor = super_container->get_elevator_by_id(id)->get_current_floor();
                 current_state = state_enum_to_string(super_container->get_elevator_by_id(id)->get_current_state());
-                last_seen = super_container->get_elevator_by_id(id)->get_last_seen();
                 last_popped_event = event_enum_to_string(event_queue->get_last_popped_event());
+
+                // Cab requests
+                locally_assigned_calls = super_container->get_locally_assigned_calls();
+
+                //network
+                alive_elevators = super_container->get_alive_elevators();
                 
                 // ----------------------------------------------------------------------------------------
 
                 // CREATE DEBUG PRINTS
-                mvprintw(1, 1,"Elevator ID: %s\n", id.id.c_str());
-                mvprintw(2, 1,"Current floor: %d\n", floor);
-                mvprintw(3, 1,"Current state: %s\n", current_state.c_str());
-                mvprintw(4, 1,"Last seen: %d\n", last_seen);
-                mvprintw(5, 1,"Last popped event: %s\n", last_popped_event.c_str());
+                mvprintw(0, 1, " ------------------ DEBUG PRINTS -----------------------\n");
+                mvprintw(1, 1, "\n ------------------ PHYSICAL ELEVATOR ------------------\n");
+                mvprintw(2, 1, "Elevator ID: %s\n", id.id.c_str());
+                mvprintw(3, 1, "Current floor: %d\n", floor);
+                mvprintw(4, 1, "Current state: %s\n", current_state.c_str());
+                mvprintw(5, 1, "Last popped event: %s\n", last_popped_event.c_str());
+                mvprintw(6, 1, "\n ------------------ CALL REQUESTS ----------------------\n");
+                i = 0;
+                for (auto call : locally_assigned_calls) {
+                    mvprintw(8+i, 1, "Call from floor: %d type: %s\n", call->get_floor(), call_type_enum_to_string(call->get_call_type()).c_str());
+                    i++;
+                }
+
+
+                mvprintw(20, 1, "\n ------------------ NETWORK ----------------------------\n");
+                i = 0;
+                for (auto &elevator : alive_elevators) {
+                    mvprintw(22+i, 1, "Elevator with ID: %s", elevator.id.c_str(), " is alive\n");
+                    i++;
+                }
+
+                // clearing
+                locally_assigned_calls = {};
 
                 refresh();
 
