@@ -66,6 +66,7 @@ class Debug_prints {
             std::string last_popped_event;
 
             int i = 1;
+            int j = 0;
 
             
             initscr();
@@ -79,8 +80,11 @@ class Debug_prints {
             clear();
 
             while (DEBUG) {
-
-                refresh();
+                
+                if (j == 10) {
+                    j = 0;
+                    clear();
+                }
 
                 // UPDATE VARIABLES
                 floor = super_container->get_elevator_by_id(id)->get_current_floor();
@@ -111,9 +115,9 @@ class Debug_prints {
                     i++;
                 }
 
-                clear();
+                refresh();
 
-                boost::this_thread::sleep_for(boost::chrono::milliseconds(10));
+                boost::this_thread::sleep_for(boost::chrono::milliseconds(500));
             }
             attroff(COLOR_PAIR(1)); 
             endwin();
