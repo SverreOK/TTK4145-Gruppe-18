@@ -211,11 +211,8 @@ void Elevator::initialize_position() {
 void Elevator::run_event_queue() {
     // Implement in main instead
     while (running) {
-        if (!event_queue->empty()) {
-            elevator_event event = event_queue->pop();
-            handle_event(event);
-        }
-        boost::this_thread::sleep_for(boost::chrono::milliseconds(FSM_RATE_MS));
+        elevator_event event = event_queue->pop();
+        handle_event(event);
     }
 }
 

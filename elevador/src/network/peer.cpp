@@ -187,7 +187,7 @@ void Peer::infinite_call_transmit() {
             std::vector<Elevator_id> alive_elevators = data_container->get_alive_elevators();
             
             if(!vector_elements_in_A_found_in_B(alive_elevators, call_ack_list) ||
-               !vector_elements_in_A_found_in_B(alive_elevators, call_serviced_list)){
+               (!vector_elements_in_A_found_in_B(alive_elevators, call_serviced_list) && call_serviced_list.size() > 0)){
                 call_transmit(call, 1);
             }
         }

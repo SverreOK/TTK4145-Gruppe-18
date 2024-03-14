@@ -33,7 +33,7 @@ private:
                     if (btn_status) {
                         button_vec[button][floor] = true;
 
-                        button_type call_type = (button_type)button; //might give wrong button check
+                        button_type call_type = (button_type)button;
                         data_container->add_new_call_with_elevatorId(floor, call_type, elevator_id); 
 
                         //printf("Button %d on floor %d pressed\n", button, floor);
