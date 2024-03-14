@@ -14,6 +14,7 @@ private:
     Super_container* data_container;
     Elevator_id elevator_id;
     thread_safe_queue* event_queue;
+    Elevator* elevator_fsm;
 
     bool running;
     int number_of_floors;
@@ -58,6 +59,13 @@ private:
         }
     }
 
+    void poll_obstruction() {
+        bool obstruction_signal = driver->get_obstruction_signal();
+        if (obstruction_signal) {
+            elevator_fsm->on_obstruction_detected();
+        }
+    }
+
 
 public:
 
@@ -66,12 +74,13 @@ public:
         while (running) {
             poll_buttons();
             poll_floor_sensors();
+            poll_obstruction();
             boost::this_thread::sleep_for(boost::chrono::milliseconds(int(1/(update_freq*1000))));
         }
     }
 
-    Elevator_driver_poller(elevator_driver* driver, Elevator_id elevator_id, Super_container* data_container, int number_of_floors, thread_safe_queue* event_queue) 
-        : driver(driver), running(false), elevator_id(elevator_id), data_container(data_container), number_of_floors(number_of_floors), event_queue(event_queue) {}
+    Elevator_driver_poller(elevator_driver* driver, Elevator_id elevator_id, Super_container* data_container, int number_of_floors, thread_safe_queue* event_queue, Elevator* elevator_fsm) 
+        : driver(driver), running(false), elevator_id(elevator_id), data_container(data_container), number_of_floors(number_of_floors), event_queue(event_queue), elevator_fsm(elevator_fsm) {}
 
 
     void stop() {
