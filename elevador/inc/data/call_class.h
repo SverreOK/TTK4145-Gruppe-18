@@ -72,7 +72,7 @@ class Call {
         bool is_serviced();
 
         void service_call(Elevator_id elevator_id);
-        void acknowlegde_call(Elevator_id elevator_id);
+        bool acknowlegde_call(Elevator_id elevator_id);
         void remove_elevator_data(Elevator_id id);
 
 };

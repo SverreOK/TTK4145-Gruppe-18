@@ -104,18 +104,19 @@ int Call::get_floor() {
     return floor;
 }
 
-void Call::acknowlegde_call(Elevator_id elevator_id) {
+bool Call::acknowlegde_call(Elevator_id elevator_id) { //return already in list
 
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
 
     //check if elevator_id is already in the list
     for (auto id : elevator_ack_list){
         if (id.id == elevator_id.id){
-            return;
+            return true;
         }
     }
     
     elevator_ack_list.push_back(elevator_id);// elevator id is added to the list since it is not already there
+    return false;
 }
 
 void Call::service_call(Elevator_id elevator_id) {

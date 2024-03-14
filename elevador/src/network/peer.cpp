@@ -141,7 +141,8 @@ void Peer::infinite_call_recieve() {
                     retransmit = true;
                 }
                 
-                new_call->acknowlegde_call(my_id); //if the id is already in the ack list, it will not be added
+                bool already_acked = new_call->acknowlegde_call(my_id); //if the id is already in the ack list, it will not be added
+                retransmit &= already_acked; //bitwise operator, but should still work
 
                 if( new_call->get_serviced_ack_list().size() > 0){ //if the call has already been serviced by some elevator, ack
                     new_call->service_call(my_id);
