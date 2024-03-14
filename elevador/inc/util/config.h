@@ -40,4 +40,4 @@
 #define ACK_TIMEOUT 1000
 #define ACK_RETRIES 10
 
-#define DEBUG 0 // 1 for debug, 0 for no debug --> implement a command line based GUI?
+#define DEBUG 1 // 1 for debug, 0 for no debug --> implement a command line based GUI?
