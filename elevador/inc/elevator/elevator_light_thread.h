@@ -14,7 +14,7 @@ class Light_controller {
         Super_container* data_container;
         Elevator_id elevator_id;
         bool running;
-        int number_of_floors = 4; //TODO CONFIG
+        int number_of_floors = NUM_FLOORSS; //TODO CONFIG
         int update_freq = 420; //hz
 
         //a 3 x number_of_floors matrix with bools to represent the current state of the lights
@@ -28,6 +28,15 @@ class Light_controller {
                     : data_container(data_container), driver(driver) {}
 
     void Update_lights() {
+
+        //clear out all lights by turning them off.
+        for (int floor = 0; floor < number_of_floors; ++floor) {
+            for (int button = 0; button < 3; ++button) {   
+                driver->set_button_lamp(button, floor, 0);
+            }
+        }
+
+
         while (1)
         {
 
@@ -37,20 +46,27 @@ class Light_controller {
         std::vector<Elevator_id> alive_elevators = data_container->get_alive_elevators();
         std::vector<Call*> call_list = data_container->get_call_list();
         for (auto call : call_list){
-            int ack_count = 0;
-            for (auto elevator : alive_elevators){
 
-                std::vector<Elevator_id> elev_ack_list = call->get_elevator_ack_list();
-                for( auto ack : elev_ack_list){
-                    if (ack.id == elevator.id){
-                        ack_count++;
+
+            button_type call_type  = call->get_call_type();
+            bool is_local_cab_call = call_type == button_type::CAB && call->get_call_id()->elevator_id.id == data_container->get_my_id().id;
+            bool is_hall_call = !(call_type == button_type::CAB);
+
+            if (is_local_cab_call || is_hall_call){
+                    
+                int ack_count = 0;
+                for (auto elevator : alive_elevators){
+                    std::vector<Elevator_id> elev_ack_list = call->get_elevator_ack_list();
+                    for( auto ack : elev_ack_list){
+                        if (ack.id == elevator.id){
+                            ack_count++;
+                        }
                     }
                 }
-            }
-            if (ack_count == alive_elevators.size() && 
-                call->get_serviced_ack_list().size() == 0){
-                    
-                temp_matrix[static_cast<int>( call->get_call_type() )][call->get_floor()] = true;
+                
+                if (ack_count == alive_elevators.size() && call->get_serviced_ack_list().size() == 0){                    
+                    temp_matrix[static_cast<int>( call_type )][call->get_floor()] = true;
+                }
             }
         }
 
