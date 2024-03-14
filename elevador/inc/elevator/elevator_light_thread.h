@@ -33,6 +33,7 @@ class Light_controller {
         for (int floor = 0; floor < number_of_floors; ++floor) {
             for (int button = 0; button < 3; ++button) {   
                 driver->set_button_lamp(button, floor, 0);
+                std::cout << "Turning off light at floor: " << floor << " button: " << button << std::endl;
             }
         }
 

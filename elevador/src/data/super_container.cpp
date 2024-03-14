@@ -100,7 +100,7 @@ void Super_container::add_new_call(int floor, button_type call_type, Call_id cal
 
 void Super_container::add_new_call_with_elevatorId(int floor, button_type call_type, Elevator_id elevator_id){
 
-    if( !call_exists(call_type, floor)){
+    if( !call_exists(call_type, floor, elevator_id)){
         int call_num = 0;
         if (get_last_call_id_originating_from_elevator(elevator_id) != nullptr){
             call_num = get_last_call_id_originating_from_elevator(elevator_id)->call_number + 1;
@@ -113,16 +113,22 @@ void Super_container::add_new_call_with_elevatorId(int floor, button_type call_t
 
 }
 
-bool Super_container::call_exists(button_type call_type, int floor){
+bool Super_container::call_exists(button_type call_type, int floor, Elevator_id elevator_id){
 
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
-
+    //TODO CHECK ID IF CAB
     for (auto call : call_list){ 
-        if (call->get_call_type() == call_type &&           //call has same type as provided button type
-            floor == call->get_floor() &&                   //call has same floor as provided nr
-            call->get_serviced_ack_list().size() == 0 ){    //call has empty serviced list
+        button_type call_type  = call->get_call_type();
+        bool is_local_cab_call = call_type == button_type::CAB && call->get_call_id()->elevator_id.id == elevator_id.id;
+        bool is_hall_call = !(call_type == button_type::CAB);
 
-            return true;
+        if (is_local_cab_call || is_hall_call){
+            if (call->get_call_type() == call_type &&           //call has same type as provided button type
+                floor == call->get_floor() &&                   //call has same floor as provided nr
+                call->get_serviced_ack_list().size() == 0 ){    //call has empty serviced list
+
+                return true;
+            }
         }
     }
     return false;
