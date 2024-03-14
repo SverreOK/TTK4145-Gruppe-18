@@ -1,6 +1,4 @@
 #include "peer.h"
-#include "super_container.h"
-#include "config.h"
 
 // CONSTRUCTOR
 Peer::Peer(Super_container* data_container) : data_container(data_container) {
@@ -33,7 +31,7 @@ void Peer::infinite_status_broadcast() {
     while (true) {
         elevator_status_network status = data_container->get_elevator_by_id(data_container->get_my_id())->get_status_network();
         broadcast_socket_tx.send_to(boost::asio::buffer(&status, sizeof(status)), udp::endpoint(broadcast_address, 12345));
-        boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(BROADCAST_RATE_MS));
         //std::cout << "Broadcasting status" << std::endl;
         for (auto id : data_container->get_alive_elevators()) {
             std::cout << "Alive elevator: " << id.id << '\n';
@@ -54,7 +52,7 @@ void Peer::infinite_status_recieve() {
         }
         catch(const std::exception& e)
         {
-            boost::this_thread::sleep_for(boost::chrono::milliseconds(32));
+            boost::this_thread::sleep_for(boost::chrono::milliseconds(STATUS_RECEIVE_RATE_MS));
             continue;
         }
         elevator_status_network* incoming_status = (elevator_status_network*)buffer;
@@ -76,7 +74,7 @@ void Peer::infinite_status_recieve() {
 void Peer::dead_connection_remover() {
     while (true) {
         for (auto id : data_container->get_alive_elevators()) {
-            if (data_container->get_elevator_by_id(id)->get_last_seen() < time(NULL) - 5 && strncmp(id.id.c_str(), my_id.id.c_str(), 8) != 0) {
+            if (data_container->get_elevator_by_id(id)->get_last_seen() < time(NULL) - DEAD_CONNECTION_REMOVAL_TIME_S && strncmp(id.id.c_str(), my_id.id.c_str(), 8) != 0) {
                 data_container->remove_elevator(id);
                 std::cout << "Removed elevator with id: " << id.id << std::endl;
             }
@@ -109,7 +107,7 @@ void Peer::infinite_call_recieve() {
             catch(const std::exception& e)
             {
                 // std::cout << "emty buffer" << std::endl;
-                boost::this_thread::sleep_for(boost::chrono::milliseconds(32));
+                boost::this_thread::sleep_for(boost::chrono::milliseconds(CALL_RECEIVE_RATE_MS));
                 continue;
             }
             
@@ -194,7 +192,7 @@ void Peer::infinite_call_transmit() {
             }
         }
         //sleep
-        boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(CALL_TRANSMIT_RATE_MS));
     }
 }
 
@@ -230,7 +228,7 @@ void Peer::run_peer() {
 
     boost::thread purge_thread(purge_receive_buffers, std::ref(call_socket_rx));
     boost::thread purge_thread_2(purge_receive_buffers, std::ref(broadcast_socket_rx));
-    boost::this_thread::sleep_for(boost::chrono::seconds(5));
+    boost::this_thread::sleep_for(boost::chrono::milliseconds(SOCKET_CLEAR_RATE_MS));
     purge_thread.interrupt();
     purge_thread_2.interrupt();
     purge_thread.join();

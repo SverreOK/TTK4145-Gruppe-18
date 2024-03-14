@@ -169,7 +169,7 @@ void Elevator::open_door() {
 void Elevator::door_timer() {
     while (true) {
         try {
-            boost::this_thread::sleep_for(boost::chrono::seconds(3));
+            boost::this_thread::sleep_for(boost::chrono::milliseconds(DOOR_OPEN_TIME_MS));
             break; // If sleep completes without interruption, break loop
         } catch (boost::thread_interrupted&) {
             // If sleep is interrupted, continue loop to restart sleep
@@ -215,7 +215,7 @@ void Elevator::run_event_queue() {
             elevator_event event = event_queue->pop();
             handle_event(event);
         }
-        boost::this_thread::sleep_for(boost::chrono::milliseconds(5));
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(FSM_RATE_MS));
     }
 }
 

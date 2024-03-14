@@ -18,7 +18,6 @@ private:
 
     bool running;
     int number_of_floors;
-    int update_freq = 20; //hz
     int current_floor;
 
     std::vector<std::vector<bool>> button_vec =  std::vector<std::vector<bool>>(3, std::vector<bool>(number_of_floors, false));
@@ -75,7 +74,7 @@ public:
             poll_buttons();
             poll_floor_sensors();
             poll_obstruction();
-            boost::this_thread::sleep_for(boost::chrono::milliseconds(int(1/(update_freq*1000))));
+            boost::this_thread::sleep_for(boost::chrono::milliseconds(POLLER_RATE_MS));
         }
     }
 

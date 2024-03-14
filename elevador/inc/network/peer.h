@@ -23,10 +23,10 @@ private:
 
     Elevator_id my_id = {ELEVATOR_ID};
 
-    int broadcast_tx_port = 9879;
-    int broadcast_rx_port = 12345;
-    int call_tx_port = 9878;
-    int call_rx_port = 12346;
+    int broadcast_tx_port = BROADCAST_TX_PORT;
+    int broadcast_rx_port = BROADCAST_RX_PORT;
+    int call_tx_port = CALL_TX_PORT;
+    int call_rx_port = CALL_RX_PORT;
 
     boost::mutex mtx;
 
