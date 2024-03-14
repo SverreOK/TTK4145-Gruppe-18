@@ -114,6 +114,9 @@ void Super_container::add_new_call_with_elevatorId(int floor, button_type call_t
 }
 
 bool Super_container::call_exists(button_type call_type, int floor){
+
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
+
     for (auto call : call_list){ 
         if (call->get_call_type() == call_type &&           //call has same type as provided button type
             floor == call->get_floor() &&                   //call has same floor as provided nr
@@ -129,12 +132,11 @@ std::vector<Call*> Super_container::get_calls_originating_from_elevator(Elevator
     std::vector<Call*> calls = std::vector<Call*>();
     
 
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
     for (auto call : call_list){
         
         if (call->get_call_id()->elevator_id.id == elevator_id.id){
-            boost::unique_lock<boost::mutex> scoped_lock(mtx);
             calls.push_back(call);
-            scoped_lock.unlock();   
         }
     }
     return calls;
@@ -146,6 +148,8 @@ Call_id* Super_container::get_last_call_id_originating_from_elevator(Elevator_id
     int last_call_id_number = 0;
     Call_id* last_call_id = nullptr;
     std::vector<Call*> calls = get_calls_originating_from_elevator(elevator_id);
+
+    boost::unique_lock<boost::mutex> scoped_lock(mtx); 
     
     for (auto call : call_list){
         if (call->get_call_id()->call_number >= last_call_id_number){
@@ -161,6 +165,9 @@ Call_id* Super_container::get_last_call_id_originating_from_elevator(Elevator_id
 int Super_container::add_elevator(Elevator_state* elevator){
 
     //check if the elevator is already in the list //TODO is this good?
+
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
+
     for (auto e : elevators){
         if (e->get_id().id == elevator->get_id().id){
             std::cout << "Elevator with id " << elevator->get_id().id << " already in list" << std::endl;
@@ -171,23 +178,29 @@ int Super_container::add_elevator(Elevator_state* elevator){
             e->set_obstruction(elevator->get_obstruction_status());
             e->set_last_seen();
 
-            return 1;
+            scoped_lock.unlock();
+            update_locally_assigned_calls();
 
+            return 1;
         }
     }
 
-    boost::unique_lock<boost::mutex> scoped_lock(mtx);
     elevators.push_back(elevator);
+
+    scoped_lock.unlock();
+    update_locally_assigned_calls();
+
     return 0;
 }
 
 void Super_container::remove_elevator(Elevator_id id){
 
+
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
+
     for (auto elevator : elevators){
         if (elevator->get_id().id == id.id){
-            boost::unique_lock<boost::mutex> scoped_lock(mtx);
             elevators.erase(std::remove(elevators.begin(), elevators.end(), elevator), elevators.end());
-            scoped_lock.unlock();
         }
     }
 
@@ -195,6 +208,11 @@ void Super_container::remove_elevator(Elevator_id id){
     for (auto call : call_list){
         call->remove_elevator_data(id);
     }
+
+    scoped_lock.unlock();
+
+    update_locally_assigned_calls();
+    push_new_call_event();
 
 }
 
@@ -206,12 +224,12 @@ void Super_container::set_my_id(Elevator_id id){
 std::vector<Elevator_id> Super_container::get_alive_elevators(){
     std::vector<Elevator_id> alive_elevators = std::vector<Elevator_id>();
 
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
     
     for (auto elevator : elevators){
         if (elevator->get_alive_status()){
-            boost::unique_lock<boost::mutex> scoped_lock(mtx);
             alive_elevators.push_back(elevator->get_id());
-            scoped_lock.unlock();
+
         }
     }
     return alive_elevators;
@@ -219,17 +237,18 @@ std::vector<Elevator_id> Super_container::get_alive_elevators(){
 
 Elevator_state* Super_container::get_elevator_by_id(Elevator_id id){
     
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
     for (auto elevator : elevators){
         if (elevator->get_id().id == id.id){
-            boost::unique_lock<boost::mutex> scoped_lock(mtx);
             return elevator;
-            scoped_lock.unlock();
         }
     }
     return nullptr;
 }
 
 Elevator_id Super_container::get_my_id(){
+
+    boost::shared_lock<boost::mutex> scoped_lock(mtx);
     return my_id;
 }
 
