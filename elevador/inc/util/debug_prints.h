@@ -109,7 +109,7 @@ class Debug_prints {
                     i++;
                 }
 
-                refresh();
+                clear();
 
                 boost::this_thread::sleep_for(boost::chrono::milliseconds(10));
             }
