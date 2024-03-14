@@ -34,6 +34,9 @@ class Debug_prints {
                     return "ARRIVED_AT_FLOOR";
                 case elevator_event::DOOR_TIMEOUT:
                     return "DOOR_TIMEOUT";
+
+                default:
+                    return "";
             }
         }
 
@@ -46,43 +49,41 @@ class Debug_prints {
             uint8_t floor;
             std::string current_state;
             int last_seen;
-            std::string next_event;
+            std::string last_popped_event;
 
             
             initscr();
+            start_color();
+            init_pair(1, COLOR_CYAN, COLOR_BLACK);
 
             curs_set(0);
 
+            box(stdscr, 0, 0);
+            attron(COLOR_PAIR(1));
+            clear();
+
             while (DEBUG) {
 
-                // update variables
+                // UPDATE VARIABLES
                 floor = super_container->get_elevator_by_id(id)->get_current_floor();
                 current_state = state_enum_to_string(super_container->get_elevator_by_id(id)->get_current_state());
                 last_seen = super_container->get_elevator_by_id(id)->get_last_seen();
-                // i want to see the next event in the queue
-                if (!event_queue->empty()) {
-                    next_event = event_enum_to_string(event_queue->front());
-                }
-                else {
-                    next_event = "NO EVENT IN QUEUE";
-                }
-                    
+                last_popped_event = event_enum_to_string(event_queue->get_last_popped_event());
+                
+                // ----------------------------------------------------------------------------------------
 
-
-
-                clear();
-                // create a nice printout of the variables above
-                printw("Elevator ID: %s\n", id.id.c_str());
-                printw("Current floor: %d\n", floor);
-                printw("Current state: %s\n", current_state.c_str());
-                printw("Last seen: %d\n", last_seen);
-                printw("Next event: %s\n", next_event.c_str());
+                // CREATE DEBUG PRINTS
+                mvprintw(1, 1,"Elevator ID: %s\n", id.id.c_str());
+                mvprintw(2, 1,"Current floor: %d\n", floor);
+                mvprintw(3, 1,"Current state: %s\n", current_state.c_str());
+                mvprintw(4, 1,"Last seen: %d\n", last_seen);
+                mvprintw(5, 1,"Last popped event: %s\n", last_popped_event.c_str());
 
                 refresh();
 
-                boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
+                boost::this_thread::sleep_for(boost::chrono::milliseconds(10));
             }
-
+            attroff(COLOR_PAIR(1)); 
             endwin();
 
         }

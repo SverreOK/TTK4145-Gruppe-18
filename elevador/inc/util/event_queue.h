@@ -28,6 +28,8 @@ class thread_safe_queue {
     
         // Condition variable for signaling 
         std::condition_variable m_cond; 
+
+        elevator_event last_popped_event;
     
     public: 
         // Pushes an element to the queue 
@@ -60,8 +62,9 @@ class thread_safe_queue {
                         [this]() { return !m_queue.empty(); }); 
     
             // retrieve item 
-            elevator_event item = m_queue.front(); 
+            elevator_event item = m_queue.front();
             m_queue.pop(); 
+            last_popped_event = item;
     
             // return item
             return item; 
@@ -75,5 +78,10 @@ class thread_safe_queue {
         elevator_event front() {
             std::unique_lock<std::mutex> lock(m_mutex);
             return m_queue.front();
+        }
+
+        elevator_event get_last_popped_event() {
+            std::lock_guard<std::mutex> lock(m_mutex);
+            return last_popped_event;
         }
 }; 
