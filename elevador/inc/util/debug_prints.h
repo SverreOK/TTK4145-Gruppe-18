@@ -65,11 +65,6 @@ class Debug_prints {
             int last_seen;
             std::string last_popped_event;
 
-            // Cab requests
-            std::vector<Call *> locally_assigned_calls;
-
-            //Network
-            std::vector<Elevator_id> alive_elevators;
             int i = 1;
 
             
@@ -89,12 +84,6 @@ class Debug_prints {
                 floor = super_container->get_elevator_by_id(id)->get_current_floor();
                 current_state = state_enum_to_string(super_container->get_elevator_by_id(id)->get_current_state());
                 last_popped_event = event_enum_to_string(event_queue->get_last_popped_event());
-
-                // Cab requests
-                locally_assigned_calls = super_container->get_locally_assigned_calls();
-
-                //network
-                alive_elevators = super_container->get_alive_elevators();
                 
                 // ----------------------------------------------------------------------------------------
 
@@ -107,7 +96,7 @@ class Debug_prints {
                 mvprintw(5, 1, "Last popped event: %s\n", last_popped_event.c_str());
                 mvprintw(6, 1, "\n ------------------ CALL REQUESTS ----------------------\n");
                 i = 0;
-                for (auto call : locally_assigned_calls) {
+                for (auto call : super_container->get_locally_assigned_calls()) {
                     mvprintw(8+i, 1, "Call from floor: %d type: %s\n", call->get_floor(), call_type_enum_to_string(call->get_call_type()).c_str());
                     i++;
                 }
@@ -115,13 +104,10 @@ class Debug_prints {
 
                 mvprintw(20, 1, "\n ------------------ NETWORK ----------------------------\n");
                 i = 0;
-                for (auto &elevator : alive_elevators) {
+                for (auto &elevator : super_container->get_alive_elevators()) {
                     mvprintw(22+i, 1, "Elevator with ID: %s", elevator.id.c_str(), " is alive\n");
                     i++;
                 }
-
-                // clearing
-                locally_assigned_calls = {};
 
                 refresh();
 
