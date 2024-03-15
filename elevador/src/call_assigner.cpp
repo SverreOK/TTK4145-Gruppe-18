@@ -21,7 +21,8 @@ std::vector<std::vector<bool>> call_list_to_floor_list(std::vector<Call*> calls,
     return floors;
 }
 
-std::string exec(const char* cmd) {
+// Execute a command and return the output as a string
+std::string exec(const char* cmd) { 
     std::array<char, 128> buffer;
     std::string result;
     std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
@@ -34,8 +35,8 @@ std::string exec(const char* cmd) {
     return result;
 }
 
-
-
+// Takes a 2D vector of bools representing the up/down buttons on each floor, outputs a JSON string according to 
+// the hall_request_assigner's input format
 std::string generate_hall_request_assigner_json(std::vector<std::vector<bool>> hall_call_floors, std::vector<Elevator_state*> elevators, std::vector<Call*> calls) { 
     Json::Value root;
     
@@ -75,13 +76,9 @@ std::string generate_hall_request_assigner_json(std::vector<std::vector<bool>> h
     }
     root["states"] = states;
 
-    //std::string root_str = root.toStyledString(); // Styled string for easier debug (indentation and newlines)
     Json::FastWriter fastWriter;
     std::string root_str = fastWriter.write(root);
     root_str = root_str.substr(0, root_str.length() - 1);  // remove trailing newline
-    Json::StyledWriter styledWriter;
-    std::string root_str_2 = styledWriter.write(root);
-    //std::cout << root_str_2 << std::endl;
     return root_str;
 }
 
