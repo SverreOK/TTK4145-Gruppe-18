@@ -3,6 +3,8 @@ CC = g++
 
 # Compiler flags
 CFLAGS = -Iinc -Iinc/data -Iinc/elevator -Iinc/util -Iinc/network -Iinc/startup
+# Extra compiler flags for more error hehehehehe
+CFLAGS += -Wall -Wextra -Wpedantic
 
 # Debug compiler flags
 CFLAGS_DEBUG = -g $(CFLAGS)
