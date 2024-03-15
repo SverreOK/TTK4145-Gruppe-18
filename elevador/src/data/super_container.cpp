@@ -48,17 +48,21 @@ std::vector<Call*> Super_container::get_locally_assigned_calls(){
     return copy;
 }
 
-void Super_container::add_call(Call* new_call){
+Call* Super_container::add_call(Call* new_call){
     //TODO: should check is should merge? also merge in the if the call already exists
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
 
     // std::vector<Call*> call_list_copy = call_list;
     //check if call with same ID exists
+    Call* call_referenced = nullptr;
+
     bool already_exists = false;
     for (auto c : call_list){
         if (c->get_call_id()->call_number == new_call->get_call_id()->call_number &&
             c->get_call_id()->elevator_id.id == new_call->get_call_id()->elevator_id.id){
-            already_exists = true;
+
+
+
             for(auto elevator_id : new_call->get_elevator_ack_list()){
                 c->acknowlegde_call(elevator_id);
             }
@@ -67,17 +71,24 @@ void Super_container::add_call(Call* new_call){
                 c->service_call(elevator_id);
             }
 
+            already_exists = true;
+            call_referenced = c;
+            break;
+
         }
     }
 
     if (!already_exists){
         call_list.push_back(new_call);
+        call_referenced = new_call;
     }
 
     scoped_lock.unlock();
 
     update_locally_assigned_calls();
     push_new_call_event();
+
+    return call_referenced;
 }
 
 

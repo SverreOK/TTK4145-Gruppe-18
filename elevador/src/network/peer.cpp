@@ -119,7 +119,7 @@ void Peer::infinite_call_recieve() {
 
                         bool sameacklist = vectors_are_equal(call->get_elevator_ack_list(), new_call->get_elevator_ack_list());
                         bool sameservicedlist = vectors_are_equal(call->get_serviced_ack_list(), new_call->get_serviced_ack_list());
-                        // fuck me
+
                         if (sameacklist &&
                             sameservicedlist) {
                                 already_exists = true;
@@ -129,7 +129,7 @@ void Peer::infinite_call_recieve() {
             }
 
             if (!already_exists) {
-                //data_container->add_call(new Call(*incoming_call)); //this should also merge the call if it already exists
+                
                 bool retransmit = false;
 
                 std::vector<Elevator_id> new_call_ack_list = new_call->get_elevator_ack_list();
@@ -142,23 +142,18 @@ void Peer::infinite_call_recieve() {
                 }
                 
                 bool already_acked = new_call->acknowlegde_call(my_id); //if the id is already in the ack list, it will not be added
-                retransmit &= already_acked; //bitwise operator, but should still work
 
                 if( new_call->get_serviced_ack_list().size() > 0){ //if the call has already been serviced by some elevator, ack
                     new_call->service_call(my_id);
                 }
 
-                data_container->add_call(new_call);
+                Call* call_in_data = data_container->add_call(new_call);
                 
                 if (retransmit)
                 {
-                    call_transmit(new_call, 1);
+                    call_transmit(call_in_data, 1);
                 }
             }
-            
-
-            //delay for 50ms
-            // boost::this_thread::sleep_for(boost::chrono::milliseconds(32));
         }
 }
 

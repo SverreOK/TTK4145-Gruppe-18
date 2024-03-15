@@ -29,7 +29,7 @@ class Super_container {
 
         void add_new_call(int floor, button_type call_type, Call_id call_id);
         void add_new_call_with_elevatorId(int floor, button_type call_type, Elevator_id elevator_id);
-        void add_call(Call* call); 
+        Call* add_call(Call* call); 
 
         void change_call(Call* call, std::string elevator_id);
         void push_new_call_event();
