@@ -126,7 +126,7 @@ void Peer::infinite_call_recieve() {
                                 break;
                         }
                     }
-            }
+                }
 
             if (!already_exists) {
 

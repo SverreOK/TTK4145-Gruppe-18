@@ -137,7 +137,7 @@ class Debug_prints {
                 mvprintw(20, 1, "\n ------------------ NETWORK ----------------------------\n");
                 i = 0;
                 for (auto &elevator : super_container->get_alive_elevators()) {
-                    mvprintw(22+i, 1, "Elevator with ID: %s", elevator.id.c_str(), " is alive\n");
+                    mvprintw(22+i, 1, "Elevator with ID: %s is alive\n", elevator.id.c_str()); //NOTE changed this fellar a bit for warnings -A
                     i++;
                 }
 

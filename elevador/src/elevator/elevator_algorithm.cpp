@@ -1,7 +1,5 @@
-#pragma once
-
 #include "elevator_algorithm.h"
-#include <iostream>
+
 
 // N_FLOORS IS DEFINED IN DRIVERS
 // button_type IS DEFINED IN CALL_CLASS
@@ -67,6 +65,7 @@ bool should_stop(int current_floor, int current_direction, std::vector<Call*> ca
             }
         }
     }
+    return false; // should never reach this point, keep for better practice and compiler warnings
 }
 
 

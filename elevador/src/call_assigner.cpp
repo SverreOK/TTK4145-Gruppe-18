@@ -1,8 +1,4 @@
-#pragma once
-
 #include "call_assigner.h"
-#include <jsoncpp/json/json.h>
-#include <iostream>
 
 // Converts a list of calls to a 2D vector of bools representing the up/down buttons on each floor
 static std::vector<std::vector<bool>> call_list_to_floor_list(std::vector<Call*> calls, int N_FLOORS) { // Output format: [[up_button, down_button], [up_button, down_button], ...]

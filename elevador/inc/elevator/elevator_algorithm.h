@@ -1,10 +1,10 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <vector>
+#include <iostream>
 #include "elevator_fsm.h"
 #include "elevator_driver.h"
 #include "call_class.h"
-
 #include "super_container.h"
 
 bool requests_above(int current_floor, std::vector<Call*> call_list);
