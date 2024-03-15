@@ -22,7 +22,7 @@
 #define STATUS_RECEIVE_RATE_MS 10
 
 // Network broadcast address
-#define BROADCAST_ADDRESS "127.0.0.1" // 192.168.1.255
+#define BROADCAST_ADDRESS "192.168.1.255" // 192.168.1.255
 
 // Network ports
 #define BROADCAST_TX_PORT 9879
@@ -38,8 +38,9 @@
 
 // Backup 
 #define BACKUP_TOGGLE 1 // 1 for backup, 0 for no backup
-#define HEARTBEAT_RATE_MS 1000
-#define HEARTBEAT_ADDRESS "127.0.0.1"
+#define HEARTBEAT_RATE_MS 500
+#define HEARTBEAT_TIMEOUT_DURATION_MS 2000
+#define HEARTBEAT_ADDRESS "127.0.0.1" //should be localhost
 #define PRIMARY_PORT "27106"
 #define BACKUP_PORT "27107"
 

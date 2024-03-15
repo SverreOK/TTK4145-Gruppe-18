@@ -74,7 +74,7 @@ void run_backup(const std::string& host, const std::string& port) {
             // Checks if the primary is still alive, if not 
             if (error == boost::asio::error::would_block) {
             
-                if (!is_primary_now && std::chrono::steady_clock::now() - last_receive_time > 3s) {
+                if (!is_primary_now && std::chrono::steady_clock::now() - last_receive_time > std::chrono::milliseconds(HEARTBEAT_TIMEOUT_DURATION_MS)) {
                     is_primary_now = true;
 
                     break;
