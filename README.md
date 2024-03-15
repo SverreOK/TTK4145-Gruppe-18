@@ -20,7 +20,7 @@ Linux (Ubuntu):
 
 ``` bash
 sudo apt-get update
-sudo apt-get install g++ libjsoncpp-dev libboost-system-dev libboost-thread-dev libboost-chrono-dev libncurses5-dev
+sudo apt-get install g++ libjsoncpp-dev libboost-all-dev libncurses5-dev
 ```
 
 ### Configuration
