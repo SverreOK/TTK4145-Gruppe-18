@@ -18,7 +18,7 @@ int main() {
     //create an elevator_id
     Elevator_id elevator_id{ELEVATOR_ID};
 
-        //create event queue
+    //create event queue
     thread_safe_queue* event_queue = new thread_safe_queue();
 
 
