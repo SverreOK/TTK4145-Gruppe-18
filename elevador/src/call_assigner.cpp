@@ -4,15 +4,16 @@
 #include <jsoncpp/json/json.h>
 #include <iostream>
 
+// Converts a list of calls to a 2D vector of bools representing the up/down buttons on each floor
 std::vector<std::vector<bool>> call_list_to_floor_list(std::vector<Call*> calls, int N_FLOORS) { // Output format: [[up_button, down_button], [up_button, down_button], ...]
     std::vector<std::vector<bool>> floors(N_FLOORS, std::vector<bool>(2, false));
     for (auto call : calls) {
         switch (call -> get_call_type()) {
             case button_type::UP_HALL:
-                floors.at(call -> get_floor() )[0] = true; // -1 because the floor number is 1-indexed
+                floors.at(call -> get_floor())[0] = true; 
                 break;
             case button_type::DOWN_HALL:
-                floors.at(call -> get_floor() )[1] = true;
+                floors.at(call -> get_floor())[1] = true;
                 break;
             default:
                 break;
@@ -82,6 +83,7 @@ std::string generate_hall_request_assigner_json(std::vector<std::vector<bool>> h
     return root_str;
 }
 
+// Checks if a call is assigned to a given elevator by comparing the call's floor and direction to the output of the hall_request_assigner
 bool call_is_assigned(Call* call, std::vector<std::vector<bool>> assigned_floors, std::string elevator_id) {
     bool matches = false;
 
@@ -93,6 +95,8 @@ bool call_is_assigned(Call* call, std::vector<std::vector<bool>> assigned_floors
         || assigned_floors.at(call_floor).at(1) && going_down) {
         matches = true;
     }
+
+    // Cab calls must always be assigned to the elevator that they were called from
     if (call -> get_call_type() == button_type::CAB && call -> get_call_id()->elevator_id.id == elevator_id) {
         matches = true;
     }
@@ -100,12 +104,11 @@ bool call_is_assigned(Call* call, std::vector<std::vector<bool>> assigned_floors
     return matches;
 }
 
+// Takes hall_request_assigner's output and converts it to a 2D vector of bools representing assigned floors for a given elevator
 std::vector<std::vector<bool>> get_assigned_floors_from_json(std::string json_string, std::string elevator_id) {
     Json::Value root;
     Json::Reader reader;
     std::vector<std::vector<bool>> assigned_floors;
-
-    //std::cout << json_string << std::endl;
 
     bool parsingSuccessful = reader.parse(json_string, root);
     if (parsingSuccessful) {
@@ -120,11 +123,10 @@ std::vector<std::vector<bool>> get_assigned_floors_from_json(std::string json_st
     return assigned_floors;
 }
 
+// Takes a 2D vector of bools representing an elevator's assigned floors and uses it to assign the relevant calls to the elevator.
 std::vector<Call*> get_assigned_calls_from_json(std::string json_string, std::string elevator_id, std::vector<Call*> calls) {
     std::vector<std::vector<bool>> assigned_floors = get_assigned_floors_from_json(json_string, elevator_id);
     std::vector<Call*> assigned_calls;
-
-    //check if assigned_calls has anything inside/is empty
 
     if (assigned_floors.empty()) {
         return assigned_calls;
@@ -135,9 +137,12 @@ std::vector<Call*> get_assigned_calls_from_json(std::string json_string, std::st
             assigned_calls.push_back(call);
         }
     }
+
     return assigned_calls;
 }
 
+// Main routine for the call assigner. Takes a list of active elevators and calls as well as ID for a given elevator, 
+// returns all calls that should be assigned to that elevator.
 std::vector<Call*> get_assigned_calls_for_elevator(std::vector<Call*> calls, std::vector<Elevator_state*> elevators, Elevator_id local_id) {
 
     std::vector<std::vector<bool>> hall_call_floors = call_list_to_floor_list(calls, 4); // Set to 4 for now, should be replaced with a constant
