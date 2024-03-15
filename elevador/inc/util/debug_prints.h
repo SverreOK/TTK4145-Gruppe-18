@@ -1,5 +1,6 @@
 #include <ncurses.h>
 #include <chrono>
+#include <vector>
 #include <boost/thread.hpp>
 
 #include "super_container.h"
@@ -12,7 +13,25 @@ class Debug_prints {
         Elevator_id id;
         thread_safe_queue *event_queue;
 
-        // Forward declaration
+        // ART
+        std::vector<std::string> door_open_art = {
+                " ___________________ ",
+                "|  _______________  |",
+                "| |               | |",
+                "| |               | |",
+                "| |       O       | |", // Stick figure inside
+                "| |      -|-      | |", // Representing the body and arms
+                "| |      / \\      | |", // Representing the legs
+                "| |_______________| |",
+                "|___________________|"
+        };
+
+        void print_door_open_art(int start) {
+            for (int i = 0; i < door_open_art.size(); i++) {
+                mvprintw(start+i, 1, door_open_art.at(i).c_str(), "\n");
+            }
+        }
+
         std::string state_enum_to_string(state_enum state) {
             switch (state) {
                 case state_enum::IDLE:
@@ -23,6 +42,9 @@ class Debug_prints {
                     return "MOVING DOWN";
                 case state_enum::DOOR_OPEN:
                     return "DOOR_OPEN";
+                
+                default:
+                    return "";
             }
         }
 
@@ -50,6 +72,9 @@ class Debug_prints {
                     return "UP";
                 case button_type::DOWN_HALL:
                     return "DOWN";
+
+                default:
+                    return "";
             }
         }
 
@@ -116,6 +141,9 @@ class Debug_prints {
                     i++;
                 }
 
+                mvprintw(30, 1, "\n ------------------ ART ----------------------------\n");
+                print_door_open_art(32);
+
                 refresh();
 
                 boost::this_thread::sleep_for(boost::chrono::milliseconds(500));
@@ -123,5 +151,5 @@ class Debug_prints {
             attroff(COLOR_PAIR(1)); 
             endwin();
 
-        }
+        };
 };
