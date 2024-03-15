@@ -104,7 +104,7 @@ int Call::get_floor() {
     return floor;
 }
 
-bool Call::acknowlegde_call(Elevator_id elevator_id) { //return already in list
+bool Call::acknowlegde_call(Elevator_id elevator_id) { //TODO idk if this thing needs to return anything
 
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
 
@@ -115,7 +115,7 @@ bool Call::acknowlegde_call(Elevator_id elevator_id) { //return already in list
         }
     }
     
-    elevator_ack_list.push_back(elevator_id);// elevator id is added to the list since it is not already there
+    elevator_ack_list.push_back(elevator_id);
     return false;
 }
 
@@ -166,9 +166,6 @@ call_message Call::get_call_message() {
 
 void Call::remove_elevator_data(Elevator_id id){
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
-    //remove elevator_id from elevator_ack_list and serviced_ack_list if it finds it
-
-
 
     for (auto it = elevator_ack_list.begin(); it != elevator_ack_list.end(); it++){
         if (it->id == id.id){

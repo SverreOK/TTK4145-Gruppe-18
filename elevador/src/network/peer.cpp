@@ -129,7 +129,7 @@ void Peer::infinite_call_recieve() {
             }
 
             if (!already_exists) {
-                
+
                 bool retransmit = false;
 
                 std::vector<Elevator_id> new_call_ack_list = new_call->get_elevator_ack_list();
@@ -141,7 +141,7 @@ void Peer::infinite_call_recieve() {
                     retransmit = true;
                 }
                 
-                bool already_acked = new_call->acknowlegde_call(my_id); //if the id is already in the ack list, it will not be added
+                new_call->acknowlegde_call(my_id); //if the id is already in the ack list, it will not be added
 
                 if( new_call->get_serviced_ack_list().size() > 0){ //if the call has already been serviced by some elevator, ack
                     new_call->service_call(my_id);
