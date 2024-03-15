@@ -12,8 +12,31 @@
 #include "super_container.h"
 #include "peer.h"
 #include "debug_prints.h"
+#include "process_pair.h"
 
-int main() {
+int main(int argc, char* argv[]) {
+
+    bool is_backup = argc > 1 && std::string(argv[1]) == "backup";
+
+    if (is_backup && BACKUP_TOGGLE) {
+
+        // Running backup before starting primary loop
+        std::cout << "Running backup!" << std::endl;
+        run_backup(HEARTBEAT_ADDRESS, BACKUP_PORT);
+        
+    }
+    else if (BACKUP_TOGGLE) {
+
+        // Running primary loop
+        std::cout << "Running primary!" << std::endl;
+        run_primary(HEARTBEAT_ADDRESS, PRIMARY_PORT);
+
+    }
+    else {
+
+        // Backup is not enabled make dispatch logic without backup?
+        std::cout << "Backup is not enabled" << std::endl;
+    }
 
     //create an elevator_id
     Elevator_id elevator_id{ELEVATOR_ID};
@@ -21,21 +44,14 @@ int main() {
     //create event queue
     thread_safe_queue* event_queue = new thread_safe_queue();
 
-
     //create a super container
     Super_container* data_container = new Super_container(event_queue);
-
-    
 
     //add E1 to the super container
     Elevator_state* elevator = new Elevator_state(elevator_id);
     elevator->set_alive(true);
     data_container->add_elevator(elevator);
     data_container->set_my_id(elevator_id);
-
-    auto a = data_container->get_alive_elevators();
-    auto b = data_container->get_call_list();
-
 
     //create a driver, poller and light controller
     elevator_driver* driver = new elevator_driver();

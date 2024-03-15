@@ -22,7 +22,7 @@
 #define STATUS_RECEIVE_RATE_MS 10
 
 // Network broadcast address
-#define BROADCAST_ADDRESS "192.168.1.255"
+#define BROADCAST_ADDRESS "127.0.0.1" // 192.168.1.255
 
 // Network ports
 #define BROADCAST_TX_PORT 9879
@@ -36,8 +36,12 @@
 // Socket clearing
 #define SOCKET_CLEAR_RATE_MS 1000
 
-// ACKing
-#define ACK_TIMEOUT 1000
-#define ACK_RETRIES 10
+// Backup 
+#define BACKUP_TOGGLE 1 // 1 for backup, 0 for no backup
+#define HEARTBEAT_RATE_MS 1000
+#define HEARTBEAT_ADDRESS "127.0.0.1"
+#define PRIMARY_PORT "27106"
+#define BACKUP_PORT "27107"
 
-#define DEBUG 1 // 1 for debug, 0 for no debug --> implement a command line based GUI?
+// Debug enabling
+#define DEBUG 1 // 1 for debug, 0 for no debug 
