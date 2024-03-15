@@ -17,7 +17,6 @@ std::vector<Call*> Super_container::get_call_list(){
 }
 
 std::vector<Call*> Super_container::update_locally_assigned_calls(){
-
     std::vector<Elevator_id> alive_elevators = get_alive_elevators();
 
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
@@ -26,9 +25,6 @@ std::vector<Call*> Super_container::update_locally_assigned_calls(){
     std::vector<Call*> not_serviced_calls = std::vector<Call*>();
 
     //remove calls that are already serviced by checking if serviced vector length more than 0
-
-
-
     for (auto call : call_list_copy){
 
         std::vector<Elevator_id> call_ack_list = call->get_elevator_ack_list();
@@ -55,6 +51,7 @@ std::vector<Call*> Super_container::get_locally_assigned_calls(){
 void Super_container::add_call(Call* new_call){
     //TODO: should check is should merge? also merge in the if the call already exists
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
+
     // std::vector<Call*> call_list_copy = call_list;
     //check if call with same ID exists
     bool already_exists = false;
@@ -77,8 +74,6 @@ void Super_container::add_call(Call* new_call){
         call_list.push_back(new_call);
     }
 
-    
-
     scoped_lock.unlock();
 
     update_locally_assigned_calls();
@@ -87,16 +82,12 @@ void Super_container::add_call(Call* new_call){
 
 
 void Super_container::add_new_call(int floor, button_type call_type, Call_id call_id){
-
     Call* new_call = new Call(floor, call_type, call_id);
-
     new_call->acknowlegde_call(call_id.elevator_id);
-
     add_call(new_call);
 }
 
 void Super_container::add_new_call_with_elevatorId(int floor, button_type call_type, Elevator_id elevator_id){
-
     if( !call_exists(call_type, floor, elevator_id)){
         int call_num = 0;
         if (get_last_call_id_originating_from_elevator(elevator_id) != nullptr){
@@ -106,12 +97,9 @@ void Super_container::add_new_call_with_elevatorId(int floor, button_type call_t
         Call_id new_call_id{elevator_id, call_num};
         add_new_call(floor, call_type, new_call_id);
     }
-
-
 }
 
 bool Super_container::call_exists(button_type call_type, int floor, Elevator_id elevator_id){
-
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
     //TODO CHECK ID IF CAB
     for (auto call : call_list){ 
@@ -133,9 +121,9 @@ bool Super_container::call_exists(button_type call_type, int floor, Elevator_id 
 
 std::vector<Call*> Super_container::get_calls_originating_from_elevator(Elevator_id elevator_id){
     std::vector<Call*> calls = std::vector<Call*>();
-    
 
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
+
     for (auto call : call_list){
         
         if (call->get_call_id()->elevator_id.id == elevator_id.id){
@@ -166,11 +154,9 @@ Call_id* Super_container::get_last_call_id_originating_from_elevator(Elevator_id
 
 
 int Super_container::add_elevator(Elevator_state* elevator){
-
-    //check if the elevator is already in the list //TODO is this good?
-
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
 
+    //check if the elevator is already in the list //TODO is this good?
     for (auto e : elevators){
         if (e->get_id().id == elevator->get_id().id){
             //update the elevator
@@ -196,8 +182,6 @@ int Super_container::add_elevator(Elevator_state* elevator){
 }
 
 void Super_container::remove_elevator(Elevator_id id){
-
-
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
 
     for (auto elevator : elevators){
@@ -238,18 +222,18 @@ std::vector<Elevator_id> Super_container::get_alive_elevators(){
 }
 
 Elevator_state* Super_container::get_elevator_by_id(Elevator_id id){
-    
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
+
     for (auto elevator : elevators){
         if (elevator->get_id().id == id.id){
             return elevator;
         }
     }
+
     return nullptr;
 }
 
 Elevator_id Super_container::get_my_id(){
-
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
     return my_id;
 }
