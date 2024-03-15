@@ -137,7 +137,7 @@ void Peer::infinite_call_recieve() {
                 std::vector<Elevator_id> alive_elevators = data_container->get_alive_elevators();
 
                 if (!vector_elements_in_A_found_in_B(alive_elevators, new_call_ack_list) ||
-                    new_call_serviced_list.size() > 0 && new_call_serviced_list.size() < alive_elevators.size()) {
+                    (!vector_elements_in_A_found_in_B(alive_elevators, call_serviced_list) && call_serviced_list.size() > 0)) {
                     retransmit = true;
                 }
                 
