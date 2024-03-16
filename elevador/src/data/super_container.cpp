@@ -59,7 +59,8 @@ Call* Super_container::add_call(Call* new_call){
     bool already_exists = false;
     for (auto c : call_list){
         if (c->get_call_id()->call_number == new_call->get_call_id()->call_number &&
-            c->get_call_id()->elevator_id.id == new_call->get_call_id()->elevator_id.id){
+            c->get_call_id()->elevator_id.id == new_call->get_call_id()->elevator_id.id &&
+            c->get_call_type() == new_call->get_call_type() {
 
 
 
