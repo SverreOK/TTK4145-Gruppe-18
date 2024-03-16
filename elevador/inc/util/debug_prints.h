@@ -113,6 +113,7 @@ class Debug_prints {
             // Updates screen if debug is enabled
             while (true) {
                 
+                // This snippet clears the screen every 10 iterations and not every 1 iteration to avoid glitching
                 if (j == 10) {
                     j = 0;
                     clear();
@@ -151,11 +152,15 @@ class Debug_prints {
                 mvprintw(30, 1, "\n ------------------ ART ----------------------------\n");
                 print_door_open_art(32);
 
+                // Updates variables
                 refresh();
 
                 boost::this_thread::sleep_for(boost::chrono::milliseconds(500));
             }
+            // Turn off color
             attroff(COLOR_PAIR(1)); 
+
+            // End ncurses
             endwin();
 
         };
