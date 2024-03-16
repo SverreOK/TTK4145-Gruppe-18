@@ -48,9 +48,11 @@ void launch_primary() {
     Peer* peer = new Peer(data_container);
     peer->run_peer();
 
-    // debug print
-    Debug_prints* debug_prints = new Debug_prints(data_container, elevator_id, event_queue);
-    boost::thread debug_thread(&Debug_prints::debug_print_start, debug_prints, data_container, elevator_id, event_queue);
+     // debug print
+    if (DEBUG) {
+        Debug_prints* debug_prints = new Debug_prints(data_container, elevator_id, event_queue);
+        boost::thread debug_thread(&Debug_prints::debug_print_start, debug_prints, data_container, elevator_id, event_queue);
+    }
 }
 
 void launch_backup() {
@@ -95,8 +97,10 @@ void launch_with_no_backup() {
     peer->run_peer();
 
     // debug print
-    Debug_prints* debug_prints = new Debug_prints(data_container, elevator_id, event_queue);
-    boost::thread debug_thread(&Debug_prints::debug_print_start, debug_prints, data_container, elevator_id, event_queue);
+    if (DEBUG) {
+        Debug_prints* debug_prints = new Debug_prints(data_container, elevator_id, event_queue);
+        boost::thread debug_thread(&Debug_prints::debug_print_start, debug_prints, data_container, elevator_id, event_queue);
+    }
     
 
     while(1){

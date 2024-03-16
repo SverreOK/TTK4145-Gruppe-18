@@ -9,6 +9,8 @@
 
 class Debug_prints {
     private:
+
+        // Debug information from the system
         Super_container *super_container;
         Elevator_id id;
         thread_safe_queue *event_queue;
@@ -26,6 +28,7 @@ class Debug_prints {
                 "|___________________|"
         };
 
+        // PRINT ART
         void print_door_open_art(int start) {
             for (int i = 0; i < door_open_art.size(); i++) {
                 mvprintw(start+i, 1, door_open_art.at(i).c_str(), "\n");
@@ -90,21 +93,25 @@ class Debug_prints {
             int last_seen;
             std::string last_popped_event;
 
+            //Iteration stuff
             int i = 1;
             int j = 0;
 
-            
+            // init screen, and set color
             initscr();
             start_color();
             init_pair(1, COLOR_CYAN, COLOR_BLACK);
 
+            // hide cursor
             curs_set(0);
 
+            // box for the window
             box(stdscr, 0, 0);
             attron(COLOR_PAIR(1));
             clear();
 
-            while (DEBUG) {
+            // Updates screen if debug is enabled
+            while (true) {
                 
                 if (j == 10) {
                     j = 0;
