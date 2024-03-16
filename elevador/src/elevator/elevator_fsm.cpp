@@ -20,14 +20,13 @@ void Elevator::handle_event(elevator_event event) {
         case state_enum::MOVING_UP:
         case state_enum::MOVING_DOWN:
             if(event == elevator_event::ARRIVED_AT_FLOOR){
+                driver -> set_floor_indicator(current_floor);
+                
                 if (should_stop(current_floor, Current_direction, call_list)){
                     driver->set_motor_direction(0);
                     data_container->get_elevator_by_id(id)->set_current_state(state_enum::DOOR_OPEN);
                     open_door(); //NOTE: this might need to be moved to after the clear_orders function
                     clear_orders(call_list, current_floor, Current_direction);
-                }
-                else{
-                    //do nothing?
                 }
             }
         break;
