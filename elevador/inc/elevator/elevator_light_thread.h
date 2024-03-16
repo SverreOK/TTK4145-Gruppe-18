@@ -25,7 +25,7 @@ class Light_controller {
 
 
     Light_controller(Super_container* data_container, elevator_driver* driver) 
-                    : data_container(data_container), driver(driver) {}
+                    : driver(driver), data_container(data_container) {}
 
     void Update_lights() {
 
@@ -65,7 +65,7 @@ class Light_controller {
                     }
                 }
                 
-                if (ack_count == alive_elevators.size() && call->get_serviced_ack_list().size() == 0){                    
+                if (ack_count == static_cast<int>(alive_elevators.size()) && call->get_serviced_ack_list().size() == 0){                    
                     temp_matrix[static_cast<int>( call_type )][call->get_floor()] = true;
                 }
             }

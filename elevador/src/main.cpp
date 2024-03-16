@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
         // Running primary loop
         // Starts the program together with heartbeat
         std::cout << "Running primary!" << std::endl;
-        run_primary(HEARTBEAT_ADDRESS, PRIMARY_PORT);
+        run_primary(HEARTBEAT_ADDRESS);// didnt use this anymore , PRIMARY_PORT
 
     }
     else {

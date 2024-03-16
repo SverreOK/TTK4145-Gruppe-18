@@ -46,7 +46,8 @@ void elevator_driver::connect() {
 
 void elevator_driver::set_motor_direction(int dir) {
     std::lock_guard<std::mutex> lock(mtx);
-    boost::asio::write(socket, boost::asio::buffer((char[4]) {1, static_cast<char>(dir)}, 4));
+    std::array<char, 4> data = {1, static_cast<char>(dir), 0, 0};
+    boost::asio::write(socket, boost::asio::buffer(data));
 }
 
 void elevator_driver::set_button_lamp(int button, int floor, int value) {
@@ -56,7 +57,8 @@ void elevator_driver::set_button_lamp(int button, int floor, int value) {
     assert(button < N_BUTTONS);
 
     std::lock_guard<std::mutex> lock(mtx);
-    boost::asio::write(socket, boost::asio::buffer((char[4]) {2, static_cast<char>(button), static_cast<char>(floor), static_cast<char>(value)}, 4));
+    std::array<char, 4> data = {2, static_cast<char>(button), static_cast<char>(floor), static_cast<char>(value)};
+    boost::asio::write(socket, boost::asio::buffer(data));
 }
 
 void elevator_driver::set_floor_indicator(int floor) {
@@ -64,12 +66,14 @@ void elevator_driver::set_floor_indicator(int floor) {
     assert(floor < N_FLOORS);
 
     std::lock_guard<std::mutex> lock(mtx);
-    boost::asio::write(socket, boost::asio::buffer((char[4]) {3, static_cast<char>(floor)}, 4));
+    std::array<char, 4> data = {3, static_cast<char>(floor), 0, 0};
+    boost::asio::write(socket, boost::asio::buffer(data));
 }
 
 void elevator_driver::set_door_open_lamp(int value) {
     std::lock_guard<std::mutex> lock(mtx);
-    boost::asio::write(socket, boost::asio::buffer((char[4]) {4, static_cast<char>(value)}, 4));
+    std::array<char, 4> data = {4, static_cast<char>(value), 0, 0};
+    boost::asio::write(socket, boost::asio::buffer(data));
 }
 
 //todo add set_stop_light function!
@@ -77,7 +81,10 @@ void elevator_driver::set_door_open_lamp(int value) {
 
 int elevator_driver::get_button_signal(int button, int floor) {
     std::lock_guard<std::mutex> lock(mtx);
-    boost::asio::write(socket, boost::asio::buffer((char[4]) {6, static_cast<char>(button), static_cast<char>(floor)}, 4));
+
+    std::array<char, 4> data = {6, static_cast<char>(button), static_cast<char>(floor), 0};
+    boost::asio::write(socket, boost::asio::buffer(data));
+    
     char response[4];
     boost::asio::read(socket, boost::asio::buffer(response, 4));
     return response[1];
@@ -85,7 +92,8 @@ int elevator_driver::get_button_signal(int button, int floor) {
 
 int elevator_driver::get_floor_sensor_signal() {
     std::lock_guard<std::mutex> lock(mtx);
-    boost::asio::write(socket, boost::asio::buffer((char[4]) {7}, 4));
+    std::array<char, 4> data = {7, 0, 0, 0};
+    boost::asio::write(socket, boost::asio::buffer(data));
     char response[4];
     boost::asio::read(socket, boost::asio::buffer(response, 4));
     return response[1] ? response[2] : -1;
@@ -93,7 +101,10 @@ int elevator_driver::get_floor_sensor_signal() {
 
 int elevator_driver::get_stop_signal() {
     std::lock_guard<std::mutex> lock(mtx);
-    boost::asio::write(socket, boost::asio::buffer((char[4]) {8}, 4));
+    // For get_stop_signal()
+    std::array<char,4> data = {8, 0, 0, 0};
+    boost::asio::write(socket, boost::asio::buffer(data));
+
     char response[4];
     boost::asio::read(socket, boost::asio::buffer(response, 4));
     return response[1] ? response[2] : -1;
@@ -101,7 +112,9 @@ int elevator_driver::get_stop_signal() {
 
 int elevator_driver::get_obstruction_signal() {
     std::lock_guard<std::mutex> lock(mtx);
-    boost::asio::write(socket, boost::asio::buffer((char[4]) {9}, 4));
+    
+    std::array<char, 4> data = {9, 0, 0, 0};
+    boost::asio::write(socket, boost::asio::buffer(data));
     char response[4];
     boost::asio::read(socket, boost::asio::buffer(response, 4));
     return response[1];

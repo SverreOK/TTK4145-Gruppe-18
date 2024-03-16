@@ -99,7 +99,7 @@ void Super_container::add_new_call(int floor, button_type call_type, Call_id cal
 }
 
 void Super_container::add_new_call_with_elevatorId(int floor, button_type call_type, Elevator_id elevator_id){
-    if( !call_exists(call_type, floor, elevator_id)){
+    if( !similar_call_exists(call_type, floor, elevator_id)){
         int call_num = 0;
         if (get_last_call_id_originating_from_elevator(elevator_id) != nullptr){
             call_num = get_last_call_id_originating_from_elevator(elevator_id)->call_number + 1;
@@ -110,18 +110,18 @@ void Super_container::add_new_call_with_elevatorId(int floor, button_type call_t
     }
 }
 
-bool Super_container::call_exists(button_type call_type, int floor, Elevator_id elevator_id){
+bool Super_container::similar_call_exists(button_type test_call_type, int test_floor, Elevator_id test_elevator_id){
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
     //TODO CHECK ID IF CAB
-    for (auto call : call_list){ 
-        button_type call_type  = call->get_call_type();
-        bool is_local_cab_call = call_type == button_type::CAB && call->get_call_id()->elevator_id.id == elevator_id.id;
-        bool is_hall_call = !(call_type == button_type::CAB);
+    for (auto existing_call : call_list){ 
+        button_type existing_call_type  = existing_call->get_call_type();
+        bool is_local_cab_call = (existing_call_type == button_type::CAB) && (existing_call->get_call_id()->elevator_id.id == test_elevator_id.id);
+        bool is_hall_call = !(existing_call->get_call_type() == button_type::CAB);
 
         if (is_local_cab_call || is_hall_call){
-            if (call->get_call_type() == call_type &&           //call has same type as provided button type
-                floor == call->get_floor() &&                   //call has same floor as provided nr
-                call->get_serviced_ack_list().size() == 0 ){    //call has empty serviced list
+            if (existing_call->get_call_type() == test_call_type &&           //call has same type as provided button type
+                test_floor == existing_call->get_floor() &&                   //call has same floor as provided nr
+                existing_call->get_serviced_ack_list().size() == 0 ){    //call has empty serviced list
 
                 return true;
             }

@@ -17,7 +17,7 @@ auto last_receive_time = std::chrono::steady_clock::now();
 // Runs the primary
 // Sends heartbeats to the backup
 // Runs the primary dispatch logic
-void run_primary(const std::string& host, const std::string& port) {
+void run_primary(const std::string& host) { // unsused? , const std::string& port
     try {
         
         // Socket setup for primary
@@ -69,7 +69,7 @@ void run_backup(const std::string& host, const std::string& port) {
             std::cout << "Backup running" << std::endl;
 
             boost::system::error_code error;
-            size_t length = socket.receive_from(boost::asio::buffer(buf), sender_endpoint, 0, error);
+            socket.receive_from(boost::asio::buffer(buf), sender_endpoint, 0, error); // "size_t length =" is not used so i removed it
 
             // Checks if the primary is still alive, if not 
             if (error == boost::asio::error::would_block) {
@@ -96,7 +96,7 @@ void run_backup(const std::string& host, const std::string& port) {
         socket.close();
 
         // Run the primary because you are now the primary :))
-        run_primary(host, PRIMARY_PORT);
+        run_primary(host); // , PRIMARY_PORT didnt use this any more
     } 
 
     catch (std::exception& e) {

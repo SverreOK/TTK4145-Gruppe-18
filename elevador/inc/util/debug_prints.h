@@ -24,13 +24,13 @@ class Debug_prints {
                 "| |       O       | |", // Stick figure inside
                 "| |      -|-      | |", // Representing the body and arms
                 "| |      / \\      | |", // Representing the legs
-                "| |_______________| |",
+                "| |_______________| |", // Representing the emptiness of my soul and the elevator and the door and the stick figure and the world and the universe and the void
                 "|___________________|"
         };
 
         // PRINT ART
         void print_door_open_art(int start) {
-            for (int i = 0; i < door_open_art.size(); i++) {
+            for (int i = 0; i < static_cast<int>(door_open_art.size()); i++) {
                 mvprintw(start+i, 1, door_open_art.at(i).c_str(), "\n");
             }
         }
@@ -90,7 +90,6 @@ class Debug_prints {
             //Physical
             uint8_t floor;
             std::string current_state;
-            int last_seen;
             std::string last_popped_event;
 
             //Iteration stuff

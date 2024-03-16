@@ -87,8 +87,8 @@ static bool call_is_assigned(Call* call, std::vector<std::vector<bool>> assigned
     bool going_down = call -> get_call_type() == button_type::DOWN_HALL;
     int call_floor = call -> get_floor();
 
-    if (assigned_floors.at(call_floor).at(0) && going_up 
-        || assigned_floors.at(call_floor).at(1) && going_down) {
+    if ((assigned_floors.at(call_floor).at(0) && going_up) || 
+        (assigned_floors.at(call_floor).at(1) && going_down)) {
         matches = true;
     }
 

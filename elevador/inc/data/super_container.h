@@ -40,7 +40,7 @@ class Super_container {
 
         void service_call(Call* call, Elevator_id elevator_id);
 
-        bool call_exists(button_type call_type, int floor, Elevator_id elevatpr_id);
+        bool similar_call_exists(button_type call_type, int floor, Elevator_id elevatpr_id);
 
 
         Elevator_state* get_elevator_by_id(Elevator_id id);

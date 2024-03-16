@@ -44,7 +44,7 @@ void Peer::infinite_status_recieve() {
     while (true) {
         try
         {
-            size_t len = broadcast_socket_rx.receive_from(boost::asio::buffer(buffer), sender_endpoint);
+            broadcast_socket_rx.receive_from(boost::asio::buffer(buffer), sender_endpoint); //len not used :grinning: : size_t len = 
         }
         catch(const std::exception& e)
         {
@@ -97,7 +97,7 @@ void Peer::infinite_call_recieve() {
             
             try
             {
-                size_t len = call_socket_rx.receive_from(boost::asio::buffer(buffer), sender_endpoint);
+                call_socket_rx.receive_from(boost::asio::buffer(buffer), sender_endpoint); // len not used :grinning: : size_t len = 
             }
             catch(const std::exception& e)
             {
@@ -204,7 +204,7 @@ void purge_receive_buffers(boost::asio::ip::udp::socket& call_socket_rx) {
         while (1){
             char buffer[1024];
             boost::asio::ip::udp::endpoint sender_endpoint;
-            size_t len = call_socket_rx.receive_from(boost::asio::buffer(buffer), sender_endpoint);
+            call_socket_rx.receive_from(boost::asio::buffer(buffer), sender_endpoint); // size_t len =
             boost::this_thread::interruption_point();
         }
     } catch (std::exception& e) {

@@ -26,11 +26,9 @@ class Elevator {
     private:
         elevator_driver* driver;
 
-        std::mutex event_mutex;
+        Elevator_id id;
 
         Super_container* data_container;
-
-        Elevator_id id;
 
         thread_safe_queue* event_queue;
 
@@ -42,6 +40,8 @@ class Elevator {
 
         boost::thread door_timer_thread;
 
+        std::mutex event_mutex;
+
 
         int running;
 
@@ -50,7 +50,6 @@ class Elevator {
         void clear_orders(std::vector<Call*> call_list, int current_floor, int current_direction);
 
     public:
-        // Constructor declaration
         Elevator(elevator_driver* driver, Elevator_id id, Super_container* data_container, thread_safe_queue* event_queue);
 
         void handle_event(elevator_event event);

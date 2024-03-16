@@ -78,7 +78,9 @@ public:
     }
 
     Elevator_driver_poller(elevator_driver* driver, Elevator_id elevator_id, Super_container* data_container, int number_of_floors, thread_safe_queue* event_queue, Elevator* elevator_fsm) 
-        : driver(driver), running(false), elevator_id(elevator_id), data_container(data_container), number_of_floors(number_of_floors), event_queue(event_queue), elevator_fsm(elevator_fsm) {}
+        : driver(driver), data_container(data_container), elevator_id(elevator_id), event_queue(event_queue), elevator_fsm(elevator_fsm), number_of_floors(number_of_floors) {
+            running = false;
+        }
 
 
     void stop() {
