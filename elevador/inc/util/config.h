@@ -38,8 +38,8 @@
 
 // Backup 
 #define BACKUP_TOGGLE 1 // 1 for backup, 0 for no backup
-#define HEARTBEAT_RATE_MS 500
-#define HEARTBEAT_TIMEOUT_DURATION_MS 2000
+#define HEARTBEAT_RATE_MS 1000
+#define HEARTBEAT_TIMEOUT_DURATION_MS 5000
 #define HEARTBEAT_ADDRESS "127.0.0.1" //should be localhost
 #define PRIMARY_PORT "27106"
 #define BACKUP_PORT "27107"
