@@ -22,7 +22,7 @@
 #define STATUS_RECEIVE_RATE_MS 10
 
 // Network broadcast address
-#define BROADCAST_ADDRESS "192.168.1.255" // 192.168.1.255
+#define BROADCAST_ADDRESS "10.100.23.255" // Correct for lab. 192.168.1.255 for office
 
 // Network ports
 #define BROADCAST_TX_PORT 9879
