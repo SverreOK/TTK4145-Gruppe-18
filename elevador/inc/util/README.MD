@@ -1,4 +1,4 @@
-## inc/util/ module documentation
+## util module
 ### overview
 - **config.h**: Defines configurations for elevator operation, door settings, network communication, debugging options and backup options.
 - **debug_prints.h**: Contains the Debug_prints class, which utilizes ncurses for visual debugging output related to elevator state, events, and network status.
