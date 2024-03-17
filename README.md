@@ -1,8 +1,12 @@
 # Peer-to-Peer Elevator System in C++ 🚀🤖🔗
 This is a term project in [TTK4145](https://www.ntnu.no/studier/emner/TTK4145) developed by three students. The project implements software for a distributed elevator system. This solution is utilzing a peer-to-peer architecture to enable communication between several elevators.
 
+There are two main folders:
+- **./Elevador**: Effectively the root folder for the distributed elevator system
+- **./Excercices**: Contains multiple smaller excercices from the subject.
+
 ## Setup of project 🛠️
-Documentation resides in each module folder in elevador\inc.
+Documentation of code resides in each module folder in elevador\inc.
 ### Prerequisites 🧑‍💻
 To build and run this project, you will need to have the following installed on your system:
 
@@ -36,10 +40,14 @@ After you have configured correctly, you can build the project using:
 ``` bash
 make
 ```
+This will build a "main" file in the root folder you can run by using:
+``` bash
+./main
+```
 To build debug version, use:
 ``` bash
 make debug
 ```
-
+This will build a file called "main_debug". which can be ran using a debugger configuration/setup.
 ## Honorable Mentions 🎖️
 Thank you Ola Vanni Flaata for networking knowledge.
