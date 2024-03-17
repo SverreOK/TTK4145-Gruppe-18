@@ -33,6 +33,10 @@ bool requests_same_floor(int current_floor, std::vector<Call*> call_list) {
 
 bool should_stop(int current_floor, int current_direction, std::vector<Call*> call_list) {
 
+    //check if call list is empty
+    if (call_list.empty()) {
+        return true;
+    }
 
     for (auto call : call_list) {
 
@@ -65,7 +69,7 @@ bool should_stop(int current_floor, int current_direction, std::vector<Call*> ca
             }
         }
     }
-    return true; // should never reach this point, keep for better practice and compiler warnings
+    return false; //should never reach here
 }
 
 
