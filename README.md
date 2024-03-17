@@ -30,9 +30,13 @@ sudo apt-get install g++ libjsoncpp-dev libboost-all-dev libncurses5-dev
 ### Configuration 📐
 The configuration resides in elevador\inc\util\config.h. These are default values. 
 
-For physical testing use,
+The most important configs to check before compiling to run on your system are the following (shown with default setting):
 ``` cpp
+#define NUM_ELEVATORS 3
 #define NUM_FLOORSS 4
+#define BROADCAST_ADDRESS "10.100.23.255"
+#define ELEVATOR_ID "Ole"
+//NOTE: you may also need to check the different ports used!
 ```
 
 ### Running the Project 🏃‍♂️
