@@ -5,8 +5,7 @@
 #include "config.h"
 #include <boost/thread/mutex.hpp>
 
-struct call_message
-{
+struct call_message {
     char elevator_id[8];
     uint8_t floor;
     uint8_t call_type;
@@ -46,23 +45,19 @@ class Call {
         int floor;
         button_type call_type;
         Call_id* call_id;
-        // Elevator_id assigned_elevator; //maybe change to a bool called something like "assigned to local node"?
         
         std::vector<Elevator_id> serviced_ack_list;
         std::vector<Elevator_id> elevator_ack_list;
 
         boost::mutex mtx;
 
-
-
-
     public:
+
         Call(int floor, button_type call_type, Call_id* call_id);
         Call(int floor, button_type call_type, Call_id call_id);
         Call(call_message call_msg);
 
         call_message get_call_message();
-
 
         std::vector<Elevator_id> get_elevator_ack_list();
         std::vector<Elevator_id> get_serviced_ack_list();
@@ -74,10 +69,7 @@ class Call {
         void service_call(Elevator_id elevator_id);
         bool acknowlegde_call(Elevator_id elevator_id);
         void remove_elevator_data(Elevator_id id);
-
 };
-
-
 
 bool vector_elements_in_A_found_in_B(std::vector<Elevator_id> list1, std::vector<Elevator_id> list2);
 bool vectors_are_equal(std::vector<Elevator_id> list1, std::vector<Elevator_id> list2);
