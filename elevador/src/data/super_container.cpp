@@ -4,11 +4,11 @@
 class Call;
 
 Super_container::Super_container(thread_safe_queue* event_queue)
-                                : event_queue(event_queue){
-    elevators = std::vector<Elevator_state*>();
-    call_list = std::vector<Call*>();
-    locally_assigned_calls = std::vector<Call*>();
-}
+  : event_queue(event_queue),
+    elevators(std::vector<Elevator_state*>()),
+    call_list(std::vector<Call*>()),
+    locally_assigned_calls(std::vector<Call*>())
+{}
 
 std::vector<Call*> Super_container::get_call_list(){
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
