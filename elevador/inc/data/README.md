@@ -1,7 +1,7 @@
 
-# data module 📖
+# data module 📚
 
-This module contains three files related to the data types used.
+### overview 🔭
 - **call_class.h**: Contains a few smaller structs & classes for storing Call data.
 - **elevator_state_class.h**: Contains the class used for storing state of an elevator
 - **super_container.h**: The main object passed in the code, contains all of the above with methods for interacting.
