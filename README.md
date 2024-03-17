@@ -28,9 +28,9 @@ sudo apt-get install g++ libjsoncpp-dev libboost-all-dev libncurses5-dev
 ```
 
 ### Configuration 📐
-The configuration resides in elevador\inc\util\config.h. These are default values. 
+The configuration resides in elevador\inc\util\config.h, with default values.
 
-The most important configs to check before compiling to run on your system are the following (shown with default setting):
+The most important configs to check in file before compiling to run on your system are the following (shown with default setting):
 ``` cpp
 #define NUM_ELEVATORS 3                     //must be equal or larger than amount of elevators expected on network
 #define NUM_FLOORSS 4                       //must match your simulated/physical elevator
