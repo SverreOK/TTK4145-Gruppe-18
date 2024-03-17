@@ -8,45 +8,29 @@
 #include <iostream>
 #include <thread>
 
-
 #include "elevator_driver.h" 
 #include "elevator_algorithm.h"
 #include "super_container.h"
 #include "event_queue.h"
 #include "config.h"
 
-// // Forward declaration
-// class elevator_driver;
-
-
-
-
-
 class Elevator {
     private:
-        elevator_driver* driver;
-
         Elevator_id local_elevator_id;
-
+        elevator_driver* driver;
         Super_container* data_container;
-
         thread_safe_queue* event_queue;
 
         boost::thread fsm_thread;
-
-        int Current_direction;
-        
-        state_enum last_move_state;
-
         boost::thread door_timer_thread;
 
         std::mutex event_mutex;
 
-
+        state_enum last_move_state;
+        int Current_direction;
         int running;
 
         void initialize_position();
-
         void clear_orders(std::vector<Call*> call_list, int current_floor, int current_direction);
 
     public:
@@ -65,5 +49,4 @@ class Elevator {
         void stop();
 
         ~Elevator();	
-
 };

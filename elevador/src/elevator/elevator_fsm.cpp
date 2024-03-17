@@ -1,10 +1,12 @@
 #include "elevator/elevator_fsm.h"
 
 Elevator::Elevator(elevator_driver* driver, Elevator_id local_elevator_id, Super_container* data_container, thread_safe_queue* event_queue)
-    : driver(driver), local_elevator_id(local_elevator_id), data_container(data_container), event_queue(event_queue){
-       
-        Current_direction = 0;
-}
+  : local_elevator_id(local_elevator_id), 
+    driver(driver), 
+    data_container(data_container), 
+    event_queue(event_queue),
+    Current_direction(0)
+{}
 
 void Elevator::handle_event(elevator_event event) {
 
