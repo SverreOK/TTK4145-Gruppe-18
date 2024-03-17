@@ -56,9 +56,9 @@ void Elevator_state::set_current_floor(int floor){
     current_floor = floor;
 }
 
-void Elevator_state::set_obstruction(bool obstruction){
+void Elevator_state::set_obstruction(bool obstruction_input){
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
-    obstruction = obstruction;
+    obstruction = obstruction_input;
 }
 
 void Elevator_state::set_alive(bool alive){
