@@ -143,10 +143,10 @@ std::vector<Call*> get_assigned_calls_for_elevator(std::vector<Call*> calls, std
 
     // Final state check in case of edge cases  
     for (auto elevator : elevators) {
-        if (elevator -> get_current_state() == state_enum::MOVING_UP &&
-            elevator -> get_current_floor() == NUM_FLOORSS - 1 ||
-            elevator -> get_current_state() == state_enum::MOVING_DOWN &&
-            elevator -> get_current_floor() == 0) {
+        if ((elevator -> get_current_state() == state_enum::MOVING_UP &&
+            elevator -> get_current_floor() == NUM_FLOORSS - 1) ||
+            (elevator -> get_current_state() == state_enum::MOVING_DOWN &&
+            elevator -> get_current_floor() == 0)) {
                 elevator -> set_current_state(state_enum::IDLE);
         }
     }
