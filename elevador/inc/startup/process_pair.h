@@ -80,7 +80,6 @@ void run_backup(const std::string& host, const std::string& port) {
                     break;
                 }
 
-                // sleep for 1 second
                 boost::this_thread::sleep_for(boost::chrono::milliseconds(HEARTBEAT_RATE_MS));
                 continue;
             }

@@ -177,7 +177,19 @@ void Elevator::initialize_position() {
 
 // This function starts the elevator
 void Elevator::run_event_queue() {
-    // Implement in main instead
+
+    //event queue startup by waiting until there is no obstruction
+
+    while (driver->get_obstruction_signal() == 1){
+        driver -> set_door_open_lamp(1);
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
+    }
+    boost::this_thread::sleep_for(boost::chrono::milliseconds(DOOR_OPEN_TIME_MS));
+    driver -> set_door_open_lamp(0);
+
+    event_queue->push(elevator_event::DOOR_CLOSED); // initial event to kick off the FSM
+
+    
     while (running) {
         elevator_event event = event_queue->pop();
         handle_event(event);
@@ -187,15 +199,6 @@ void Elevator::run_event_queue() {
 void Elevator::start() {
     Elevator::initialize_position();
     running = true;
-
-    while (data_container->get_elevator_by_id(local_elevator_id)->get_obstruction_status() == 1){
-        // Wait for the elevator to reach the nearest floor
-        boost::this_thread::sleep_for(boost::chrono::milliseconds(100));
-    }
-    boost::this_thread::sleep_for(boost::chrono::milliseconds(DOOR_OPEN_TIME_MS));
-    driver -> set_door_open_lamp(0);
-
-    event_queue->push(elevator_event::DOOR_CLOSED); // initial event to kick off the FSM
 
     fsm_thread = boost::thread(&Elevator::run_event_queue, this);
 }
