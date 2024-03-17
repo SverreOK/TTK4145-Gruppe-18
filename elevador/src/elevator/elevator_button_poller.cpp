@@ -7,7 +7,8 @@ Elevator_driver_poller::Elevator_driver_poller(elevator_driver* driver, Elevator
     event_queue(event_queue), 
     elevator_fsm(elevator_fsm), 
     number_of_floors(number_of_floors),
-    running(false);
+    running(false)
+{}
 
 void Elevator_driver_poller::poll_buttons() {
     for (int floor = 0; floor < number_of_floors; ++floor) {
