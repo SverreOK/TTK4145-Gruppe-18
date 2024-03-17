@@ -25,8 +25,8 @@ void Elevator::handle_event(elevator_event event) {
                 if (should_stop(current_floor, Current_direction, call_list)){
                     driver->set_motor_direction(0);
                     data_container->get_elevator_by_id(local_elevator_id)->set_current_state(state_enum::DOOR_OPEN);
-                    open_door();
                     clear_orders(call_list, current_floor, Current_direction);
+                    open_door();
                 }
             }
         break;
@@ -42,8 +42,8 @@ void Elevator::handle_event(elevator_event event) {
                 if (Current_direction == 0){
                     if(requests_same_floor(current_floor, call_list)){
                         data_container->get_elevator_by_id(local_elevator_id)->set_current_state(state_enum::DOOR_OPEN);
-                        open_door(); //NOTE: this might need to be moved to after the clear_orders function
                         clear_orders(call_list, current_floor, Current_direction);
+                        open_door(); //NOTE: this might need to be moved to after the clear_orders function
                     }
                 }
 
@@ -64,7 +64,7 @@ void Elevator::handle_event(elevator_event event) {
 
         case state_enum::DOOR_OPEN:
             if(event == elevator_event::ORDER_RECEIVED){
-                clear_orders(call_list, current_floor, Current_direction);
+                //clear_orders(call_list, current_floor, Current_direction);
             } else if(event == elevator_event::DOOR_TIMEOUT){
                 //close door light
                 data_container->get_elevator_by_id(local_elevator_id)->set_current_state(state_enum::IDLE);
@@ -78,6 +78,7 @@ void Elevator::handle_event(elevator_event event) {
 void Elevator::clear_orders(std::vector<Call*> call_list, int current_floor, int current_direction) {
     bool more_calls_up = requests_above(current_floor, call_list);
     bool more_calls_down = requests_below(current_floor, call_list);
+    bool normal_clear = false;
     
     for (auto call : call_list) {
         if (call->get_floor() == current_floor){
@@ -90,25 +91,44 @@ void Elevator::clear_orders(std::vector<Call*> call_list, int current_floor, int
                 case 1: //moving up
                     if (call_type == button_type::UP_HALL){ //and call is up at this floor
                         data_container->service_call(call, local_elevator_id);
-                    }
-                    else if(call_type == button_type::DOWN_HALL && !more_calls_up){ //or call is down at this floor and there are no more calls up
-                        data_container->service_call(call, local_elevator_id);
+                        normal_clear = true;
                     }
                 break;
 
                 case -1: //moving down
                     if (call_type == button_type::DOWN_HALL){ //and call is down at this floor
                         data_container->service_call(call, local_elevator_id);
-                    }
-                    else if(call_type == button_type::UP_HALL && !more_calls_down){ //or call is up at this floor and there are no more calls down
-                        data_container->service_call(call, local_elevator_id);
+                        normal_clear = true;
                     }
                 break;
 
                 case 0:
                     if (call_type == button_type::UP_HALL || call_type == button_type::DOWN_HALL){ //and call is up or down at this floor
                         data_container->service_call(call, local_elevator_id);
+                        normal_clear = true;
                     }
+            }
+        }
+    }
+
+    if (!normal_clear){ // if no normal clear was done, check if clear in other direction is needed
+        for (auto call : call_list) {
+            if (call->get_floor() == current_floor){
+                button_type call_type = call->get_call_type();
+
+                switch (current_direction){
+                    case 1: //moving up
+                        if(call_type == button_type::DOWN_HALL && !more_calls_up){ //or call is down at this floor and there are no more calls up
+                            data_container->service_call(call, local_elevator_id);
+                        }
+                    break;
+
+                    case -1: //moving down
+                        if(call_type == button_type::UP_HALL && !more_calls_down){ //or call is up at this floor and there are no more calls down
+                            data_container->service_call(call, local_elevator_id);
+                        }
+                    break;
+                }
             }
         }
     }
