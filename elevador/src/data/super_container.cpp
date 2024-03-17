@@ -77,7 +77,9 @@ Call *Super_container::add_call(Call *new_call)
             c->get_call_id()->elevator_id.id == new_call->get_call_id()->elevator_id.id &&
             c->get_call_type() == new_call->get_call_type())
         {
-
+            std::cout << "Call types: " << std::endl;
+            std::cout << "c: " << std::string(int(c->get_call_type())) << std::endl;
+            std::cout << "new_call: " << std::string(int(new_call->get_call_type())) << std::endl;
             for (auto elevator_id : new_call->get_elevator_ack_list())
             {
                 c->acknowlegde_call(elevator_id);

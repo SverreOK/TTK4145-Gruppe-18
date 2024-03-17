@@ -14,7 +14,7 @@ class Light_controller {
         Super_container* data_container;
         Elevator_id elevator_id;
         bool running;
-        int number_of_floors = NUM_FLOORSS; //TODO CONFIG
+        int number_of_floors = NUM_FLOORSS;
         int update_freq = 420; //hz
 
         //a 3 x number_of_floors matrix with bools to represent the current state of the lights
