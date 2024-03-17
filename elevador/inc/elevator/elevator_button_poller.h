@@ -29,10 +29,9 @@ class Elevator_driver_poller {
         Elevator_driver_poller(elevator_driver* driver, Elevator_id elevator_id, Super_container* data_container, int number_of_floors, thread_safe_queue* event_queue, Elevator* elevator_fsm);
 
         void poll_all();
+        
         void stop();
         bool get_running();
 
-        ~Elevator_driver_poller() {
-            stop();
-        }
+        ~Elevator_driver_poller();
 };
