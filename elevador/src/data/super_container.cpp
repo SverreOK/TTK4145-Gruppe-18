@@ -18,25 +18,21 @@ std::vector<Call*> Super_container::get_call_list(){
 
 void Super_container::update_locally_assigned_calls(){
     std::vector<Elevator_id> alive_elevators = get_alive_elevators();
-
-    Elevator_state* local_elevator = get_elevator_by_id(my_id);
-
-    boost::unique_lock<boost::mutex> scoped_lock(mtx);
-
     std::vector<Call*> call_list_copy = call_list;
     std::vector<Call*> not_serviced_calls = std::vector<Call*>();
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
+    Elevator_state* local_elevator = get_elevator_by_id(my_id);
 
-    //remove calls that are already serviced by checking if serviced vector length more than 0
+    // Remove calls that are already serviced by checking if serviced vector length more than 0
     for (auto call : call_list_copy){
-
         std::vector<Elevator_id> call_ack_list = call->get_elevator_ack_list();
-
         if (call->get_serviced_ack_list().size() == 0 &&
             vector_elements_in_A_found_in_B(alive_elevators, call_ack_list)){
             not_serviced_calls.push_back(call);
         }
     }
 
+    // Add non-obstructed elevators to a new vector for call assignment
     std::vector<Elevator_state*> elevators_copy = std::vector<Elevator_state*>();
     for (auto elevator : elevators) {
         if (elevator -> get_obstruction_status() == false) {
@@ -44,7 +40,7 @@ void Super_container::update_locally_assigned_calls(){
         }
     }
 
-    //if there are no elevators in elevators_copy, force add calls to local elevator
+    // If the elevator is alone on the network, it must add itself, otherwise get_assigned_calls_for_elevator will throw an error
     if (elevators_copy.size() == 0){
         elevators_copy.push_back(local_elevator);
     }
