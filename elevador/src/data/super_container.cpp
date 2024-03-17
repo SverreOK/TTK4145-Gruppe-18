@@ -48,7 +48,7 @@ std::vector<Call *> Super_container::update_locally_assigned_calls()
             elevators_copy.push_back(elev);
         }
     }
-    locally_assigned_calls = get_assigned_calls_for_elevator(not_serviced_calls, elevators_copy, my_id);
+    locally_assigned_calls = get_assigned_calls_for_elevator(not_serviced_calls, elevators, my_id);
 
     std::vector<Call *> copy = locally_assigned_calls;
     return copy;
@@ -76,7 +76,6 @@ Call *Super_container::add_call(Call *new_call)
         if (c->get_call_id()->call_number == new_call->get_call_id()->call_number &&
             c->get_call_id()->elevator_id.id == new_call->get_call_id()->elevator_id.id &&
             c->get_call_type() == new_call->get_call_type())
-            std::cout << "Call already exists" << std::endl;
         {
 
             for (auto elevator_id : new_call->get_elevator_ack_list())
