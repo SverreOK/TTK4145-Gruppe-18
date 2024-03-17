@@ -76,6 +76,7 @@ Call *Super_container::add_call(Call *new_call)
         if (c->get_call_id()->call_number == new_call->get_call_id()->call_number &&
             c->get_call_id()->elevator_id.id == new_call->get_call_id()->elevator_id.id &&
             c->get_call_type() == new_call->get_call_type())
+            std::cout << "Call already exists" << std::endl;
         {
 
             for (auto elevator_id : new_call->get_elevator_ack_list())
