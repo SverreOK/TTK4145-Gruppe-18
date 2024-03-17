@@ -32,12 +32,13 @@ The configuration resides in elevador\inc\util\config.h. These are default value
 
 The most important configs to check before compiling to run on your system are the following (shown with default setting):
 ``` cpp
-#define NUM_ELEVATORS 3
-#define NUM_FLOORSS 4
-#define BROADCAST_ADDRESS "10.100.23.255"
-#define ELEVATOR_ID "Ole"
+#define NUM_ELEVATORS 3 //must be equal or larger than amount of elevators expected
+#define NUM_FLOORSS 4 //must match your elevator
+#define BROADCAST_ADDRESS "10.100.23.255" //must match your network
+#define ELEVATOR_ID "Ole" //must be unique between all elevators
 //NOTE: you may also need to check the different ports used!
 ```
+
 
 ### Running the Project 🏃‍♂️
 After you have configured correctly, you can build the project using:
