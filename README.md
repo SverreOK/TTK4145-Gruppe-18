@@ -1,5 +1,5 @@
 # Peer-to-Peer Elevator System in C++ 🚀🤖🔗
-This is a term project in [TTK4145](https://www.ntnu.no/studier/emner/TTK4145) developed by three students. The project implements software for a distributed elevator system. This solution is utilzing a peer-to-peer architecture to enable communication between several elevators.
+This is a term project in [TTK4145](https://www.ntnu.no/studier/emner/TTK4145) developed by [endurs](https://github.com/endurs), [MSalthe](https://github.com/MSalthe), and [SverreOK](https://github.com/SverreOK). The project implements software for a distributed elevator system. This solution is utilzing a peer-to-peer architecture to enable communication between several elevators.
 
 There are two main folders:
 - **./Elevador**: Effectively the root folder for the distributed elevator system
