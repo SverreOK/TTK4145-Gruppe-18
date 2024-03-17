@@ -26,7 +26,7 @@ class Elevator {
     private:
         elevator_driver* driver;
 
-        Elevator_id id;
+        Elevator_id local_elevator_id;
 
         Super_container* data_container;
 
@@ -50,7 +50,7 @@ class Elevator {
         void clear_orders(std::vector<Call*> call_list, int current_floor, int current_direction);
 
     public:
-        Elevator(elevator_driver* driver, Elevator_id id, Super_container* data_container, thread_safe_queue* event_queue);
+        Elevator(elevator_driver* driver, Elevator_id local_elevator_id, Super_container* data_container, thread_safe_queue* event_queue);
 
         void handle_event(elevator_event event);
 

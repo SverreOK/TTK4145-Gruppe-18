@@ -38,7 +38,7 @@ class Light_controller {
         }
 
         //turn on the obstruction light if the obstruction signal is true (and vice versa)
-        driver->set_door_open_lamp(driver->get_obstruction_signal());
+        // driver->set_door_open_lamp(driver->get_obstruction_signal());
 
 
         while (1)
