@@ -141,16 +141,6 @@ static std::vector<Call*> get_assigned_calls_from_json(std::string json_string, 
 // returns all calls that should be assigned to that elevator.
 std::vector<Call*> get_assigned_calls_for_elevator(std::vector<Call*> calls, std::vector<Elevator_state*> elevators, Elevator_id local_id) {
 
-    // Final state check in case of edge cases  
-    for (auto elevator : elevators) {
-        if ((elevator -> get_current_state() == state_enum::MOVING_UP &&
-            elevator -> get_current_floor() == NUM_FLOORSS - 1) ||
-            (elevator -> get_current_state() == state_enum::MOVING_DOWN &&
-            elevator -> get_current_floor() == 0)) {
-                elevator -> set_current_state(state_enum::IDLE);
-        }
-    }
-
     std::vector<std::vector<bool>> hall_call_floors = call_list_to_floor_list(calls, NUM_FLOORSS);
     std::string argument_string = generate_hall_request_assigner_json(hall_call_floors, elevators, calls);
     std::string execution_string = "./hall_request_assigner --input '" + argument_string + "'";
