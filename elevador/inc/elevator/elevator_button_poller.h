@@ -15,9 +15,9 @@ class Elevator_driver_poller {
         Super_container* data_container;
         thread_safe_queue* event_queue;
 
-        bool running;
         int number_of_floors;
         int current_floor;
+        bool running;
 
         std::vector<std::vector<bool>> button_vec =  std::vector<std::vector<bool>>(3, std::vector<bool>(number_of_floors, false));
 

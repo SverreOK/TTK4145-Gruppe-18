@@ -1,11 +1,11 @@
 #include "elevator_button_poller.h"
 
 Elevator_driver_poller::Elevator_driver_poller(elevator_driver* driver, Elevator_id elevator_id, Super_container* data_container, int number_of_floors, thread_safe_queue* event_queue, Elevator* elevator_fsm) 
-  : driver(driver), 
-    data_container(data_container), 
-    elevator_id(elevator_id), 
-    event_queue(event_queue), 
     elevator_fsm(elevator_fsm), 
+    elevator_id(elevator_id), 
+    driver(driver), 
+    data_container(data_container), 
+    event_queue(event_queue), 
     number_of_floors(number_of_floors),
     running(false)
 {}
