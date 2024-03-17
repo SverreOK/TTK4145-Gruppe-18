@@ -30,23 +30,18 @@ private:
 
     boost::mutex mtx;
 
-
 public:
     Peer(Super_container* data_container);
 
     ~Peer();
 
+    // Background threads
     void infinite_status_broadcast();
-
     void infinite_status_recieve();
-
-    void dead_connection_remover();
-
     void infinite_call_recieve();
-
     void infinite_call_transmit();
-
+    void dead_connection_remover();
+    
     void call_transmit(Call* call, int burst_size);
-
     void run_peer();
 };
