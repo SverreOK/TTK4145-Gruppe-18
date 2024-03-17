@@ -48,7 +48,7 @@ std::vector<Call *> Super_container::update_locally_assigned_calls()
             elevators_copy.push_back(elev);
         }
     }
-    locally_assigned_calls = get_assigned_calls_for_elevator(not_serviced_calls, elevators, my_id);
+    locally_assigned_calls = get_assigned_calls_for_elevator(not_serviced_calls, elevators_copy, my_id);
 
     std::vector<Call *> copy = locally_assigned_calls;
     return copy;
