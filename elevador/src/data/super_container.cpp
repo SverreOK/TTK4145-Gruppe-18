@@ -186,12 +186,14 @@ int Super_container::add_elevator(Elevator_state* elevator) {
     elevators.push_back(elevator);
 
     scoped_lock.unlock();
-    
+
     update_locally_assigned_calls();
 
     return 0;
 }
 
+// Called whenever an elevator hasn't sent a status update in the last DEAD_CONNECTION_REMOVAL_TIME_S seconds
+// Remove them from list of alive elevators, as well as other lists (such as ack lists)
 void Super_container::remove_elevator(Elevator_id id){
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
 
@@ -201,7 +203,6 @@ void Super_container::remove_elevator(Elevator_id id){
         }
     }
 
-    //loop through all calls, and remove the elevator from the serviced and ack list if it exists there
     for (auto call : call_list){
         call->remove_elevator_data(id);
     }
@@ -210,7 +211,6 @@ void Super_container::remove_elevator(Elevator_id id){
 
     update_locally_assigned_calls();
     push_new_call_event();
-
 }
 
 void Super_container::set_my_id(Elevator_id id){
@@ -229,6 +229,7 @@ std::vector<Elevator_id> Super_container::get_alive_elevators(){
 
         }
     }
+
     return alive_elevators;
 }
 
@@ -253,35 +254,7 @@ void Super_container::push_new_call_event(){
     event_queue->push(elevator_event::ORDER_RECEIVED);
 }
 
-//TODO maybe update when fixing with networking
 void Super_container::service_call(Call* call, Elevator_id elevator_id){
-
     call -> service_call(elevator_id);
-
-    //check if the call serviced list has all elevators in elevators  vector in the serviced vector
-
-    // std::vector<Elevator_id> serviced_list = call -> get_serviced_ack_list();
-    //if all elevators are in the serviced list, remove the call from the call list
-    // if (serviced_list.size() == elevators.size()){
-    //     boost::unique_lock<boost::mutex> scoped_lock(mtx);
-    //     call_list.erase(std::remove(call_list.begin(), call_list.end(), call), call_list.end()); //sjatt sjippidi idk if it works
-    //     scoped_lock.unlock();
-    // }
-
     update_locally_assigned_calls();
-
 }
-
-// std::vector<bool> Super_container::get_local_cab_requests_cheeky() {
-//     std::vector<Call*> calls = get_calls_originating_from_elevator(my_id);
-//     std::vector<bool> requests = {false, false, false, false};
-//     for (auto call : calls) {
-//         if (call->get_call_type() == button_type::CAB) {
-//             requests[call->get_floor()] = true;
-//         }
-//     }
-//     return requests;
-// } // TODO
-
-
-
