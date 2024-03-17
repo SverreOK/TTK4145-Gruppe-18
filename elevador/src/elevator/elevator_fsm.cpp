@@ -2,7 +2,6 @@
 
 Elevator::Elevator(elevator_driver* driver, Elevator_id id, Super_container* data_container, thread_safe_queue* event_queue)
     : driver(driver), id(id), data_container(data_container), event_queue(event_queue){
-       
         Current_direction = 0;
 }
 
@@ -180,6 +179,8 @@ void Elevator::initialize_position() {
     //update current floor
     data_container->get_elevator_by_id(id)->set_current_floor(driver->get_floor_sensor_signal());
     driver->set_motor_direction(0);
+
+    Elevator::open_door();
 }
 
 // This function starts the elevator
