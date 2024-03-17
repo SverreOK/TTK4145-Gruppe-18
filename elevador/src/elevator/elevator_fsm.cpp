@@ -2,6 +2,7 @@
 
 Elevator::Elevator(elevator_driver* driver, Elevator_id id, Super_container* data_container, thread_safe_queue* event_queue)
     : driver(driver), id(id), data_container(data_container), event_queue(event_queue){
+       
         Current_direction = 0;
 }
 
