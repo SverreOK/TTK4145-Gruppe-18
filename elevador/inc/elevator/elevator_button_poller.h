@@ -1,50 +1,38 @@
 #pragma once
 
-
-#include "super_container.h"
-
-#include "elevator_driver.h"
-
 #include <boost/thread.hpp>
 
+#include "super_container.h"
+#include "elevator_driver.h"
 #include "elevator_fsm.h"
 
 class Elevator_driver_poller {
 
-private:
-    elevator_driver* driver;
-    Super_container* data_container;
-    Elevator_id elevator_id;
-    thread_safe_queue* event_queue;
-    Elevator* elevator_fsm;
+    private:
+        Elevator* elevator_fsm;
+        Elevator_id elevator_id;
+        elevator_driver* driver;
+        Super_container* data_container;
+        thread_safe_queue* event_queue;
 
-    bool running;
-    int number_of_floors;
-    int current_floor;
+        bool running;
+        int number_of_floors;
+        int current_floor;
 
-    std::vector<std::vector<bool>> button_vec =  std::vector<std::vector<bool>>(3, std::vector<bool>(number_of_floors, false));
+        std::vector<std::vector<bool>> button_vec =  std::vector<std::vector<bool>>(3, std::vector<bool>(number_of_floors, false));
 
-    void poll_buttons();
+        void poll_buttons();
+        void poll_floor_sensors();
+        void poll_obstruction();
 
-    void poll_floor_sensors();
+    public:
+        Elevator_driver_poller(elevator_driver* driver, Elevator_id elevator_id, Super_container* data_container, int number_of_floors, thread_safe_queue* event_queue, Elevator* elevator_fsm);
 
-    void poll_obstruction();
+        void poll_all();
+        void stop();
+        bool get_running();
 
-public:
-
-    void poll_all();
-
-    Elevator_driver_poller(elevator_driver* driver, Elevator_id elevator_id, Super_container* data_container, int number_of_floors, thread_safe_queue* event_queue, Elevator* elevator_fsm) 
-        : driver(driver), data_container(data_container), elevator_id(elevator_id), event_queue(event_queue), elevator_fsm(elevator_fsm), number_of_floors(number_of_floors) {
-            running = false;
+        ~Elevator_driver_poller() {
+            stop();
         }
-
-
-    void stop();
-
-    bool get_running();
-
-    ~Elevator_driver_poller() {
-        stop();
-    }
 };
