@@ -1,6 +1,5 @@
 #include "super_container.h"
 
-#include "call_assigner.h"
 class Call;
 
 Super_container::Super_container(thread_safe_queue* event_queue)
@@ -47,7 +46,6 @@ void Super_container::update_locally_assigned_calls(){
 
     locally_assigned_calls = get_assigned_calls_for_elevator(not_serviced_calls, elevators_copy, my_id);
     std::vector<Call*> copy =  locally_assigned_calls;
- 
 }
 
 std::vector<Call*> Super_container::get_locally_assigned_calls(){
