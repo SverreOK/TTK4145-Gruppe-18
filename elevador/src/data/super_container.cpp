@@ -118,9 +118,9 @@ bool Super_container::similar_call_exists(button_type test_call_type, int test_f
         bool is_hall_call = !(existing_call->get_call_type() == button_type::CAB);
 
         if (is_local_cab_call || is_hall_call){
-            if (existing_call->get_call_type() == test_call_type &&           //call has same type as provided button type
-                test_floor == existing_call->get_floor() &&                   //call has same floor as provided nr
-                existing_call->get_serviced_ack_list().size() == 0 ){    //call has empty serviced list
+            if (existing_call->get_call_type() == test_call_type &&             //call has same type as provided button type
+                test_floor == existing_call->get_floor() &&                     //call has same floor as provided nr
+                existing_call->get_serviced_ack_list().size() == 0 ){           //call has empty serviced list
 
                 return true;
             }
