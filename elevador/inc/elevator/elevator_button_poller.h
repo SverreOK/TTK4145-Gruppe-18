@@ -60,13 +60,11 @@ private:
     void poll_obstruction() {
         bool obstruction_signal = driver->get_obstruction_signal();
         
-        if (obstruction_signal != data_container->get_elevator_by_id(elevator_id)->get_obstruction_status()) {
-            data_container->get_elevator_by_id(elevator_id)->set_obstruction(obstruction_signal);
+        data_container->get_elevator_by_id(elevator_id)->set_obstruction(obstruction_signal);
 
-            if (obstruction_signal) {
-                elevator_fsm->on_obstruction_detected();
-            } 
-        }
+        if (obstruction_signal) {
+            elevator_fsm->on_obstruction_detected();
+        } 
     }
 
 

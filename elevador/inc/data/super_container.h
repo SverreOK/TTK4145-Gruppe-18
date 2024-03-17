@@ -46,7 +46,7 @@ class Super_container {
         Elevator_state* get_elevator_by_id(Elevator_id id);
         Call_id* get_last_call_id_originating_from_elevator(Elevator_id elevator_id);
         std::vector<Call*> get_calls_originating_from_elevator(Elevator_id elevator_id);
-        std::vector<Call*> update_locally_assigned_calls();
+        void update_locally_assigned_calls();
         std::vector<Call*> get_locally_assigned_calls();
         // std::vector<bool> get_local_cab_requests_cheeky();
         Elevator_id get_my_id();

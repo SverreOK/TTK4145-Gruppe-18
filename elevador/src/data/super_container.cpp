@@ -16,8 +16,10 @@ std::vector<Call*> Super_container::get_call_list(){
     return copy;
 }
 
-std::vector<Call*> Super_container::update_locally_assigned_calls(){
+void Super_container::update_locally_assigned_calls(){
     std::vector<Elevator_id> alive_elevators = get_alive_elevators();
+
+    Elevator_state* local_elevator = get_elevator_by_id(my_id);
 
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
 
@@ -42,16 +44,19 @@ std::vector<Call*> Super_container::update_locally_assigned_calls(){
         }
     }
 
-    locally_assigned_calls = get_assigned_calls_for_elevator(not_serviced_calls, elevators_copy, my_id);
+    //if there are no elevators in elevators_copy, force add calls to local elevator
+    if (elevators_copy.size() == 0){
+        elevators_copy.push_back(local_elevator);
+    }
 
+    locally_assigned_calls = get_assigned_calls_for_elevator(not_serviced_calls, elevators_copy, my_id);
     std::vector<Call*> copy =  locally_assigned_calls;
-    return copy;
+ 
 }
 
 std::vector<Call*> Super_container::get_locally_assigned_calls(){
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
-    std::vector<Call*> copy = locally_assigned_calls;
-    return copy;
+    return locally_assigned_calls;
 }
 
 Call* Super_container::add_call(Call* new_call){

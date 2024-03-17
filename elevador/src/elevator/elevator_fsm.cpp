@@ -74,6 +74,7 @@ void Elevator::handle_event(elevator_event event) {
                 //close door light
                 data_container->get_elevator_by_id(id)->set_current_state(state_enum::IDLE);
                 event_queue->push(elevator_event::DOOR_CLOSED);
+                driver->set_door_open_lamp(0);
             }
         break;
     }
@@ -151,8 +152,6 @@ void Elevator::door_timer() {
             continue;
         }
     }
-    
-    driver->set_door_open_lamp(0);
     event_queue->push(elevator_event::DOOR_TIMEOUT);
 }
 
