@@ -30,13 +30,10 @@ void Peer::infinite_status_broadcast() {
 
     while (true) {
 
-        if (data_container->get_elevator_by_id(data_container->get_my_id())->get_obstruction_status() == false){
-            elevator_status_network status = data_container->get_elevator_by_id(data_container->get_my_id())->get_status_network();
-            broadcast_socket_tx.send_to(boost::asio::buffer(&status, sizeof(status)), udp::endpoint(broadcast_address, 12345));
-            boost::this_thread::sleep_for(boost::chrono::milliseconds(BROADCAST_RATE_MS));
-        }
 
-        boost::this_thread::sleep_for(boost::chrono::milliseconds( static_cast<int>(BROADCAST_RATE_MS/4)));
+        elevator_status_network status = data_container->get_elevator_by_id(data_container->get_my_id())->get_status_network();
+        broadcast_socket_tx.send_to(boost::asio::buffer(&status, sizeof(status)), udp::endpoint(broadcast_address, 12345));
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(BROADCAST_RATE_MS));
         //std::cout << "Broadcasting status" << std::endl;
     }   
 }
