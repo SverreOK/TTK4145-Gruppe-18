@@ -55,12 +55,6 @@ void Light_controller::Update_lights() {
             }
         }
 
-
-
-        //wait for x ms before updating the lights again
-        //print in conside fuck my life :D
         boost::this_thread::sleep_for(boost::chrono::milliseconds(LIGHT_RATE_MS));
-
     }
-    
 }
