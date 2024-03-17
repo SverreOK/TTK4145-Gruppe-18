@@ -8,11 +8,10 @@
 #include <cstdlib> // For system command
 
 #include "config.h"
+#include "start_logic.h"
 
 using boost::asio::ip::udp;
 using namespace std::chrono_literals;
-
-auto last_receive_time = std::chrono::steady_clock::now();
 
 // Runs the primary
 // Sends heartbeats to the backup

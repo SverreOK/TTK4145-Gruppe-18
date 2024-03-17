@@ -51,6 +51,8 @@ void run_backup(const std::string& host, const std::string& port) {
         bool is_primary_now = false;
         char buf[1024];
 
+        auto last_receive_time = std::chrono::steady_clock::now();
+
         while (!is_primary_now) {
             std::cout << "Backup running" << std::endl;
 
