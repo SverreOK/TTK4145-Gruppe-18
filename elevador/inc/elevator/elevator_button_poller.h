@@ -7,6 +7,8 @@
 
 #include <boost/thread.hpp>
 
+#include "elevator_fsm.h"
+
 class Elevator_driver_poller {
 
 private:
