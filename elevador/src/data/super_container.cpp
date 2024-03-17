@@ -9,13 +9,13 @@ Super_container::Super_container(thread_safe_queue* event_queue)
     event_queue(event_queue)
 {}
 
-std::vector<Call*> Super_container::get_call_list(){
+std::vector<Call*> Super_container::get_call_list() {
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
     std::vector<Call*> copy = call_list;
     return copy;
 }
 
-void Super_container::update_locally_assigned_calls(){
+void Super_container::update_locally_assigned_calls() {
     std::vector<Elevator_id> alive_elevators = get_alive_elevators();
     std::vector<Call*> call_list_copy = call_list;
     std::vector<Call*> not_serviced_calls = std::vector<Call*>();
@@ -23,7 +23,7 @@ void Super_container::update_locally_assigned_calls(){
     Elevator_state* local_elevator = get_elevator_by_id(my_id);
 
     // Remove calls that are already serviced by checking if serviced vector length more than 0
-    for (auto call : call_list_copy){
+    for (auto call : call_list_copy) {
         std::vector<Elevator_id> call_ack_list = call->get_elevator_ack_list();
         if (call->get_serviced_ack_list().size() == 0 &&
             vector_elements_in_A_found_in_B(alive_elevators, call_ack_list)){
@@ -48,12 +48,12 @@ void Super_container::update_locally_assigned_calls(){
     std::vector<Call*> copy =  locally_assigned_calls;
 }
 
-std::vector<Call*> Super_container::get_locally_assigned_calls(){
+std::vector<Call*> Super_container::get_locally_assigned_calls() {
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
     return locally_assigned_calls;
 }
 
-Call* Super_container::add_call(Call* new_call){
+Call* Super_container::add_call(Call* new_call) {
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
     Call* call_referenced = nullptr;
 
@@ -62,11 +62,11 @@ Call* Super_container::add_call(Call* new_call){
         if (c->get_call_id()->call_number == new_call->get_call_id()->call_number &&
             c->get_call_id()->elevator_id.id == new_call->get_call_id()->elevator_id.id) {
 
-            for(auto elevator_id : new_call->get_elevator_ack_list()){
+            for(auto elevator_id : new_call->get_elevator_ack_list()) {
                 c->acknowlegde_call(elevator_id);
             }
 
-            for (auto elevator_id : new_call->get_serviced_ack_list()){
+            for (auto elevator_id : new_call->get_serviced_ack_list()) {
                 c->service_call(elevator_id);
             }
 
@@ -76,7 +76,7 @@ Call* Super_container::add_call(Call* new_call){
         }
     }
 
-    if (!already_exists){
+    if (!already_exists) {
         call_list.push_back(new_call);
         call_referenced = new_call;
     }
@@ -89,16 +89,16 @@ Call* Super_container::add_call(Call* new_call){
     return call_referenced;
 }
 
-
-void Super_container::add_new_call(int floor, button_type call_type, Call_id call_id){
+void Super_container::add_new_call(int floor, button_type call_type, Call_id call_id) {
     Call* new_call = new Call(floor, call_type, call_id);
     new_call->acknowlegde_call(call_id.elevator_id);
     add_call(new_call);
 }
 
-void Super_container::add_new_call_with_elevatorId(int floor, button_type call_type, Elevator_id elevator_id){
+void Super_container::add_new_call_with_elevatorId(int floor, button_type call_type, Elevator_id elevator_id) {
     if( !similar_call_exists(call_type, floor, elevator_id)){
         int call_num = 0;
+
         if (get_last_call_id_originating_from_elevator(elevator_id) != nullptr){
             call_num = get_last_call_id_originating_from_elevator(elevator_id)->call_number + 1;
         }
@@ -108,9 +108,9 @@ void Super_container::add_new_call_with_elevatorId(int floor, button_type call_t
     }
 }
 
-bool Super_container::similar_call_exists(button_type test_call_type, int test_floor, Elevator_id test_elevator_id){
+bool Super_container::similar_call_exists(button_type test_call_type, int test_floor, Elevator_id test_elevator_id) {
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
-    //TODO CHECK ID IF CAB
+
     for (auto existing_call : call_list){ 
         button_type existing_call_type  = existing_call->get_call_type();
         bool is_local_cab_call = (existing_call_type == button_type::CAB) && (existing_call->get_call_id()->elevator_id.id == test_elevator_id.id);
@@ -125,26 +125,26 @@ bool Super_container::similar_call_exists(button_type test_call_type, int test_f
             }
         }
     }
+
     return false;
 }
 
-std::vector<Call*> Super_container::get_calls_originating_from_elevator(Elevator_id elevator_id){
+std::vector<Call*> Super_container::get_calls_originating_from_elevator(Elevator_id elevator_id) {
     std::vector<Call*> calls = std::vector<Call*>();
 
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
 
     for (auto call : call_list){
-        
         if (call->get_call_id()->elevator_id.id == elevator_id.id){
             calls.push_back(call);
         }
     }
+
     return calls;
 }
 
 
-Call_id* Super_container::get_last_call_id_originating_from_elevator(Elevator_id elevator_id){
-
+Call_id* Super_container::get_last_call_id_originating_from_elevator(Elevator_id elevator_id) {
     int last_call_id_number = 0;
     Call_id* last_call_id = nullptr;
     std::vector<Call*> calls = get_calls_originating_from_elevator(elevator_id);
@@ -161,11 +161,11 @@ Call_id* Super_container::get_last_call_id_originating_from_elevator(Elevator_id
     return last_call_id;
 }
 
-
-int Super_container::add_elevator(Elevator_state* elevator){
+// Called whenever an elevator sends a status update
+int Super_container::add_elevator(Elevator_state* elevator) {
     boost::unique_lock<boost::mutex> scoped_lock(mtx);
 
-    //check if the elevator is already in the list //TODO is this good?
+    // Check if we already know the elevator is alive, if so update the elevator's state
     for (auto e : elevators){
         if (e->get_id().id == elevator->get_id().id){
             //update the elevator
@@ -182,9 +182,11 @@ int Super_container::add_elevator(Elevator_state* elevator){
         }
     }
 
+    // Otherwise, add the elevator to the list of alive elevators
     elevators.push_back(elevator);
 
     scoped_lock.unlock();
+    
     update_locally_assigned_calls();
 
     return 0;
