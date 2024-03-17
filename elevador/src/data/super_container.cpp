@@ -4,10 +4,10 @@
 class Call;
 
 Super_container::Super_container(thread_safe_queue* event_queue)
-  : event_queue(event_queue),
-    elevators(std::vector<Elevator_state*>()),
-    call_list(std::vector<Call*>()),
+  : elevators(std::vector<Elevator_state*>()),
     locally_assigned_calls(std::vector<Call*>())
+    call_list(std::vector<Call*>()),
+    event_queue(event_queue),
 {}
 
 std::vector<Call*> Super_container::get_call_list(){
