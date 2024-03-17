@@ -170,21 +170,34 @@ void Peer::infinite_call_recieve() {
  */ 
 
 void Peer::infinite_call_transmit() {
+
+
     
     while (true) {
-        for (auto call : data_container->get_call_list()) {
 
-            std::vector<Elevator_id> call_ack_list = call->get_elevator_ack_list();
-            std::vector<Elevator_id> call_serviced_list = call->get_serviced_ack_list();
-            std::vector<Elevator_id> alive_elevators = data_container->get_alive_elevators();
-            
-            if(!vector_elements_in_A_found_in_B(alive_elevators, call_ack_list) ||
-               (!vector_elements_in_A_found_in_B(alive_elevators, call_serviced_list) && call_serviced_list.size() > 0)){
+        //"intelligent call retransmission" N times
+        for ( int i = 0; i <= COMPLETE_CALL_LIST_TRANSMIT_RATE; i++){
+            for (auto call : data_container->get_call_list()) {
+
+                std::vector<Elevator_id> call_ack_list = call->get_elevator_ack_list();
+                std::vector<Elevator_id> call_serviced_list = call->get_serviced_ack_list();
+                std::vector<Elevator_id> alive_elevators = data_container->get_alive_elevators();
+                
+                if(!vector_elements_in_A_found_in_B(alive_elevators, call_ack_list) ||
+                (!vector_elements_in_A_found_in_B(alive_elevators, call_serviced_list) && call_serviced_list.size() > 0)){
+                    call_transmit(call, 1);
+                }
+            }
+            boost::this_thread::sleep_for(boost::chrono::milliseconds(CALL_TRANSMIT_RATE_MS));
+        }
+
+        //retransmit all calls in list (except serviced calls still)
+        for (auto call : data_container->get_call_list()) {
+            if (call->get_serviced_ack_list().size() == 0){
                 call_transmit(call, 1);
             }
+            boost::this_thread::sleep_for(boost::chrono::milliseconds(10)); // to not completely DDOS the network
         }
-        //sleep
-        boost::this_thread::sleep_for(boost::chrono::milliseconds(CALL_TRANSMIT_RATE_MS));
     }
 }
 

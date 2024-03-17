@@ -61,7 +61,6 @@ void Elevator::handle_event(elevator_event event) {
                 //std::cout << "wierd event while in IDLE" << std::endl;
             }
 
-
         break;
 
         case state_enum::DOOR_OPEN:
@@ -188,6 +187,10 @@ void Elevator::run_event_queue() {
 void Elevator::start() {
     Elevator::initialize_position();
     running = true;
+
+
+    event_queue->push(elevator_event::DOOR_CLOSED); // initial event to kick off the FSM
+
     fsm_thread = boost::thread(&Elevator::run_event_queue, this);
 }
 
