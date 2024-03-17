@@ -86,9 +86,9 @@ void Elevator::clear_orders(std::vector<Call*> call_list, int current_floor, int
     bool more_calls_down = requests_below(current_floor, call_list);
     
     for (auto call : call_list) {
+
         if (call->get_floor() == current_floor){
 
-            
             button_type call_type = call->get_call_type();
 
             if (call_type == button_type::CAB){ //always clear cab call if its at the current floor
@@ -114,11 +114,6 @@ void Elevator::clear_orders(std::vector<Call*> call_list, int current_floor, int
                     }
                 break;
 
-                // case 0: //standing still
-                //     if (call_type == button_type::UP_HALL || call_type == button_type::DOWN_HALL){ //and call is up or down at this floor
-                //         data_container->service_call(call, id);
-                //     }
-                // break;
                 case 0:
                     if (call_type == button_type::UP_HALL || call_type == button_type::DOWN_HALL){ //and call is up or down at this floor
                         data_container->service_call(call, id);

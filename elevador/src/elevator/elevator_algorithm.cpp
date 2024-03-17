@@ -65,7 +65,7 @@ bool should_stop(int current_floor, int current_direction, std::vector<Call*> ca
             }
         }
     }
-    return false; // should never reach this point, keep for better practice and compiler warnings
+    return true; // should never reach this point, keep for better practice and compiler warnings
 }
 
 
