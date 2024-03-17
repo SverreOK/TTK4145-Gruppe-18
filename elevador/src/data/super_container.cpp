@@ -17,10 +17,11 @@ std::vector<Call*> Super_container::get_call_list() {
 
 void Super_container::update_locally_assigned_calls() {
     std::vector<Elevator_id> alive_elevators = get_alive_elevators();
+    Elevator_state* local_elevator = get_elevator_by_id(my_id);
+    
+    boost::unique_lock<boost::mutex> scoped_lock(mtx);
     std::vector<Call*> call_list_copy = call_list;
     std::vector<Call*> not_serviced_calls = std::vector<Call*>();
-    boost::unique_lock<boost::mutex> scoped_lock(mtx);
-    Elevator_state* local_elevator = get_elevator_by_id(my_id);
 
     // Remove calls that are already serviced by checking if serviced vector length more than 0
     for (auto call : call_list_copy) {

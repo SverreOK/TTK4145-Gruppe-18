@@ -14,7 +14,6 @@ struct call_message {
     char serviced[NUM_ELEVATORS][8];
 };
 
-//enum for direction of elevator
 enum class button_type {
     UP_HALL = 0,
     DOWN_HALL = 1,
@@ -37,7 +36,6 @@ enum class state_enum {
     MOVING_DOWN,
     DOOR_OPEN
 };
-
 
 class Call {
     private:
