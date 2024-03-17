@@ -13,18 +13,6 @@
 // Number of buttons (and corresponding lamps) on a per-floor basis
 #define N_BUTTONS 3
 
-
-
-
-////////////////////////////////////////////////////////////////////////
-///////////////////////// Elevator Driver  /////////////////////////////
-////////////////////////////////////////////////////////////////////////
-
-// /// Forward declarations
-// class Elevator_state;
-// class Elevator;
-
-
 class elevator_driver {
 private:
     boost::asio::io_service io_service;
@@ -36,7 +24,6 @@ private:
     char port[8];
     bool connected;
     
-
 public:
     elevator_driver();
     void connect();
@@ -45,7 +32,7 @@ public:
     void set_button_lamp(int button, int floor, int value);
     void set_floor_indicator(int floor);
     void set_door_open_lamp(int value);
-    void set_stop_lamp(int value);
+    // void set_stop_lamp(int value); // Not implemented
 
     int get_button_signal(int button, int floor);
     int get_floor_sensor_signal();
@@ -53,28 +40,4 @@ public:
     int get_obstruction_signal();
     
     bool get_connected();
-
-    // void poll_floor(Elevator *elevator, Elevator_state state);
-    // void poll_obstruction(Elevator *elevator, Elevator_state state);
-
-    //~elevator_driver();
-
 };
-
-
-
-
-
-//Do we need these? / use them?
-
-// typedef enum tag_elevator_hardware_motor_direction { 
-//     DIRN_DOWN = -1,
-//     DIRN_STOP = 0,
-//     DIRN_UP = 1
-// } elevator_hardware_motor_direction_t;
-
-// typedef enum tag_elevator_hardware_lamp_type { 
-//     BUTTON_CALL_UP = 0,
-//     BUTTON_CALL_DOWN = 1,
-//     BUTTON_COMMAND = 2
-// } elevator_hardware_button_type_t;
